@@ -151,7 +151,7 @@ namespace LectorCvsResultados
                     TimeSpan ts = i - minFecha;
                     //int percent = ts.Days * j / 100;
                     //int percent = (ts.Days * 80) / 100;
-                    listaAnalizada.Add(RevisionDatos.AnalizarDatosPorDiaSeleccion(i, contexto, 80,k));
+                    listaAnalizada.Add(RevisionDatos.AnalizarDatosPorDiaSeleccion(i, contexto, k));
                     i = i.AddDays(1);
                 }
                 //EscribirDatosArchivo(listaAnalizada, "AnalisisAnalizadaConDictU2"+k, rutaBase);
@@ -168,31 +168,31 @@ namespace LectorCvsResultados
 
         }
 
-        public static void AnalizarDatosListaDiasBetween(string rutaBase)
-        {
-            List<AnalisisDatosDTO> listaAnalizada = new List<AnalisisDatosDTO>();
-            List<AgrupadorConsolidadoDTO> listaConsolidada = new List<AgrupadorConsolidadoDTO>();
+        //public static void AnalizarDatosListaDiasBetween(string rutaBase)
+        //{
+        //    List<AnalisisDatosDTO> listaAnalizada = new List<AnalisisDatosDTO>();
+        //    List<AgrupadorConsolidadoDTO> listaConsolidada = new List<AgrupadorConsolidadoDTO>();
 
-            listaAnalizada = new List<AnalisisDatosDTO>();
-                for (var i = DateTime.Today.AddDays(-15); i < DateTime.Today;)
-                {
-                    TimeSpan ts = i - minFecha;
-                    int percentMenor = ts.Days * 60 / 100;
-                    int percentMayor = ts.Days * 79 / 100;
-                    //int percent = 80;
-                    listaAnalizada.Add(RevisionDatos.AnalizarDatosPorDiaSeleccionBetween(i, contexto, 5, percentMenor, percentMayor));
-                    i = i.AddDays(1);
-            }
-            EscribirDatosArchivo(listaAnalizada, "AnalisisAnalizada", rutaBase);
-            AgrupadorConsolidadoDTO a = new AgrupadorConsolidadoDTO();
-                a.MaxValue = (from x in listaAnalizada select x.ResultadosPositivos).Max();
-                a.MinValue = (from x in listaAnalizada select x.ResultadosPositivos).Min();
-                //a.Porcentaje = j;
-                a.TotalPositivosMuestras = (from x in listaAnalizada select x.ResultadosPositivos).Sum();
-                listaAnalizada.Clear();
-                listaConsolidada.Add(a);
-            EscribirDatosArchivo(listaConsolidada, "AnalisisDiaBetween" + 5, rutaBase);
-        }
+        //    listaAnalizada = new List<AnalisisDatosDTO>();
+        //        for (var i = DateTime.Today.AddDays(-15); i < DateTime.Today;)
+        //        {
+        //            TimeSpan ts = i - minFecha;
+        //            int percentMenor = ts.Days * 60 / 100;
+        //            int percentMayor = ts.Days * 79 / 100;
+        //            //int percent = 80;
+        //            listaAnalizada.Add(RevisionDatos.AnalizarDatosPorDiaSeleccionBetween(i, contexto, 5, percentMenor, percentMayor));
+        //            i = i.AddDays(1);
+        //    }
+        //    EscribirDatosArchivo(listaAnalizada, "AnalisisAnalizada", rutaBase);
+        //    AgrupadorConsolidadoDTO a = new AgrupadorConsolidadoDTO();
+        //        a.MaxValue = (from x in listaAnalizada select x.ResultadosPositivos).Max();
+        //        a.MinValue = (from x in listaAnalizada select x.ResultadosPositivos).Min();
+        //        //a.Porcentaje = j;
+        //        a.TotalPositivosMuestras = (from x in listaAnalizada select x.ResultadosPositivos).Sum();
+        //        listaAnalizada.Clear();
+        //        listaConsolidada.Add(a);
+        //    EscribirDatosArchivo(listaConsolidada, "AnalisisDiaBetween" + 5, rutaBase);
+        //}
 
         public static void AnalizarUnGanador(List<string> filenames)
         {
@@ -205,16 +205,16 @@ namespace LectorCvsResultados
             }
         }
 
-        public static void AnalizarUnGanadorLvl2(List<string> filenames)
-        {
-            for (int i = 0; i < filenames.Count; i++)
-            {
-                DateTime dt = DateTime.ParseExact(filenames[i], "yyyyMMdd", CultureInfo.InvariantCulture);
-                TimeSpan ts = dt - minFecha;
-                int percent = ts.Days * 80 / 100;
-                AnDataUnGanador.AnalizarDatosPorDiaSeleccionLvl2(dt, contexto, percent);
-            }
-        }
+        //public static void AnalizarUnGanadorLvl2(List<string> filenames)
+        //{
+        //    for (int i = 0; i < filenames.Count; i++)
+        //    {
+        //        DateTime dt = DateTime.ParseExact(filenames[i], "yyyyMMdd", CultureInfo.InvariantCulture);
+        //        TimeSpan ts = dt - minFecha;
+        //        int percent = ts.Days * 80 / 100;
+        //        AnDataUnGanador.AnalizarDatosPorDiaSeleccionLvl2(dt, contexto, percent);
+        //    }
+        //}
 
         public static void AnalizarUnGanadorLvl3(string rutaBase)
         {

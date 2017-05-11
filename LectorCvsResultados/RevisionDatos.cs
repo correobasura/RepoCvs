@@ -9,14 +9,14 @@ namespace LectorCvsResultados
 {
     public class RevisionDatos
     {
-        public static AnalisisDatosDTO AnalizarDatosPorDiaSeleccion(DateTime fecha, SisResultEntities contexto, int minimoRegistrosExistentes, int cantidadQuitar = 0)
+        public static AnalisisDatosDTO AnalizarDatosPorDiaSeleccion(DateTime fecha, SisResultEntities contexto, int cantidadQuitar = 10)
         {
             string fechaFormat = fecha.ToString("yyyyMMdd");
             int diaSemana = fecha.DayOfWeek == 0 ? 7 : (int)fecha.DayOfWeek;
             int maxIndex = ConsultasClass.ConsultarMaxIndex(fechaFormat, contexto);
-            List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccion(maxIndex, fechaFormat, contexto, diaSemana, fecha.Day);
+            List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccion(maxIndex, fechaFormat, contexto);
             List<AgrupadorTabIndexDiferenciaDTO> listaTodosResultados = ConsultasClass.ConsultarTodosDatosDia(fechaFormat, contexto);
-            List<AgrupadorTotalTabIndexDTO> listaConteoIgualdadDia = ConsultasClass.ConsultarDatosIgualdadDia(contexto, diaSemana, maxIndex, fechaFormat);
+            List<AgrupadorTotalTabIndexDTO> listaConteoIgualdadDia = ConsultasClass.ConsultarDatosIgualdadDia(contexto, diaSemana, maxIndex, fechaFormat, fecha.Day);
             List<int> listaIgualdades = (from x in listaConteoIgualdadDia select x.Tabindex).Take(cantidadQuitar).ToList();
             List<AgrupadorTotalTabIndexDTO> listaResultadosTemp = (from x in listaResultados where !(listaIgualdades.Contains(x.Tabindex)) select x).ToList();
             List<int> listaTabIndexDifCero = (from x in listaTodosResultados where x.Diferencia == 0 select x.Tabindex).ToList();
@@ -31,51 +31,12 @@ namespace LectorCvsResultados
             //Dictionary<int, AgrupadorTimeSpanDTO> dict = RevisarTimeSpanDatos(fecha, contexto, maxIndex);
             for (int i = 0; i < listaResultadosMuestra.Count(); i++)
             {
-                if(listaTabIndexDifCero.IndexOf(listaResultadosMuestra.ElementAt(i).Tabindex) != -1)
+                if (listaTabIndexDifCero.IndexOf(listaResultadosMuestra.ElementAt(i).Tabindex) != -1)
                 {
                     a.ResultadosNegativos++;
                     //var ultimo = dict[listaResultadosMuestra.ElementAt(i).Tabindex].UltimoEnRachas;
                     //var itemDic = dict[listaResultadosMuestra.ElementAt(i).Tabindex].DictRachasAcumuladas[ultimo];
                     //a.UltimoParecido +=  + ",\t";
-                }
-                else if(listaTabIndexDifNoCero.IndexOf(listaResultadosMuestra.ElementAt(i).Tabindex) != -1)
-                {
-                    a.ResultadosPositivos++;
-                }
-            }
-            a.PromedioPositivo = (double)a.ResultadosPositivos / cantidadTomar;
-            a.PromedioNegativo = (double)a.ResultadosNegativos / cantidadTomar;
-
-            return a;
-        }
-
-        public static AnalisisDatosDTO AnalizarDatosPorDiaSeleccionBetween(DateTime fecha, SisResultEntities contexto, int cantidadIgualdfades, int percentMenor, int percentMayor)
-        {
-            string fechaFormat = fecha.ToString("yyyyMMdd");
-            int diaSemana = fecha.DayOfWeek == 0 ? 7 : (int)fecha.DayOfWeek;
-            int maxIndex = ConsultasClass.ConsultarMaxIndex(fechaFormat, contexto);
-            List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccionBetween(maxIndex, fechaFormat, contexto, percentMenor, percentMayor);
-            List<AgrupadorTabIndexDiferenciaDTO> listaTodosResultados = ConsultasClass.ConsultarTodosDatosDia(fechaFormat, contexto);
-            //List<AgrupadorTotalTabIndexDTO> listaResultadosIgualdad = ConsultasClass.ConsultarDatosIgualdadDia(contexto, diaSemana, maxIndex, fechaFormat);
-            //List<int> listaIgualdades = (from x in listaResultadosIgualdad select x.Tabindex).Take(cantidadIgualdfades).ToList();
-            //List<AgrupadorTotalTabIndexDTO> listaResultadosTemp = (from x in listaResultados where !(listaIgualdades.Contains(x.Tabindex)) select x).ToList();
-            List<int> listaTabIndexDifCero = (from x in listaTodosResultados where x.Diferencia == 0 select x.Tabindex).ToList();
-            List<int> listaTabIndexDifNoCero = (from x in listaTodosResultados where x.Diferencia != 0 select x.Tabindex).ToList();
-
-
-            AnalisisDatosDTO a = new AnalisisDatosDTO();
-            a.TotalDatos = listaResultados.Count();
-            a.Fecha = fechaFormat;
-            int cantidadTomar = 15;
-            List<AgrupadorTotalTabIndexDTO> listaResultadosMuestra = listaResultados.Take(cantidadTomar).ToList();
-            //List<AgrupadorTotalTabIndexDTO> listaResultadosMuestra = listaResultadosTemp.Take(cantidadTomar).ToList();
-            Dictionary<int, AgrupadorTimeSpanDTO> dict = RevisarTimeSpanDatos(fecha, contexto, maxIndex);
-            for (int i = 0; i < listaResultadosMuestra.Count(); i++)
-            {
-                if (listaTabIndexDifCero.IndexOf(listaResultadosMuestra.ElementAt(i).Tabindex) != -1)
-                {
-                    a.ResultadosNegativos++;
-                    a.UltimoParecido += dict[listaResultadosMuestra.ElementAt(i).Tabindex].UltimoEnRachas+"\t";
                 }
                 else if (listaTabIndexDifNoCero.IndexOf(listaResultadosMuestra.ElementAt(i).Tabindex) != -1)
                 {
@@ -84,6 +45,7 @@ namespace LectorCvsResultados
             }
             a.PromedioPositivo = (double)a.ResultadosPositivos / cantidadTomar;
             a.PromedioNegativo = (double)a.ResultadosNegativos / cantidadTomar;
+
             return a;
         }
 
@@ -92,9 +54,9 @@ namespace LectorCvsResultados
             string fechaFormat = fecha.ToString("yyyyMMdd");
             int diaSemana = fecha.DayOfWeek == 0 ? 7 : (int)fecha.DayOfWeek;
             int maxIndex = ConsultasClass.ConsultarMaxIndex(fechaFormat, contexto);
-            List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccion(maxIndex, fechaFormat, contexto, minimoRegistrosExistentes);
+            List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccion(maxIndex, fechaFormat, contexto);
             List<AgrupadorTabIndexDiferenciaDTO> listaTodosResultados = ConsultasClass.ConsultarTodosDatosDia(fechaFormat, contexto);
-            List<AgrupadorTotalTabIndexDTO> listaResultadosIgualdad = ConsultasClass.ConsultarDatosIgualdadDia(contexto, diaSemana, maxIndex, fechaFormat);
+            List<AgrupadorTotalTabIndexDTO> listaResultadosIgualdad = ConsultasClass.ConsultarDatosIgualdadDia(contexto, diaSemana, maxIndex, fechaFormat,0);
             List<int> listaIgualdades = (from x in listaResultadosIgualdad select x.Tabindex).Take(cantidadIgualdfades).ToList();
             List<AgrupadorTotalTabIndexDTO> listaResultadosTemp = (from x in listaResultados where !(listaIgualdades.Contains(x.Tabindex)) select x).ToList();
             List<int> listaTabIndexDifCero = (from x in listaTodosResultados where x.Diferencia == 0 select x.Tabindex).ToList();
@@ -132,9 +94,9 @@ namespace LectorCvsResultados
             string fechaFormat = fecha.ToString("yyyyMMdd");
             int diaSemana = fecha.DayOfWeek == 0 ? 7 : (int)fecha.DayOfWeek;
             int maxIndex = ConsultasClass.ConsultarMaxIndex(fechaFormat, contexto);
-            List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccion(maxIndex, fechaFormat, contexto, minimoRegistrosExistentes);
+            List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccion(maxIndex, fechaFormat, contexto);
             List<AgrupadorTabIndexDiferenciaDTO> listaTodosResultados = ConsultasClass.ConsultarTodosDatosDia(fechaFormat, contexto);
-            List<AgrupadorTotalTabIndexDTO> listaResultadosIgualdad = ConsultasClass.ConsultarDatosIgualdadDia(contexto, diaSemana, maxIndex, fechaFormat);
+            List<AgrupadorTotalTabIndexDTO> listaResultadosIgualdad = ConsultasClass.ConsultarDatosIgualdadDia(contexto, diaSemana, maxIndex, fechaFormat,0);
             List<int> listaIgualdades = (from x in listaResultadosIgualdad select x.Tabindex).Take(cantidadIgualdfades).ToList();
             List<AgrupadorTotalTabIndexDTO> listaResultadosTemp = (from x in listaResultados where !(listaIgualdades.Contains(x.Tabindex)) select x).ToList();
             List<int> listaTabIndexDifCero = (from x in listaTodosResultados where x.Diferencia == 0 select x.Tabindex).ToList();

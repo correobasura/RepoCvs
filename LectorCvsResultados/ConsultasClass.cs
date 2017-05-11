@@ -40,9 +40,9 @@ namespace LectorCvsResultados
             return valSecuencia;
         }
 
-        public static List<AgrupadorTotalTabIndexDTO> ConsultarDatosParaDiaSeleccion(int maxListIndex, string fechaFormat, SisResultEntities contexto, int minimoRegistrosExistentes, int diaMes = 0)
+        public static List<AgrupadorTotalTabIndexDTO> ConsultarDatosParaDiaSeleccion(int maxListIndex, string fechaFormat, SisResultEntities contexto)
         {
-            string query = string.Format(ConstantesConsulta.QUERY_SELECCION_ORDENADA_MAS_VALORES_FECHA_PROM, fechaFormat, maxListIndex, minimoRegistrosExistentes, diaMes);
+            string query = string.Format(ConstantesConsulta.QUERY_SELECCION_ORDENADA_MAS_VALORES_FECHA_PROM, fechaFormat, maxListIndex);
             DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
             return data.AsEnumerable().ToList();
         }
@@ -60,9 +60,9 @@ namespace LectorCvsResultados
             return data.AsEnumerable().ToList();
         }
 
-        public static List<AgrupadorTotalTabIndexDTO> ConsultarDatosIgualdadDia(SisResultEntities contexto, int diaSemana, int maxTabIndex, string fechaNum)
+        public static List<AgrupadorTotalTabIndexDTO> ConsultarDatosIgualdadDia(SisResultEntities contexto, int diaSemana, int maxTabIndex, string fechaNum, int diaMes)
         {
-            string query = string.Format(ConstantesConsulta.QUERY_DATOS_IGUALDAD_DIA, diaSemana, maxTabIndex, fechaNum);
+            string query = string.Format(ConstantesConsulta.QUERY_DATOS_IGUALDAD_DIA, diaSemana, maxTabIndex, fechaNum, diaMes);
             DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
             return data.AsEnumerable().ToList();
         }

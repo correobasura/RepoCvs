@@ -19,7 +19,7 @@ namespace LectorCvsResultados
                     + "ORDER BY 1 DESC, 2";
 
         public const string QUERY_SELECCION_ORDENADA_MAS_VALORES_FECHA_PROM =
-                    "SELECT   COUNT(1)/fn_cantidad_reg_index_fs(tabindex,{0}) AS total, tabindex AS tabindex, {2} "
+                    "SELECT   COUNT(1)/fn_cantidad_reg_index_fs(tabindex,{0}) AS total, tabindex AS tabindex "
                     + "FROM     userresulttablesfs "
                     + "WHERE    diferenciag != 0 "
                     + "AND      fechaNum < {0} "
@@ -48,13 +48,24 @@ namespace LectorCvsResultados
                     + "WHERE fechaNum = {0}";
 
         public const string QUERY_DATOS_IGUALDAD_DIA =
-                    "SELECT COUNT(1)/fn_cantidad_reg_index_diaS(tabindex,{0},{2}) AS total, tabindex AS tabindex "
+                    "SELECT SUM(a.total) AS total, a.tabindex AS tabindex FROM("
+                    + "SELECT COUNT(1)/fn_cantidad_reg_index_diaS(tabindex,{0},{2}) AS total, tabindex AS tabindex "
                     + "FROM userresulttablesfs "
                     + "WHERE diferenciag = 0 "
                     + "AND diasemnum = {0} "
                     + "AND tabindex <= {1} "
                     + "AND FECHANUM < {2} "
                     + "GROUP BY tabindex "
+                    + "UNION ALL "
+                    + "SELECT COUNT(1)/fn_cantidad_reg_index_diaM(tabindex,{3},{2}) AS total, tabindex AS tabindex "
+                    + "FROM userresulttablesfs "
+                    + "WHERE diferenciag = 0 "
+                    + "AND diaMesNum = {3} "
+                    + "AND tabindex <= {1} "
+                    + "AND FECHANUM < {2} "
+                    + "GROUP BY tabindex "
+                    + ") a "
+                    + "GROUP BY a.tabindex "
                     + "ORDER BY 1 DESC, 2";
 
         public const string QUERY_DATOS_MAS_VALORES_LVL1 = "SELECT COUNT(1) AS total, lineindex AS lineindex "
