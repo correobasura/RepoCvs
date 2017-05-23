@@ -64,9 +64,6 @@
     <Compile Include="ANALISTINDEXUNG.cs">
       <DependentUpon>SisResultModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="ANALISTINDEXUNGLV2.cs">
-      <DependentUpon>SisResultModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="AnDataMayorUno.cs" />
     <Compile Include="AnDataUnGanador.cs" />
     <Compile Include="ConstantesConsulta.cs" />
@@ -74,7 +71,6 @@
     <Compile Include="ConsultasClass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RevisionDatos.cs" />
     <Compile Include="SisResultModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -42,12 +42,13 @@ namespace LectorCvsResultados
                     + "FROM Userresulttablesfs "
                     + "WHERE fechaNum = {0}";
 
-        public const string QUERY_TODOS_RESULTADOS_DIA = 
+        public const string QUERY_RESULTADOS_DIA = 
                     "SELECT tabindex AS TabIndex, Diferenciag AS Diferencia "
                     + "FROM userResultTablesFs "
-                    + "WHERE fechaNum = {0}";
+                    + "WHERE fechaNum = {0} "
+                    + "ORDER BY tabindex";
 
-        public const string QUERY_DATOS_IGUALDAD_DIA =
+        public const string QUERY_ACUMULADO_DATOS_IGUALDAD_DIA_MES =
                     "SELECT SUM(a.total) AS total, a.tabindex AS tabindex FROM("
                     + "SELECT COUNT(1)/fn_cantidad_reg_index_diaS(tabindex,{0},{2}) AS total, tabindex AS tabindex "
                     + "FROM userresulttablesfs "
@@ -81,5 +82,31 @@ namespace LectorCvsResultados
                     + "AND fechaNum < {0} "
                     + "GROUP BY lineindex "
                     + "ORDER BY 1 DESC, 2";
+
+        public const string QUERY_MAX_INDEX_RESULTADOS =
+                    "SELECT MAX(tabindex) "
+                    + "FROM Userresulttablesfs ";
+
+        public const string QUERY_MAX_FECHA_TABINDEX =
+                    "SELECT MAX(fechaNum) AS FechaNum, tabindex AS tabindex "
+                    + "FROM Userresulttablesfs "
+                    + "WHERE tabindex <= {0} "
+                    + "GROUP BY tabindex ORDER BY 1";
+
+        public const string QUERY_COUNT_SPANTIEMPOS =
+                    "SELECT COUNT(1) AS total, spantiempo AS spantiempo, RANK () OVER (ORDER BY COUNT(1) DESC) AS rank "
+                    + "FROM userresulttablesfs "
+                    + "WHERE tabindex = {0} "
+                    + "AND fechanum < {1} "
+                    + "GROUP BY spantiempo "
+                    + "ORDER BY 3";
+
+        public const string QUERY_ULTIMO_SPAN_TIEMPO =
+                    "SELECT spantiempo, fechanum "
+                    + "FROM userresulttablesfs "
+                    + "WHERE tabindex = {0} "
+                    + "AND fechanum < {1} "
+                    + "AND spantiempo IS NOT NULL "
+                    + "ORDER BY fechanum DESC";
     }
 }

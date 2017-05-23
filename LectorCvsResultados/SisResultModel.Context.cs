@@ -27,6 +27,5 @@ namespace LectorCvsResultados
     
         public virtual DbSet<USERRESULTTABLESFS> USERRESULTTABLESFS { get; set; }
         public virtual DbSet<ANALISTINDEXUNG> ANALISTINDEXUNG { get; set; }
-        public virtual DbSet<ANALISTINDEXUNGLV2> ANALISTINDEXUNGLV2 { get; set; }
     }
 }

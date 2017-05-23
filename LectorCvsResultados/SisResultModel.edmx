@@ -17,19 +17,8 @@
           <Property Name="MESNUM" Type="number" Precision="38" Scale="0" />
           <Property Name="DIAMESNUM" Type="number" Precision="38" Scale="0" />
           <Property Name="DIASEMNUM" Type="number" Precision="38" Scale="0" />
-        </EntityType>
-        <EntityType Name="ANALISTINDEXUNGLV2">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="FECHA" Type="date" />
-          <Property Name="LINEINDEX" Type="number" Precision="38" Scale="0" />
-          <Property Name="RESULT" Type="number" Precision="38" Scale="0" />
-          <Property Name="FECHANUM" Type="number" Precision="38" Scale="0" />
-          <Property Name="MESNUM" Type="number" Precision="38" Scale="0" />
-          <Property Name="DIAMESNUM" Type="number" Precision="38" Scale="0" />
-          <Property Name="DIASEMNUM" Type="number" Precision="38" Scale="0" />
+          <Property Name="ULTIMOTIMESPAN" Type="number" Precision="38" Scale="0" />
+          <Property Name="CANTIDADULTTIMESPAN" Type="number" Precision="38" Scale="0" />
         </EntityType>
         <EntityType Name="USERRESULTTABLESFS">
           <Key>
@@ -48,10 +37,10 @@
           <Property Name="MESNUM" Type="number" Precision="38" Scale="0" />
           <Property Name="DIAMESNUM" Type="number" Precision="38" Scale="0" />
           <Property Name="DIASEMNUM" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIEMPO" Type="number" Precision="38" Scale="0" />
         </EntityType>
         <EntityContainer Name="SistResultModelStoreContainer">
           <EntitySet Name="ANALISTINDEXUNG" EntityType="Self.ANALISTINDEXUNG" Schema="USERRESULTTABLES" store:Type="Tables" />
-          <EntitySet Name="ANALISTINDEXUNGLV2" EntityType="Self.ANALISTINDEXUNGLV2" Schema="USERRESULTTABLES" store:Type="Tables" />
           <EntitySet Name="USERRESULTTABLESFS" EntityType="Self.USERRESULTTABLESFS" Schema="USERRESULTTABLES" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -61,7 +50,6 @@
         <EntityContainer Name="SisResultEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="USERRESULTTABLESFS" EntityType="SistResultModel.USERRESULTTABLESFS" />
           <EntitySet Name="ANALISTINDEXUNG" EntityType="SistResultModel.ANALISTINDEXUNG" />
-          <EntitySet Name="ANALISTINDEXUNGLV2" EntityType="SistResultModel.ANALISTINDEXUNGLV2" />
         </EntityContainer>
         <EntityType Name="USERRESULTTABLESFS">
           <Key>
@@ -80,6 +68,7 @@
           <Property Name="MESNUM" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="DIAMESNUM" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="DIASEMNUM" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="SPANTIEMPO" Type="Decimal" Precision="38" Scale="0" />
         </EntityType>
         <EntityType Name="ANALISTINDEXUNG">
           <Key>
@@ -93,19 +82,8 @@
           <Property Name="MESNUM" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="DIAMESNUM" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="DIASEMNUM" Type="Decimal" Precision="38" Scale="0" />
-        </EntityType>
-        <EntityType Name="ANALISTINDEXUNGLV2">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="FECHA" Type="DateTime" />
-          <Property Name="LINEINDEX" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="RESULT" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="FECHANUM" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="MESNUM" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="DIAMESNUM" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="DIASEMNUM" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="ULTIMOTIMESPAN" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="CANTIDADULTTIMESPAN" Type="Decimal" Precision="38" Scale="0" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -116,6 +94,7 @@
           <EntitySetMapping Name="USERRESULTTABLESFS">
             <EntityTypeMapping TypeName="SistResultModel.USERRESULTTABLESFS">
               <MappingFragment StoreEntitySet="USERRESULTTABLESFS">
+                <ScalarProperty Name="SPANTIEMPO" ColumnName="SPANTIEMPO" />
                 <ScalarProperty Name="DIASEMNUM" ColumnName="DIASEMNUM" />
                 <ScalarProperty Name="DIAMESNUM" ColumnName="DIAMESNUM" />
                 <ScalarProperty Name="MESNUM" ColumnName="MESNUM" />
@@ -135,20 +114,8 @@
           <EntitySetMapping Name="ANALISTINDEXUNG">
             <EntityTypeMapping TypeName="SistResultModel.ANALISTINDEXUNG">
               <MappingFragment StoreEntitySet="ANALISTINDEXUNG">
-                <ScalarProperty Name="DIASEMNUM" ColumnName="DIASEMNUM" />
-                <ScalarProperty Name="DIAMESNUM" ColumnName="DIAMESNUM" />
-                <ScalarProperty Name="MESNUM" ColumnName="MESNUM" />
-                <ScalarProperty Name="FECHANUM" ColumnName="FECHANUM" />
-                <ScalarProperty Name="RESULT" ColumnName="RESULT" />
-                <ScalarProperty Name="LINEINDEX" ColumnName="LINEINDEX" />
-                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ANALISTINDEXUNGLV2">
-            <EntityTypeMapping TypeName="SistResultModel.ANALISTINDEXUNGLV2">
-              <MappingFragment StoreEntitySet="ANALISTINDEXUNGLV2">
+                <ScalarProperty Name="CANTIDADULTTIMESPAN" ColumnName="CANTIDADULTTIMESPAN" />
+                <ScalarProperty Name="ULTIMOTIMESPAN" ColumnName="ULTIMOTIMESPAN" />
                 <ScalarProperty Name="DIASEMNUM" ColumnName="DIASEMNUM" />
                 <ScalarProperty Name="DIAMESNUM" ColumnName="DIAMESNUM" />
                 <ScalarProperty Name="MESNUM" ColumnName="MESNUM" />

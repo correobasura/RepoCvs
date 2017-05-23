@@ -37,6 +37,19 @@ namespace LectorCvsResultados
         }
     }
 
+    public class AgrupadorFechaNumTabindex
+    {
+        public int Tabindex
+        {
+            get; set;
+        }
+
+        public int FechaNum
+        {
+            get; set;
+        }
+    }
+
     public class AnalisisDatosDTO
     {
         public int TotalDatos
@@ -80,9 +93,15 @@ namespace LectorCvsResultados
             set;
         }
 
+        public string AnalizedData
+        {
+            get;
+            set;
+        }
+
         public override string ToString()
         {
-            return +TotalDatos + ";" + ResultadosPositivos + ";"+ PromedioPositivo + ";"+ ResultadosNegativos+";"+ PromedioNegativo+";"+ MinimoApariciones+";"+ Fecha+";"+ UltimoParecido;
+            return +TotalDatos + ";" + ResultadosPositivos + ";"+ PromedioPositivo + ";"+ ResultadosNegativos+";"+ PromedioNegativo+";"+ MinimoApariciones+";"+ Fecha+";"+ UltimoParecido+";"+AnalizedData;
         }
     }
 
@@ -132,18 +151,6 @@ namespace LectorCvsResultados
             set;
         }
 
-        public int MinValue
-        {
-            get;
-            set;
-        }
-
-        public int MaxValue
-        {
-            get;
-            set;
-        }
-
         public int UltimoEnRachas
         {
             get;
@@ -156,29 +163,37 @@ namespace LectorCvsResultados
             set;
         }
 
-        public string ListaString(List<int> laLista)
+        public USERRESULTTABLESFS UltimoGuardado
         {
-            StringBuilder sb = new StringBuilder();
-            foreach (var item in laLista)
-            {
-                sb.Append(item+",");
-            }
-            return sb.ToString();
-        }
-
-        public string DictionaryString(Dictionary<int, int> dict)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (var item in dict)
-            {
-                sb.Append(item.Key+ "|"+item.Value+"    ,");
-            }
-            return sb.ToString();
-        }
-
-        public override string ToString()
-        {
-            return MaxValue + ";" + MinValue+";"+ UltimoEnRachas + ";" + ListaString(ValoresAparicionAcumulada)+";"+ DictionaryString(DictRachasAcumuladas);
+            get;
+            set;
         }
     }
-}
+
+    public class AgrupadorConteosTimeSpanDTO
+    {
+        public int Total
+        {
+            get;
+            set;
+        }
+
+        public int? Spantiempo
+        {
+            get;
+            set;
+        }
+
+        public int? Fechanum
+        {
+            get;
+            set;
+        }
+
+        public int Rank
+        {
+            get;
+            set;
+        }
+    }
+    }
