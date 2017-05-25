@@ -23,6 +23,5 @@ namespace LectorCvsResultados
         public Nullable<decimal> DIAMESNUM { get; set; }
         public Nullable<decimal> DIASEMNUM { get; set; }
         public Nullable<decimal> ULTIMOTIMESPAN { get; set; }
-        public Nullable<decimal> CANTIDADULTTIMESPAN { get; set; }
     }
 }

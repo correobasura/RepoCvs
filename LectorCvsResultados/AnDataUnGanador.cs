@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LectorCvsResultados
 {
@@ -25,23 +23,26 @@ namespace LectorCvsResultados
             List<AgrupadorTabIndexDiferenciaDTO> listaTodosResultados;
             List<AgrupadorTotalTabIndexDTO> listaDatosOpcionados = AnalizarListIndexDatos(contexto, fechaFormat, diaSemana, diaMes, maxIndex, fechaNum, fechaRevisar, out listaTodosResultados, out listaTabIndexDifCero, out listaTabIndexDifNoCero);
             List<AgrupadorTotalTabIndexDTO> listaResultadosMuestra = AnalizarSpanDatosDia(contexto, fechaFormat, diaSemana, diaMes, maxIndex, fechaNum, fechaRevisar, listaTodosResultados, listaTabIndexDifCero, listaTabIndexDifNoCero, listaDatosOpcionados);
-
-
+            
             for (int j = 0; j < listaResultadosMuestra.Count; j++)
             {
-                var elemento = listaResultadosMuestra.ElementAt(j);
                 ANALISTINDEXUNG a = new ANALISTINDEXUNG();
                 a.ID = ConsultasClass.ObtenerValorSecuencia(a, contexto);
+                int tabindex = listaResultadosMuestra.ElementAt(j).Tabindex;
+                List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
+                int spanTabindex = ObtenerSpanTiempoActual(fechaRevisar, listspantiempo);
                 a.LINEINDEX = j + 1;
                 a.FECHA = fechaRevisar;
                 a.FECHANUM = fechaNum;
                 a.DIASEMNUM = diaSemana;
                 a.DIAMESNUM = diaMes;
-                if (listaTabIndexDifCero.IndexOf(elemento.Tabindex) != -1)
+                a.MESNUM = fechaRevisar.Month;
+                a.ULTIMOTIMESPAN = spanTabindex;
+                if (listaTabIndexDifCero.IndexOf(tabindex) != -1)
                 {
                     a.RESULT = -1;
                 }
-                else if (listaTabIndexDifNoCero.IndexOf(elemento.Tabindex) != -1)
+                else if (listaTabIndexDifNoCero.IndexOf(tabindex) != -1)
                 {
                     a.RESULT = 1;
                 }
@@ -52,6 +53,48 @@ namespace LectorCvsResultados
                 contexto.ANALISTINDEXUNG.Add(a);
             }
             contexto.SaveChanges();
+        }
+
+        /// <summary>
+        /// Método que maneja el análisis de los datos para los tabindex y los timespan de los datos para cada tabindex
+        /// </summary>
+        /// <param name="fechaRevisar">fecha para revisar la información</param>
+        /// <param name="contexto">Instancia del contexto para la consulta de datos.</param>
+        public static List<int> AnalizarDatosDiaActual(DateTime fechaRevisar, SisResultEntities contexto, int maxIndex)
+        {
+            string fechaFormat = fechaRevisar.ToString("yyyyMMdd");
+            int fechaNum = Convert.ToInt32(fechaFormat);
+            int diaSemana = fechaRevisar.DayOfWeek == 0 ? 7 : (int)fechaRevisar.DayOfWeek;
+            int diaMes = fechaRevisar.Day;
+
+            List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccion(maxIndex, fechaFormat, contexto);
+
+            List<int> listaResultadosMuestra = new List<int>();
+            for (int i = 0; i < listaResultados.Count && listaResultadosMuestra.Count < 25; i++)
+            {
+                int tabindex = listaResultados.ElementAt(i).Tabindex;
+                List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
+                int spanActual = ObtenerSpanTiempoActual(fechaRevisar, listspantiempo, true);
+                if (spanActual == -2)
+                {
+                    continue;
+                }
+                else if (spanActual == 0)
+                {
+                    listaResultadosMuestra.Add(listaResultados.ElementAt(i).Tabindex);
+                    continue;
+                }
+                //Se acuerdo al analisislistindex, el -2 aparecía recurrentemente dentro de los datos con mas igualdades
+                //por lo tanto se omite
+                List<AgrupadorConteosTimeSpanDTO> lista = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
+                var elemento = (from x in lista
+                                where x.Spantiempo == spanActual
+                                select x).FirstOrDefault();
+                if (elemento != null && (elemento.Rank == 2))
+                    continue;
+                listaResultadosMuestra.Add(listaResultados.ElementAt(i).Tabindex);
+            }
+            return listaResultadosMuestra;
         }
 
         /// <summary>
@@ -73,52 +116,138 @@ namespace LectorCvsResultados
         }
 
         /// <summary>
-        /// Realiza la validación de los datos para la fecha específica de los que menos aparecen con igualdades
-        /// depurando los valores tabindex con mas igualdades
+        /// Método que realiza el análisis del span de los datos
         /// </summary>
-        /// <param name="contexto">Instancia del contexto para la consulta</param>
-        /// <param name="fechaFormat">Fecha formateada para la consulta</param>
-        /// <param name="diaSemana">Día de la semana para la consulta</param>
-        /// <param name="diaMes">Día del mes para la consulta</param>
-        /// <param name="maxIndex">Máximo tabindex para realizar la verificación</param>
-        /// <param name="fechaNum">Valor númerico para la fecha formateada</param>
-        /// <param name="fechaRevisar">Fecha en formato Date</param>
-        /// <param name="listaTodosResultados">Lista que contiene todos los resultados para consultar</param>
-        /// <param name="cantidadQuitar">Cantidad de elementos para quitar de la lista si no ecibe nada, el valor por default es 10</param>
-        private static List<AgrupadorTotalTabIndexDTO> AnalizarListIndexDatos(SisResultEntities contexto, string fechaFormat, int diaSemana,
-            int diaMes, int maxIndex, int fechaNum, DateTime fechaRevisar,
-             out List<AgrupadorTabIndexDiferenciaDTO> listaTodosResultados, out List<int> listaTabIndexDifCero, out List<int> listaTabIndexDifNoCero)
+        /// <param name="contexto">Instancia del contexto para realizar la consulta</param>
+        /// <param name="fechaFormat">Fecha formateada en string</param>
+        /// <param name="diaSemana">Día de la semana para el análsis</param>
+        /// <param name="diaMes">Día del mes para el análisis</param>
+        /// <param name="maxIndex">Máximo tabindex para realizar el análisis</param>
+        /// <param name="fechaNum">Fecha en formato número</param>
+        /// <param name="fechaRevisar">Fecha para realizar el análisis</param>
+        /// <param name="listaTodosResultados">Lista que contiene todos los resultados</param>
+        /// <param name="listaTabIndexDifCero">Lista que contiene los valores con diferencia cero</param>
+        /// <param name="listaTabIndexDifNoCero">Lista que contiene todos los valores con diferencia distinta de cero</param>
+        public static List<AgrupadorTotalTabIndexDTO> AnalizarSpanDatosDia(SisResultEntities contexto, string fechaFormat, int diaSemana, int diaMes, int maxIndex, int fechaNum, DateTime fechaRevisar,
+            List<AgrupadorTabIndexDiferenciaDTO> listaTodosResultados, List<int> listaTabIndexDifCero, List<int> listaTabIndexDifNoCero,
+            List<AgrupadorTotalTabIndexDTO> listaDatosOpcionados)
         {
-            List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccion(maxIndex, fechaFormat, contexto);
-            listaTodosResultados = ConsultasClass.ConsultarResultadosDia(fechaFormat, contexto);
-            List<AgrupadorTotalTabIndexDTO> listaConteoIgualdadDia = ConsultasClass.ConsultarDatosAcumuladosIgualdadDiaSemanaMes(contexto, diaSemana, maxIndex, fechaFormat, diaMes);
-            listaTabIndexDifCero = (from x in listaTodosResultados where x.Diferencia == 0 select x.Tabindex).ToList();
-            listaTabIndexDifNoCero = (from x in listaTodosResultados where x.Diferencia != 0 select x.Tabindex).ToList();
-            return listaResultados;
+            List<AgrupadorTotalTabIndexDTO> listaResultadosMuestra = new List<AgrupadorTotalTabIndexDTO>();
+            for (int i = 0; i < listaDatosOpcionados.Count && listaResultadosMuestra.Count < 25; i++)
+            {
+                int tabindex = listaDatosOpcionados.ElementAt(i).Tabindex;
+                List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
+                int spanActual = ObtenerSpanTiempoActual(fechaRevisar, listspantiempo);
+                if (spanActual == 0)
+                {
+                    listaResultadosMuestra.Add(listaDatosOpcionados.ElementAt(i));
+                    continue;
+                }
+                else if (spanActual == -2)
+                {
+                    continue;
+                }
+                List<AgrupadorConteosTimeSpanDTO> lista = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
+                var elemento = (from x in lista
+                                where x.Spantiempo == spanActual
+                                select x).FirstOrDefault();
+                if (elemento != null && (elemento.Rank == 2))
+                    continue;
+                listaResultadosMuestra.Add(listaDatosOpcionados.ElementAt(i));
+            }
+            return listaResultadosMuestra;
         }
 
         /// <summary>
-        /// Realiza la validación de los datos para la fecha específica de los que menos aparecen con igualdades
-        /// depurando los valores tabindex con mas igualdades
+        /// Método que realiza el análisis del span de los datos
         /// </summary>
-        /// <param name="contexto">Instancia del contexto para la consulta</param>
-        /// <param name="fechaFormat">Fecha formateada para la consulta</param>
-        /// <param name="diaSemana">Día de la semana para la consulta</param>
-        /// <param name="diaMes">Día del mes para la consulta</param>
-        /// <param name="maxIndex">Máximo tabindex para realizar la verificación</param>
-        /// <param name="fechaNum">Valor númerico para la fecha formateada</param>
-        /// <param name="fechaRevisar">Fecha en formato Date</param>
-        /// <param name="listaTodosResultados">Lista que contiene todos los resultados para consultar</param>
-        /// <param name="cantidadQuitar">Cantidad de elementos para quitar de la lista si no ecibe nada, el valor por default es 10</param>
-        private static List<AgrupadorTotalTabIndexDTO> AnalizarListIndexDatosTemp(SisResultEntities contexto, string fechaFormat, int diaSemana,
-            int diaMes, int maxIndex, int fechaNum, DateTime fechaRevisar,
-             out List<AgrupadorTabIndexDiferenciaDTO> listaTodosResultados, out List<int> listaTabIndexDifCero, out List<int> listaTabIndexDifNoCero, int cantidadQuitar = 10)
+        /// <param name="contexto">Instancia del contexto para realizar la consulta</param>
+        /// <param name="fechaFormat">Fecha formateada en string</param>
+        /// <param name="diaSemana">Día de la semana para el análsis</param>
+        /// <param name="diaMes">Día del mes para el análisis</param>
+        /// <param name="maxIndex">Máximo tabindex para realizar el análisis</param>
+        /// <param name="fechaNum">Fecha en formato número</param>
+        /// <param name="fechaRevisar">Fecha para realizar el análisis</param>
+        /// <param name="listaTodosResultados">Lista que contiene todos los resultados</param>
+        /// <param name="listaTabIndexDifCero">Lista que contiene los valores con diferencia cero</param>
+        /// <param name="listaTabIndexDifNoCero">Lista que contiene todos los valores con diferencia distinta de cero</param>
+        public static AnalisisDatosDTO AnalizarSpanDatosDiaTemp(SisResultEntities contexto, string fechaFormat, int diaSemana, int diaMes, int maxIndex, int fechaNum, DateTime fechaRevisar,
+            List<AgrupadorTabIndexDiferenciaDTO> listaTodosResultados, List<int> listaTabIndexDifCero, List<int> listaTabIndexDifNoCero,
+            List<AgrupadorTotalTabIndexDTO> listaDatosOpcionados)
         {
-            List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccion(maxIndex, fechaFormat, contexto);
-            listaTodosResultados = ConsultasClass.ConsultarResultadosDia(fechaFormat, contexto);
-            listaTabIndexDifCero = (from x in listaTodosResultados where x.Diferencia == 0 select x.Tabindex).ToList();
-            listaTabIndexDifNoCero = (from x in listaTodosResultados where x.Diferencia != 0 select x.Tabindex).ToList();
-            return listaResultados;
+            List<AgrupadorTotalTabIndexDTO> listaResultadosMuestra = new List<AgrupadorTotalTabIndexDTO>();
+            for (int i = 0; i < listaDatosOpcionados.Count && listaResultadosMuestra.Count < 25; i++)
+            {
+                int tabindex = listaDatosOpcionados.ElementAt(i).Tabindex;
+                List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
+                int spanActual = ObtenerSpanTiempoActual(fechaRevisar, listspantiempo);
+                if (spanActual == 0)
+                {
+                    listaResultadosMuestra.Add(listaDatosOpcionados.ElementAt(i));
+                    continue;
+                }
+                else if (spanActual == -2)
+                {
+                    continue;
+                }
+                List<AgrupadorConteosTimeSpanDTO> lista = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
+                var elemento = (from x in lista
+                                where x.Spantiempo == spanActual
+                                select x).FirstOrDefault();
+                if (elemento != null && (elemento.Rank == 2))
+                    continue;
+                listaResultadosMuestra.Add(listaDatosOpcionados.ElementAt(i));
+            }
+
+            AnalisisDatosDTO a = new AnalisisDatosDTO();
+            a.TotalDatos = listaResultadosMuestra.Count();
+            a.Fecha = fechaFormat;
+            for (int i = 0; i < listaResultadosMuestra.Count(); i++)
+            {
+                int tabindex = listaResultadosMuestra.ElementAt(i).Tabindex;
+                if (listaTabIndexDifCero.IndexOf(listaResultadosMuestra.ElementAt(i).Tabindex) != -1)
+                {
+                    List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
+                    int spanActual = ObtenerSpanTiempoActual(fechaRevisar, listspantiempo);
+                    List<AgrupadorConteosTimeSpanDTO> lista = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
+                    var elemento = (from x in lista
+                                    where x.Spantiempo == spanActual
+                                    select x).FirstOrDefault();
+                    if (elemento != null)
+                    {
+                        int rank = elemento.Rank;
+                        int conteo = elemento.Total;
+                        int totalDatosAgrupados = lista.Count();
+
+                        a.AnalizedData += "|" + rank + "-" + conteo + "-" + totalDatosAgrupados;
+
+                    }
+                    a.ResultadosNegativos++;
+                }
+                else if (listaTabIndexDifNoCero.IndexOf(listaResultadosMuestra.ElementAt(i).Tabindex) != -1)
+                {
+                    a.ResultadosPositivos++;
+                }
+            }
+            a.PromedioPositivo = (double)a.ResultadosPositivos / 25;
+            a.PromedioNegativo = (double)a.ResultadosNegativos / 25;
+
+            return a;
+        }
+
+        /// <summary>
+        /// Crea una estructura de diccionario para el análisis de datos
+        /// </summary>
+        /// <returns>Diccionario con claves hasta el maxindex</returns>
+        public static Dictionary<int, AgrupadorTimeSpanDTO> ObtenerDiccionarioInicial()
+        {
+            Dictionary<int, AgrupadorTimeSpanDTO> dict = new Dictionary<int, AgrupadorTimeSpanDTO>();
+            for (int i = 1; i <= 765; i++)
+            {
+                dict.Add(i, new AgrupadorTimeSpanDTO());
+                dict[i].ValoresAparicionAcumulada = new List<int>();
+            }
+            return dict;
         }
 
         /// <summary>
@@ -207,161 +336,6 @@ namespace LectorCvsResultados
                     dict[item.Tabindex].ValoresAparicion.Add(1);
                 }
             }
-        }
-
-        /// <summary>
-        /// Crea una estructura de diccionario para el análisis de datos
-        /// </summary>
-        /// <returns>Diccionario con claves hasta el maxindex</returns>
-        public static Dictionary<int, AgrupadorTimeSpanDTO> ObtenerDiccionarioInicial()
-        {
-            Dictionary<int, AgrupadorTimeSpanDTO> dict = new Dictionary<int, AgrupadorTimeSpanDTO>();
-            for (int i = 1; i <= 765; i++)
-            {
-                dict.Add(i, new AgrupadorTimeSpanDTO());
-                dict[i].ValoresAparicionAcumulada = new List<int>();
-            }
-            return dict;
-        }
-
-        /// <summary>
-        /// Método que realiza el análisis del span de los datos
-        /// </summary>
-        /// <param name="contexto">Instancia del contexto para realizar la consulta</param>
-        /// <param name="fechaFormat">Fecha formateada en string</param>
-        /// <param name="diaSemana">Día de la semana para el análsis</param>
-        /// <param name="diaMes">Día del mes para el análisis</param>
-        /// <param name="maxIndex">Máximo tabindex para realizar el análisis</param>
-        /// <param name="fechaNum">Fecha en formato número</param>
-        /// <param name="fechaRevisar">Fecha para realizar el análisis</param>
-        /// <param name="listaTodosResultados">Lista que contiene todos los resultados</param>
-        /// <param name="listaTabIndexDifCero">Lista que contiene los valores con diferencia cero</param>
-        /// <param name="listaTabIndexDifNoCero">Lista que contiene todos los valores con diferencia distinta de cero</param>
-        public static AnalisisDatosDTO AnalizarSpanDatosDiaTemp(SisResultEntities contexto, string fechaFormat, int diaSemana, int diaMes, int maxIndex, int fechaNum, DateTime fechaRevisar,
-            List<AgrupadorTabIndexDiferenciaDTO> listaTodosResultados, List<int> listaTabIndexDifCero, List<int> listaTabIndexDifNoCero,
-            List<AgrupadorTotalTabIndexDTO> listaDatosOpcionados)
-        {
-
-            //List<AgrupadorTotalTabIndexDTO> listaResultadosMuestra = listaDatosOpcionados.Take(25).ToList();
-            List<AgrupadorTotalTabIndexDTO> listaResultadosMuestra = new List<AgrupadorTotalTabIndexDTO>();
-            for (int i = 0; i < listaDatosOpcionados.Count && listaResultadosMuestra.Count < 25; i++)
-            {
-                int tabindex = listaDatosOpcionados.ElementAt(i).Tabindex;
-                List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
-                int spanActual = ObtenerSpanTiempoActual(fechaRevisar, listspantiempo);
-                if (spanActual == 0)
-                {
-                    listaResultadosMuestra.Add(listaDatosOpcionados.ElementAt(i));
-                    continue;
-                }
-                List<AgrupadorConteosTimeSpanDTO> lista = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
-                var elemento = (from x in lista
-                                where x.Spantiempo == spanActual
-                                select x).FirstOrDefault();
-                if (elemento != null && (elemento.Rank == 2))
-                    continue;
-                listaResultadosMuestra.Add(listaDatosOpcionados.ElementAt(i));
-            }
-
-            AnalisisDatosDTO a = new AnalisisDatosDTO();
-            a.TotalDatos = listaResultadosMuestra.Count();
-            a.Fecha = fechaFormat;
-            for (int i = 0; i < listaResultadosMuestra.Count(); i++)
-            {
-                int tabindex = listaResultadosMuestra.ElementAt(i).Tabindex;
-                if (listaTabIndexDifCero.IndexOf(listaResultadosMuestra.ElementAt(i).Tabindex) != -1)
-                {
-                    //int spantiempo = Convert.ToInt32((from b in contexto.USERRESULTTABLESFS
-                    //                                  where b.TABINDEX == tabindex
-                    //                                  && b.SPANTIEMPO != null
-                    //                                  && b.FECHA < fechaRevisar
-                    //                                  select b).OrderByDescending(b => b.FECHANUM).AsEnumerable().ToList().FirstOrDefault().SPANTIEMPO);
-
-                    List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
-                    int spanActual = ObtenerSpanTiempoActual(fechaRevisar, listspantiempo);
-                    List<AgrupadorConteosTimeSpanDTO> lista = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
-                    var elemento = (from x in lista
-                                    where x.Spantiempo == spanActual
-                                    select x).FirstOrDefault();
-                    if (elemento != null)
-                    {
-                        int rank = elemento.Rank;
-                        int conteo = elemento.Total;
-                        int totalDatosAgrupados = lista.Count();
-
-                        a.AnalizedData += "|" + rank + "-" + conteo + "-" + totalDatosAgrupados;
-
-                    }
-                    a.ResultadosNegativos++;
-                }
-                else if (listaTabIndexDifNoCero.IndexOf(listaResultadosMuestra.ElementAt(i).Tabindex) != -1)
-                {
-                    a.ResultadosPositivos++;
-                }
-            }
-            a.PromedioPositivo = (double)a.ResultadosPositivos / 25;
-            a.PromedioNegativo = (double)a.ResultadosNegativos / 25;
-
-            return a;
-        }
-
-        private static int ObtenerSpanTiempoActual(DateTime fechaRevisar, List<AgrupadorConteosTimeSpanDTO> listspantiempo)
-        {
-            if (!listspantiempo.ToList().Any())
-                return 0;
-            AgrupadorConteosTimeSpanDTO act = listspantiempo[0];
-            DateTime lastFecha = DateTime.ParseExact(act.Fechanum.ToString(), "yyyyMMdd", CultureInfo.InvariantCulture);
-            TimeSpan ts = fechaRevisar - lastFecha;
-            int spanActual = 0;
-            if (act.Spantiempo > 0)
-            {
-                spanActual = ts.Days * -1;
-            }
-            else
-            {
-                spanActual = ts.Days;
-            }
-
-            return spanActual;
-        }
-
-        /// <summary>
-        /// Método que realiza el análisis del span de los datos
-        /// </summary>
-        /// <param name="contexto">Instancia del contexto para realizar la consulta</param>
-        /// <param name="fechaFormat">Fecha formateada en string</param>
-        /// <param name="diaSemana">Día de la semana para el análsis</param>
-        /// <param name="diaMes">Día del mes para el análisis</param>
-        /// <param name="maxIndex">Máximo tabindex para realizar el análisis</param>
-        /// <param name="fechaNum">Fecha en formato número</param>
-        /// <param name="fechaRevisar">Fecha para realizar el análisis</param>
-        /// <param name="listaTodosResultados">Lista que contiene todos los resultados</param>
-        /// <param name="listaTabIndexDifCero">Lista que contiene los valores con diferencia cero</param>
-        /// <param name="listaTabIndexDifNoCero">Lista que contiene todos los valores con diferencia distinta de cero</param>
-        public static List<AgrupadorTotalTabIndexDTO> AnalizarSpanDatosDia(SisResultEntities contexto, string fechaFormat, int diaSemana, int diaMes, int maxIndex, int fechaNum, DateTime fechaRevisar,
-            List<AgrupadorTabIndexDiferenciaDTO> listaTodosResultados, List<int> listaTabIndexDifCero, List<int> listaTabIndexDifNoCero,
-            List<AgrupadorTotalTabIndexDTO> listaDatosOpcionados)
-        {
-
-            List<AgrupadorTotalTabIndexDTO> listaResultadosMuestra = new List<AgrupadorTotalTabIndexDTO>();
-            //for (int i = 0; i < listaDatosOpcionados.Count && listaResultadosMuestra.Count < 25; i++)
-            //{
-            //    int tabindex = listaDatosOpcionados.ElementAt(i).Tabindex;
-            //    int? spantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
-            //    if (spantiempo == null)
-            //    {
-            //        listaResultadosMuestra.Add(listaDatosOpcionados.ElementAt(i));
-            //        continue;
-            //    }
-            //    List<AgrupadorConteosTimeSpanDTO> lista = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
-            //    var elemento = (from x in lista
-            //                    where x.Spantiempo == spantiempo
-            //                    select x).First();
-            //    if (elemento.Rank > 2)
-            //        continue;
-            //    listaResultadosMuestra.Add(listaDatosOpcionados.ElementAt(i));
-            //}
-            return listaResultadosMuestra;
         }
 
         /// <summary>
@@ -488,44 +462,82 @@ namespace LectorCvsResultados
         }
 
         /// <summary>
-        /// Método que maneja el análisis de los datos para los tabindex y los timespan de los datos para cada tabindex
+        /// Realiza la validación de los datos para la fecha específica de los que menos aparecen con igualdades
+        /// depurando los valores tabindex con mas igualdades
         /// </summary>
-        /// <param name="fechaRevisar">fecha para revisar la información</param>
-        /// <param name="contexto">Instancia del contexto para la consulta de datos.</param>
-        public static List<int> AnalizarDatosDiaActual(DateTime fechaRevisar, SisResultEntities contexto, int maxIndex)
+        /// <param name="contexto">Instancia del contexto para la consulta</param>
+        /// <param name="fechaFormat">Fecha formateada para la consulta</param>
+        /// <param name="diaSemana">Día de la semana para la consulta</param>
+        /// <param name="diaMes">Día del mes para la consulta</param>
+        /// <param name="maxIndex">Máximo tabindex para realizar la verificación</param>
+        /// <param name="fechaNum">Valor númerico para la fecha formateada</param>
+        /// <param name="fechaRevisar">Fecha en formato Date</param>
+        /// <param name="listaTodosResultados">Lista que contiene todos los resultados para consultar</param>
+        /// <param name="cantidadQuitar">Cantidad de elementos para quitar de la lista si no ecibe nada, el valor por default es 10</param>
+        private static List<AgrupadorTotalTabIndexDTO> AnalizarListIndexDatos(SisResultEntities contexto, string fechaFormat, int diaSemana,
+            int diaMes, int maxIndex, int fechaNum, DateTime fechaRevisar,
+             out List<AgrupadorTabIndexDiferenciaDTO> listaTodosResultados, out List<int> listaTabIndexDifCero, out List<int> listaTabIndexDifNoCero)
         {
-            string fechaFormat = fechaRevisar.ToString("yyyyMMdd");
-            int fechaNum = Convert.ToInt32(fechaFormat);
-            int diaSemana = fechaRevisar.DayOfWeek == 0 ? 7 : (int)fechaRevisar.DayOfWeek;
-            int diaMes = fechaRevisar.Day;
-
             List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccion(maxIndex, fechaFormat, contexto);
-
-            List<int> listaResultadosMuestra = new List<int>();
-            //for (int i = 0; i < listaResultados.Count && listaResultadosMuestra.Count < 25; i++)
-            //{
-            //    int tabindex = listaResultados.ElementAt(i).Tabindex;
-            //    int? spantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
-            //    if (spantiempo == null)
-            //    {
-            //        listaResultadosMuestra.Add(listaResultados.ElementAt(i).Tabindex);
-            //        continue;
-            //    }
-            //    List<AgrupadorConteosTimeSpanDTO> lista = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
-            //    var elemento = (from x in lista
-            //                    where x.Spantiempo == spantiempo
-            //                    select x).First();
-            //    if (elemento.Rank > 2)
-            //        continue;
-            //    listaResultadosMuestra.Add(listaResultados.ElementAt(i).Tabindex);
-            //}
-            return listaResultadosMuestra;
+            listaTodosResultados = ConsultasClass.ConsultarResultadosDia(fechaFormat, contexto);
+            listaTabIndexDifCero = (from x in listaTodosResultados where x.Diferencia == 0 select x.Tabindex).ToList();
+            listaTabIndexDifNoCero = (from x in listaTodosResultados where x.Diferencia != 0 select x.Tabindex).ToList();
+            return listaResultados;
         }
 
-        private static void CalcularSpanDeTabindex()
+        /// <summary>
+        /// Realiza la validación de los datos para la fecha específica de los que menos aparecen con igualdades
+        /// depurando los valores tabindex con mas igualdades
+        /// </summary>
+        /// <param name="contexto">Instancia del contexto para la consulta</param>
+        /// <param name="fechaFormat">Fecha formateada para la consulta</param>
+        /// <param name="diaSemana">Día de la semana para la consulta</param>
+        /// <param name="diaMes">Día del mes para la consulta</param>
+        /// <param name="maxIndex">Máximo tabindex para realizar la verificación</param>
+        /// <param name="fechaNum">Valor númerico para la fecha formateada</param>
+        /// <param name="fechaRevisar">Fecha en formato Date</param>
+        /// <param name="listaTodosResultados">Lista que contiene todos los resultados para consultar</param>
+        /// <param name="cantidadQuitar">Cantidad de elementos para quitar de la lista si no ecibe nada, el valor por default es 10</param>
+        private static List<AgrupadorTotalTabIndexDTO> AnalizarListIndexDatosTemp(SisResultEntities contexto, string fechaFormat, int diaSemana,
+            int diaMes, int maxIndex, int fechaNum, DateTime fechaRevisar,
+             out List<AgrupadorTabIndexDiferenciaDTO> listaTodosResultados, out List<int> listaTabIndexDifCero, out List<int> listaTabIndexDifNoCero, int cantidadQuitar = 10)
         {
-
+            List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccion(maxIndex, fechaFormat, contexto);
+            listaTodosResultados = ConsultasClass.ConsultarResultadosDia(fechaFormat, contexto);
+            listaTabIndexDifCero = (from x in listaTodosResultados where x.Diferencia == 0 select x.Tabindex).ToList();
+            listaTabIndexDifNoCero = (from x in listaTodosResultados where x.Diferencia != 0 select x.Tabindex).ToList();
+            return listaResultados;
         }
+        /// <summary>
+        /// Método que realiza la validación del spantiempo actual, ya que algunos valores pueden retornar null
+        /// </summary>
+        /// <param name="fechaRevisar">Fecha para realizar la validación del span</param>
+        /// <param name="listspantiempo">Lista que contiene los datos de los spantiempo ordenados descendentemente</param>
+        /// <param name="fechaActual">Bandera que sirve para controlar si la validación se hace para la fecha actual
+        /// y de esta forma evitar la multiplicación del valor</param>
+        /// <returns></returns>
+        private static int ObtenerSpanTiempoActual(DateTime fechaRevisar, List<AgrupadorConteosTimeSpanDTO> listspantiempo, bool fechaActual = false)
+        {
+            if (!listspantiempo.ToList().Any())
+                return 0;
+            AgrupadorConteosTimeSpanDTO act = listspantiempo[0];
+            DateTime lastFecha = DateTime.ParseExact(act.Fechanum.ToString(), "yyyyMMdd", CultureInfo.InvariantCulture);
+            TimeSpan ts = fechaRevisar - lastFecha;
+            int spanActual = 0;
+            if (fechaActual)
+            {
+                return (int)act.Spantiempo;
+            }
+            if (act.Spantiempo > 0)
+            {
+                spanActual = ts.Days * -1;
+            }
+            else
+            {
+                spanActual = ts.Days;
+            }
 
+            return spanActual;
+        }
     }
 }

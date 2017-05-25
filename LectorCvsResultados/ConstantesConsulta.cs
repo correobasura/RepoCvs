@@ -19,11 +19,11 @@ namespace LectorCvsResultados
                     + "ORDER BY 1 DESC, 2";
 
         public const string QUERY_SELECCION_ORDENADA_MAS_VALORES_FECHA_PROM =
-                    "SELECT   COUNT(1)/fn_cantidad_reg_index_fs(tabindex,{0}) AS total, tabindex AS tabindex "
-                    + "FROM     userresulttablesfs "
-                    + "WHERE    diferenciag != 0 "
-                    + "AND      fechaNum < {0} "
-                    + "AND      tabindex <= {1} "
+                    "SELECT COUNT(1)/fn_cantidad_reg_index_fs(tabindex,{0}) AS total, tabindex AS tabindex "
+                    + "FROM userresulttablesfs "
+                    + "WHERE diferenciag != 0 "
+                    + "AND fechaNum < {0} "
+                    + "AND tabindex <= {1} "
                     + "GROUP BY tabindex "
                     + "ORDER BY 1 DESC, 2";
 
