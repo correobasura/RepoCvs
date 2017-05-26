@@ -17,7 +17,7 @@ namespace LectorCvsResultados
 
         public static void AnalizarDatosListaDiaActual(string rutaBase)
         {
-            var fecha = DateTime.Today;
+            var fecha = DateTime.Today.AddDays(-1);
             List<int> lista = AnDataUnGanador.AnalizarDatosDiaActual(fecha, contexto, 134);
             EscribirDatosArchivo(lista, "AnalisisActual" + fecha.ToString("yyyyMMdd"), rutaBase);
         }
@@ -186,7 +186,7 @@ namespace LectorCvsResultados
             //AnalizarUnGanador(filenames);
             //AnalizarDatos(rutaBase, DateTime.Today, 202);
 
-            //AnalizarDatosListaDias(rutaBase);
+            AnalizarDatosListaDias(rutaBase);
 
             //SeleccionarValoresAleatorios(rutaBase);
             //AnalizarDatosListaDiasBetween(rutaBase);
@@ -194,7 +194,7 @@ namespace LectorCvsResultados
             //AnalizarUnGanadorLvl3(rutaBase);
             //RevisarTimeSpanDatos();
 
-            AnalizarDatosListaDiaActual(rutaBase);
+            //AnalizarDatosListaDiaActual(rutaBase);
         }
         //public static void AnalizarDatosListaDiasBetween(string rutaBase)
         //{

@@ -100,12 +100,12 @@ namespace LectorCvsResultados
                     + "AND tabindex <= {1} "
                     + "GROUP BY tabindex "
                     + "ORDER BY 1 DESC, 2";
+
         public const string QUERY_ULTIMO_SPAN_TIEMPO =
                     "SELECT spantiempo, fechanum "
                     + "FROM userresulttablesfs "
                     + "WHERE tabindex = {0} "
                     + "AND fechanum < {1} "
-                    + "AND spantiempo IS NOT NULL "
                     + "ORDER BY fechanum DESC";
     }
 }

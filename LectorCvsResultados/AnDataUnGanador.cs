@@ -30,7 +30,7 @@ namespace LectorCvsResultados
                 a.ID = ConsultasClass.ObtenerValorSecuencia(a, contexto);
                 int tabindex = listaResultadosMuestra.ElementAt(j);
                 List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
-                int spanTabindex = ObtenerSpanTiempoActual(fechaRevisar, listspantiempo);
+                int spanTabindex = ObtenerSpanTiempoActual(listspantiempo);
                 a.LINEINDEX = j + 1;
                 a.FECHA = fechaRevisar;
                 a.FECHANUM = fechaNum;
@@ -74,7 +74,7 @@ namespace LectorCvsResultados
             {
                 int tabindex = listaDatosOpcionados.ElementAt(i).Tabindex;
                 List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
-                int spanActual = ObtenerSpanTiempoActual(fechaRevisar, listspantiempo);
+                int spanActual = ObtenerSpanTiempoActual(listspantiempo);
                 IngresarElementosListaSeleccionados(spanActual, i, listaResultadosMuestra, contexto, tabindex, fechaFormat);
             }
             return listaResultadosMuestra;
@@ -120,7 +120,7 @@ namespace LectorCvsResultados
             {
                 int tabindex = listaDatosOpcionados.ElementAt(i).Tabindex;
                 List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
-                int spanActual = ObtenerSpanTiempoActual(fechaRevisar, listspantiempo);
+                int spanActual = ObtenerSpanTiempoActual(listspantiempo);
                 IngresarElementosListaSeleccionados(spanActual, i, listaResultadosMuestra, contexto, tabindex, fechaFormat);
             }
             return listaResultadosMuestra;
@@ -144,12 +144,17 @@ namespace LectorCvsResultados
             List<AgrupadorTotalTabIndexDTO> listaDatosOpcionados)
         {
             List<int> listaResultadosMuestra = new List<int>();
-            for (int i = 0; i < listaDatosOpcionados.Count && listaResultadosMuestra.Count < 25; i++)
+            //for (int i = 0; i < listaDatosOpcionados.Count && listaResultadosMuestra.Count < 25; i++)
+            //{
+            //    int tabindex = listaDatosOpcionados.ElementAt(i).Tabindex;
+            //    List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
+            //    int spanActual = ObtenerSpanTiempoActual(listspantiempo);
+            //    IngresarElementosListaSeleccionados(spanActual, i, listaResultadosMuestra, contexto, tabindex, fechaFormat);
+            //}
+
+            for (int i = 0; i < 25; i++)
             {
-                int tabindex = listaDatosOpcionados.ElementAt(i).Tabindex;
-                List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
-                int spanActual = ObtenerSpanTiempoActual(fechaRevisar, listspantiempo);
-                IngresarElementosListaSeleccionados(spanActual, i, listaResultadosMuestra, contexto, tabindex, fechaFormat);
+                listaResultadosMuestra.Add(listaDatosOpcionados.ElementAt(i).Tabindex);
             }
 
             AnalisisDatosDTO a = new AnalisisDatosDTO();
@@ -161,7 +166,7 @@ namespace LectorCvsResultados
                 if (listaTabIndexDifCero.IndexOf(tabindex) != -1)
                 {
                     List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
-                    int spanActual = ObtenerSpanTiempoActual(fechaRevisar, listspantiempo);
+                    int spanActual = ObtenerSpanTiempoActual(listspantiempo);
                     List<AgrupadorConteosTimeSpanDTO> lista = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
                     var elemento = (from x in lista
                                     where x.Spantiempo == spanActual
@@ -172,7 +177,7 @@ namespace LectorCvsResultados
                         int conteo = elemento.Total;
                         int totalDatosAgrupados = lista.Count();
 
-                        a.AnalizedData += "|" + rank + "-" + conteo + "-" + totalDatosAgrupados;
+                        a.AnalizedData += "|" + rank + "-" + conteo;
 
                     }
                     a.ResultadosNegativos++;
@@ -475,22 +480,11 @@ namespace LectorCvsResultados
         private static void IngresarElementosListaSeleccionados(int spanActual, int index, List<int> listaResultadosMuestra,
             SisResultEntities contexto, int tabindex, string fechaFormat)
         {
-            if (spanActual == -2 || spanActual == -3 || spanActual == -6)
-            {
-                return;
-            }
-            else if (spanActual == 0)
-            {
-                listaResultadosMuestra.Add(tabindex);
-                return;
-            }
-            //Se acuerdo al analisislistindex, el -2 aparecía recurrentemente dentro de los datos con mas igualdades
-            //por lo tanto se omite
             List<AgrupadorConteosTimeSpanDTO> lista = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
             var elemento = (from x in lista
                             where x.Spantiempo == spanActual
                             select x).FirstOrDefault();
-            if (elemento != null && (elemento.Rank == 2))
+            if (elemento != null && ((elemento.Rank >= 2 && elemento.Rank <= 4) || elemento.Rank == 7))
                 return;
             listaResultadosMuestra.Add(tabindex);
         }
@@ -503,24 +497,36 @@ namespace LectorCvsResultados
         /// <param name="fechaActual">Bandera que sirve para controlar si la validación se hace para la fecha actual
         /// y de esta forma evitar la multiplicación del valor</param>
         /// <returns></returns>
-        private static int ObtenerSpanTiempoActual(DateTime fechaRevisar, List<AgrupadorConteosTimeSpanDTO> listspantiempo)
+        private static int ObtenerSpanTiempoActual(List<AgrupadorConteosTimeSpanDTO> listspantiempo)
         {
             if (!listspantiempo.ToList().Any())
                 return 0;
-            AgrupadorConteosTimeSpanDTO act = listspantiempo[0];
-            DateTime lastFecha = DateTime.ParseExact(act.Fechanum.ToString(), "yyyyMMdd", CultureInfo.InvariantCulture);
-            TimeSpan ts = fechaRevisar - lastFecha;
-            int spanActual = 0;
-            if (act.Spantiempo > 0)
+
+            AgrupadorConteosTimeSpanDTO act = listspantiempo.ElementAt(0);
+            if (act.Spantiempo != null)
             {
-                spanActual = ts.Days * -1;
+                return (int)act.Spantiempo;
             }
             else
             {
-                spanActual = ts.Days;
+                int spanActual = 0;
+                int lastElement = 0;
+                for (int i = 0; i < listspantiempo.Count; i++)
+                {
+                    act = listspantiempo.ElementAt(i);
+                    if (act.Spantiempo != null)
+                    {
+                        lastElement = (int)act.Spantiempo;
+                        break;
+                    }
+                    spanActual++;
+                }
+                if (lastElement > 0)
+                {
+                    spanActual = spanActual * -1;
+                }
+                return spanActual;
             }
-
-            return spanActual;
         }
     }
 }
