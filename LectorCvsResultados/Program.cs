@@ -17,8 +17,9 @@ namespace LectorCvsResultados
 
         public static void AnalizarDatosListaDiaActual(string rutaBase)
         {
-            List<int> lista = AnDataUnGanador.AnalizarDatosDiaActual(DateTime.Today, contexto, 178);
-            EscribirDatosArchivo(lista, "AnalisisActual" + DateTime.Today.ToString("yyyyMMdd"), rutaBase);
+            var fecha = DateTime.Today;
+            List<int> lista = AnDataUnGanador.AnalizarDatosDiaActual(fecha, contexto, 134);
+            EscribirDatosArchivo(lista, "AnalisisActual" + fecha.ToString("yyyyMMdd"), rutaBase);
         }
 
         public static void AnalizarDatosListaDias(string rutaBase)
@@ -111,52 +112,52 @@ namespace LectorCvsResultados
         {
             string line;
             List<string> filenames = new List<string>();
-            //DateTime fechaMinima = DateTime.ParseExact("20170423", "yyyyMMdd", CultureInfo.InvariantCulture);
-            //////DateTime fechaMax = DateTime.ParseExact("20170301", "yyyyMMdd", CultureInfo.InvariantCulture);
-            //for (var i = fechaMinima; i < DateTime.Today;)
-            //{
-            //    filenames.Add(i.ToString("yyyyMMdd"));
-            //    i = i.AddDays(1);
-            //}
+            DateTime fechaMinima = DateTime.ParseExact("20170503", "yyyyMMdd", CultureInfo.InvariantCulture);
+            ////////DateTime fechaMax = DateTime.ParseExact("20170301", "yyyyMMdd", CultureInfo.InvariantCulture);
+            for (var i = fechaMinima; i < DateTime.Today;)
+            {
+                filenames.Add(i.ToString("yyyyMMdd"));
+                i = i.AddDays(1);
+            }
             //Dictionary<int, AgrupadorTimeSpanDTO> dict = AnDataUnGanador.ObtenerDiccionarioInicial();
             //filenames.Add("20170513");
-            filenames.Add("20170523");
-            StreamReader fileReader;
-            List<decimal?> listTabindex = new List<decimal?>();
-            List<USERRESULTTABLESFS> listElementosAgregados = new List<USERRESULTTABLESFS>();
+            //filenames.Add("20170524");
+            //StreamReader fileReader;
+            //List<decimal?> listTabindex = new List<decimal?>();
+            //List<USERRESULTTABLESFS> listElementosAgregados = new List<USERRESULTTABLESFS>();
 
-            for (int i = 0; i < filenames.Count; i++)
-            {
-                DateTime dt = DateTime.ParseExact(filenames[i], "yyyyMMdd", CultureInfo.InvariantCulture);
-                string rutaTemp = rutaBase + dt.ToString("yyyyMM") + "\\" + filenames[i] + ".csv";
-                fileReader = new StreamReader(rutaTemp);
-                while ((line = fileReader.ReadLine()) != null)
-                {
-                    string[] arreglo = line.Split(';');
-                    USERRESULTTABLESFS u = new USERRESULTTABLESFS();
-                    u.ID = ConsultasClass.ObtenerValorSecuencia(u, contexto);
-                    u.FECHA = dt;
-                    int tabindex = Convert.ToInt32(arreglo[0]);
-                    int diferenciaG = Convert.ToInt32(arreglo[9]);
-                    int laFechaNum = Convert.ToInt32(dt.ToString("yyyyMMdd"));
-                    u.TABINDEX = tabindex;
-                    u.HORA = arreglo[1];
-                    u.MARCADOR = arreglo[4];
-                    u.GLOCAL = Convert.ToInt32(arreglo[7]);
-                    u.GVISITANTE = Convert.ToInt32(arreglo[8]);
-                    u.DIFERENCIAG = diferenciaG;
-                    u.TOTALG = Convert.ToInt32(arreglo[10]);
-                    u.FECHANUM = laFechaNum;
-                    u.MESNUM = dt.Month;
-                    u.DIAMESNUM = dt.Day;
-                    u.DIASEMNUM = dt.DayOfWeek == 0 ? 7 : (int)dt.DayOfWeek;
-                    //AnDataUnGanador.ValidarSpanDatos(dict, u, tabindex, diferenciaG, contexto);
-                    listTabindex.Add(tabindex);
-                    listElementosAgregados.Add(u);
-                }
-            }
-            AnDataUnGanador.ValidarSpanDatosDiaAnterior(contexto, listTabindex, listElementosAgregados);
-            contexto.SaveChanges();
+            //for (int i = 0; i < filenames.Count; i++)
+            //{
+            //    DateTime dt = DateTime.ParseExact(filenames[i], "yyyyMMdd", CultureInfo.InvariantCulture);
+            //    string rutaTemp = rutaBase + dt.ToString("yyyyMM") + "\\" + filenames[i] + ".csv";
+            //    fileReader = new StreamReader(rutaTemp);
+            //    while ((line = fileReader.ReadLine()) != null)
+            //    {
+            //        string[] arreglo = line.Split(';');
+            //        USERRESULTTABLESFS u = new USERRESULTTABLESFS();
+            //        u.ID = ConsultasClass.ObtenerValorSecuencia(u, contexto);
+            //        u.FECHA = dt;
+            //        int tabindex = Convert.ToInt32(arreglo[0]);
+            //        int diferenciaG = Convert.ToInt32(arreglo[9]);
+            //        int laFechaNum = Convert.ToInt32(dt.ToString("yyyyMMdd"));
+            //        u.TABINDEX = tabindex;
+            //        u.HORA = arreglo[1];
+            //        u.MARCADOR = arreglo[4];
+            //        u.GLOCAL = Convert.ToInt32(arreglo[7]);
+            //        u.GVISITANTE = Convert.ToInt32(arreglo[8]);
+            //        u.DIFERENCIAG = diferenciaG;
+            //        u.TOTALG = Convert.ToInt32(arreglo[10]);
+            //        u.FECHANUM = laFechaNum;
+            //        u.MESNUM = dt.Month;
+            //        u.DIAMESNUM = dt.Day;
+            //        u.DIASEMNUM = dt.DayOfWeek == 0 ? 7 : (int)dt.DayOfWeek;
+            //        //AnDataUnGanador.ValidarSpanDatos(dict, u, tabindex, diferenciaG, contexto);
+            //        listTabindex.Add(tabindex);
+            //        listElementosAgregados.Add(u);
+            //    }
+            //}
+            //AnDataUnGanador.ValidarSpanDatosDiaAnterior(contexto, listTabindex, listElementosAgregados);
+            //contexto.SaveChanges();
             AnalizarUnGanador(filenames);
             //AnalizarUnGanadorLvl2(filenames);
         }
@@ -176,16 +177,16 @@ namespace LectorCvsResultados
             //var laFecha = DateTime.ParseExact("20170322", "yyyyMMdd", CultureInfo.InvariantCulture);
             //AnDataUnGanador.AnalizarDiaAnteriorUnGanador(DateTime.Today.AddDays(-1), contexto);
             //AnDataMayorUno.AnalizarDiaAnteriorMayorUno(DateTime.Today.AddDays(-1), contexto);
-            List<string> filenames = new List<string>();
-            for (var i = DateTime.Today.AddDays(-15); i < DateTime.Today;)
-            {
-                filenames.Add(i.ToString("yyyyMMdd"));
-                i = i.AddDays(1);
-            }
-            AnalizarUnGanador(filenames);
+            //List<string> filenames = new List<string>();
+            //for (var i = DateTime.Today.AddDays(-1); i < DateTime.Today;)
+            //{
+            //    filenames.Add(i.ToString("yyyyMMdd"));
+            //    i = i.AddDays(1);
+            //}
+            //AnalizarUnGanador(filenames);
             //AnalizarDatos(rutaBase, DateTime.Today, 202);
 
-            AnalizarDatosListaDias(rutaBase);
+            //AnalizarDatosListaDias(rutaBase);
 
             //SeleccionarValoresAleatorios(rutaBase);
             //AnalizarDatosListaDiasBetween(rutaBase);
@@ -193,9 +194,7 @@ namespace LectorCvsResultados
             //AnalizarUnGanadorLvl3(rutaBase);
             //RevisarTimeSpanDatos();
 
-            //AnalizarDatosListaDiaActual(rutaBase);
-
-
+            AnalizarDatosListaDiaActual(rutaBase);
         }
         //public static void AnalizarDatosListaDiasBetween(string rutaBase)
         //{
