@@ -30,12 +30,12 @@ namespace LectorCvsResultados
             listaAnalizada = new List<AnalisisDatosDTO>();
             //for (int k = 4; k < 25; k++)
             //{
-            for (var i = DateTime.Today.AddDays(-15); i < DateTime.Today;)
-            {
-                TimeSpan ts = i - minFecha;
-                listaAnalizada.Add(AnDataUnGanador.AnalizarDatosDiaTemp(i, contexto));
-                i = i.AddDays(1);
-            }
+                for (var i = DateTime.Today.AddDays(-15); i < DateTime.Today;)
+                {
+                    TimeSpan ts = i - minFecha;
+                    listaAnalizada.Add(AnDataUnGanador.AnalizarDatosDiaTemp(i, contexto));
+                    i = i.AddDays(1);
+                }
             EscribirDatosArchivo(listaAnalizada, "AnalisisDatosDepurados", rutaBase);
             //    AgrupadorConsolidadoDTO a = new AgrupadorConsolidadoDTO();
             //    a.MaxValue = (from x in listaAnalizada select x.ResultadosPositivos).Max();
@@ -44,8 +44,8 @@ namespace LectorCvsResultados
             //    a.TotalPositivosMuestras = (from x in listaAnalizada select x.ResultadosPositivos).Sum();
             //    listaAnalizada.Clear();
             //    listaConsolidada.Add(a);
-            //    EscribirDatosArchivo(listaConsolidada, "AnalisisConsolidadoT1", rutaBase);
             //}
+            //EscribirDatosArchivo(listaConsolidada, "AnalisisConsolidado", rutaBase);
 
         }
 
@@ -178,7 +178,7 @@ namespace LectorCvsResultados
             //AnDataUnGanador.AnalizarDiaAnteriorUnGanador(DateTime.Today.AddDays(-1), contexto);
             //AnDataMayorUno.AnalizarDiaAnteriorMayorUno(DateTime.Today.AddDays(-1), contexto);
             //List<string> filenames = new List<string>();
-            //for (var i = DateTime.Today.AddDays(-1); i < DateTime.Today;)
+            //for (var i = DateTime.Today.AddDays(-30); i < DateTime.Today;)
             //{
             //    filenames.Add(i.ToString("yyyyMMdd"));
             //    i = i.AddDays(1);

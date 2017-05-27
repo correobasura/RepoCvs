@@ -166,5 +166,12 @@ namespace LectorCvsResultados
             valSecuencia = (long)contexto.Database.SqlQuery<decimal>(consultaSecuencia).ToList().Single();
             return valSecuencia;
         }
+
+        public static List<AgrupadorTotalTabIndexDTO> ConsultarDatosIgualdadDia(SisResultEntities contexto, int diaSemana, int maxTabIndex, string fechaNum)
+        {
+            string query = string.Format(ConstantesConsulta.QUERY_DATOS_IGUALDAD_DIA, diaSemana, maxTabIndex, fechaNum);
+            DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
+            return data.AsEnumerable().ToList();
+        }
     }
 }

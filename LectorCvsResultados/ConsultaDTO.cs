@@ -39,6 +39,12 @@ namespace LectorCvsResultados
 
     public class AgrupadorConteosTimeSpanDTO
     {
+
+        public int? DiaSemNum
+        {
+            get;
+            set;
+        }
         public int? Fechanum
         {
             get;

@@ -75,7 +75,7 @@ namespace LectorCvsResultados
                 int tabindex = listaDatosOpcionados.ElementAt(i).Tabindex;
                 List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
                 int spanActual = ObtenerSpanTiempoActual(listspantiempo);
-                IngresarElementosListaSeleccionados(spanActual, i, listaResultadosMuestra, contexto, tabindex, fechaFormat);
+                IngresarElementosListaSeleccionados(spanActual, listaResultadosMuestra, contexto, tabindex, fechaFormat);
             }
             return listaResultadosMuestra;
         }
@@ -121,7 +121,7 @@ namespace LectorCvsResultados
                 int tabindex = listaDatosOpcionados.ElementAt(i).Tabindex;
                 List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
                 int spanActual = ObtenerSpanTiempoActual(listspantiempo);
-                IngresarElementosListaSeleccionados(spanActual, i, listaResultadosMuestra, contexto, tabindex, fechaFormat);
+                IngresarElementosListaSeleccionados(spanActual, listaResultadosMuestra, contexto, tabindex, fechaFormat);
             }
             return listaResultadosMuestra;
         }
@@ -144,17 +144,12 @@ namespace LectorCvsResultados
             List<AgrupadorTotalTabIndexDTO> listaDatosOpcionados)
         {
             List<int> listaResultadosMuestra = new List<int>();
-            //for (int i = 0; i < listaDatosOpcionados.Count && listaResultadosMuestra.Count < 25; i++)
-            //{
-            //    int tabindex = listaDatosOpcionados.ElementAt(i).Tabindex;
-            //    List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
-            //    int spanActual = ObtenerSpanTiempoActual(listspantiempo);
-            //    IngresarElementosListaSeleccionados(spanActual, i, listaResultadosMuestra, contexto, tabindex, fechaFormat);
-            //}
-
-            for (int i = 0; i < 25; i++)
+            for (int i = 0; i < listaDatosOpcionados.Count && listaResultadosMuestra.Count < 25; i++)
             {
-                listaResultadosMuestra.Add(listaDatosOpcionados.ElementAt(i).Tabindex);
+                int tabindex = listaDatosOpcionados.ElementAt(i).Tabindex;
+                List<AgrupadorConteosTimeSpanDTO> listspantiempo = ConsultasClass.ConsultarUltimoSpanTiempo(contexto, tabindex, fechaFormat);
+                int spanActual = ObtenerSpanTiempoActual(listspantiempo);
+                IngresarElementosListaSeleccionados(spanActual, listaResultadosMuestra, contexto, tabindex, fechaFormat);
             }
 
             AnalisisDatosDTO a = new AnalisisDatosDTO();
@@ -177,7 +172,7 @@ namespace LectorCvsResultados
                         int conteo = elemento.Total;
                         int totalDatosAgrupados = lista.Count();
 
-                        a.AnalizedData += "|" + rank + "-" + conteo;
+                        a.AnalizedData += rank+ ";";
 
                     }
                     a.ResultadosNegativos++;
@@ -463,6 +458,9 @@ namespace LectorCvsResultados
         {
             List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccion(maxIndex, fechaFormat, contexto);
             listaTodosResultados = ConsultasClass.ConsultarResultadosDia(fechaFormat, contexto);
+            //List<AgrupadorTotalTabIndexDTO> listaConteoIgualdadDia = ConsultasClass.ConsultarDatosIgualdadDia(contexto, diaSemana, maxIndex, fechaFormat);
+            //List<int> listaIgualdades = (from x in listaConteoIgualdadDia select x.Tabindex).Take(cantidadQuitar).ToList();
+            //List<AgrupadorTotalTabIndexDTO> listaResultadosTemp = (from x in listaResultados where !(listaIgualdades.Contains(x.Tabindex)) select x).ToList();
             listaTabIndexDifCero = (from x in listaTodosResultados where x.Diferencia == 0 select x.Tabindex).ToList();
             listaTabIndexDifNoCero = (from x in listaTodosResultados where x.Diferencia != 0 select x.Tabindex).ToList();
             return listaResultados;
@@ -477,15 +475,21 @@ namespace LectorCvsResultados
         /// <param name="contexto">Instancia del contexto para las consultas</param>
         /// <param name="tabindex">Tabindex validado</param>
         /// <param name="fechaFormat">Fecha sobre la que se realizan las validaciones</param>
-        private static void IngresarElementosListaSeleccionados(int spanActual, int index, List<int> listaResultadosMuestra,
+        private static void IngresarElementosListaSeleccionados(int spanActual, List<int> listaResultadosMuestra,
             SisResultEntities contexto, int tabindex, string fechaFormat)
         {
             List<AgrupadorConteosTimeSpanDTO> lista = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
+
             var elemento = (from x in lista
                             where x.Spantiempo == spanActual
                             select x).FirstOrDefault();
-            if (elemento != null && ((elemento.Rank >= 2 && elemento.Rank <= 4) || elemento.Rank == 7))
-                return;
+            if (elemento != null)
+            {
+                if(elemento.Rank <= 4 || elemento.Rank == 7)
+                {
+                    return;
+                }
+            }
             listaResultadosMuestra.Add(tabindex);
         }
 
