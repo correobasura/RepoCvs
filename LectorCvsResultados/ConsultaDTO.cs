@@ -145,6 +145,11 @@ namespace LectorCvsResultados
         {
             get;set;
         }
+
+        public int Apariciones
+        {
+            get;set;
+        }
     }
     public class AnalisisDatosDTO
     {

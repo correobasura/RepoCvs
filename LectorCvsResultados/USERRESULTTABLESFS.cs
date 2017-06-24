@@ -28,5 +28,7 @@ namespace LectorCvsResultados
         public Nullable<decimal> DIAMESNUM { get; set; }
         public Nullable<decimal> DIASEMNUM { get; set; }
         public Nullable<decimal> SPANTIEMPO { get; set; }
+        public Nullable<decimal> SPANTIEMPOHIST { get; set; }
+        public Nullable<decimal> TABINDEXSEQ { get; set; }
     }
 }

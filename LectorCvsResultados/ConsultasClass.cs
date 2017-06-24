@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,29 +51,18 @@ namespace LectorCvsResultados
         /// <returns></returns>
         public static List<AgrupadorTotalTabIndexDTO> ConsultarDatosParaDiaSeleccion(int maxListIndex, string fechaFormat, SisResultEntities contexto)
         {
+            DateTime dt = DateTime.ParseExact(fechaFormat, "yyyyMMdd", CultureInfo.InvariantCulture);
+            int dayofweek = (int)dt.DayOfWeek == 0 ? 7 : (int)dt.DayOfWeek;
             string query = string.Format(ConstantesConsulta.QUERY_SELECCION_ORDENADA_MAS_VALORES_FECHA_PROM, fechaFormat, maxListIndex);
+            //string query = string.Format(ConstantesConsulta.QUERY_CONTEO_VALORES_DIA_SEMANA, fechaFormat, maxListIndex, dayofweek, dt.Day);
             DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
             return data.AsEnumerable().ToList();
         }
 
-        public static List<AgrupadorTotalTabIndexDTO> ConsultarDatosParaDiaSeleccionBetween(int maxListIndex, string fechaFormat, SisResultEntities contexto, int percentMayor, int percentMenor)
+        internal static List<AgrupadorConteosTimeSpanDTO> ConsultarConteoSpanTiempoDiaSemana(SisResultEntities contexto, string fechaFormat, int diaSemana)
         {
-            string query = string.Format(ConstantesConsulta.QUERY_SELECCION_ORDENADA_MAS_VALORES_FECHA_BETWEEN, fechaFormat, maxListIndex, percentMayor, percentMenor);
-            DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
-            return data.AsEnumerable().ToList();
-        }
-
-        public static List<AgrupadorTotalTabIndexDTO> ConsultarDatosParaDiaSeleccionLvl1(SisResultEntities contexto, string fechaNum)
-        {
-            string query = string.Format(ConstantesConsulta.QUERY_DATOS_MAS_VALORES_LVL1, fechaNum);
-            DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
-            return data.AsEnumerable().ToList();
-        }
-
-        public static List<AgrupadorTotalTabIndexDTO> ConsultarDatosParaDiaSeleccionLvl2(SisResultEntities contexto, string fechaNum)
-        {
-            string query = string.Format(ConstantesConsulta.QUERY_DATOS_MAS_VALORES_LVL2, fechaNum);
-            DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
+            string query = string.Format(ConstantesConsulta.QUERY_COUNT_SPANTIEMPOS_DIASEM, diaSemana, fechaFormat);
+            DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
             return data.AsEnumerable().ToList();
         }
 
@@ -172,6 +162,42 @@ namespace LectorCvsResultados
             string query = string.Format(ConstantesConsulta.QUERY_DATOS_IGUALDAD_DIA, diaSemana, maxTabIndex, fechaNum);
             DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
             return data.AsEnumerable().ToList();
+        }
+
+        /// <summary>
+        /// Método que retorna el máximo valor de la secuencia de un tabindex
+        /// </summary>
+        /// <param name="contexto">Instancia para realizar la consulta</param>
+        /// <param name="tabIndex">Tabindex sobre el que se realiza la validación</param>
+        /// <returns></returns>
+        public static int ConsultarUltimoTimeSpan(SisResultEntities contexto, int tabIndex, string fechaFormat)
+        {
+            string query = string.Format(ConstantesConsulta.QUERY_ULTIMO_SPAN, tabIndex, fechaFormat);
+            return contexto.Database.SqlQuery<int>(query).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Método que retorna el máximo valor de la secuencia de un tabindex
+        /// </summary>
+        /// <param name="contexto">Instancia para realizar la consulta</param>
+        /// <param name="tabIndex">Tabindex sobre el que se realiza la validación</param>
+        /// <returns></returns>
+        public static int ConsultarNextTabindexSeq(SisResultEntities contexto, int tabIndex)
+        {
+            string query = string.Format(ConstantesConsulta.QUERY_NEXT_TABINDEX_SEQ, tabIndex);
+            return contexto.Database.SqlQuery<int>(query).Single() + 1;
+        }
+
+        /// <summary>
+        /// Método que el promedio calculado para las igualdades de un tabindex en un día de la semana
+        /// </summary>
+        /// <param name="contexto">Instancia para realizar la consulta</param>
+        /// <param name="tabIndex">Tabindex sobre el que se realiza la validación</param>
+        /// <returns></returns>
+        public static double ConsultarIgualdadesTabindexDiasem(SisResultEntities contexto, int tabIndex, int diaSem, int fechaNum)
+        {
+            string query = string.Format(ConstantesConsulta.QUERY_COUNT_IGUALDADES_TABINDEX_DIA, tabIndex, diaSem, fechaNum);
+            return contexto.Database.SqlQuery<double>(query).Single();
         }
     }
 }

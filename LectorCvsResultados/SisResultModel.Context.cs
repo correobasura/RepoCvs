@@ -25,7 +25,7 @@ namespace LectorCvsResultados
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<USERRESULTTABLESFS> USERRESULTTABLESFS { get; set; }
         public virtual DbSet<ANALISTINDEXUNG> ANALISTINDEXUNG { get; set; }
+        public virtual DbSet<USERRESULTTABLESFS> USERRESULTTABLESFS { get; set; }
     }
 }

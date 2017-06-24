@@ -23,22 +23,9 @@ namespace LectorCvsResultados
                     + "FROM userresulttablesfs "
                     + "WHERE tabindex = {0} "
                     + "AND fechanum < {1} "
+                    + "AND spantiempo IS NOT NULL "
                     + "GROUP BY spantiempo "
                     + "ORDER BY 3";
-
-        public const string QUERY_DATOS_MAS_VALORES_LVL1 = "SELECT COUNT(1) AS total, lineindex AS lineindex "
-                    + "FROM analistindexung "
-                    + "WHERE result IN (1,0) "
-                    + "AND fechaNum < {0} "
-                    + "GROUP BY lineindex "
-                    + "ORDER BY 1 DESC, 2";
-
-        public const string QUERY_DATOS_MAS_VALORES_LVL2 = "SELECT COUNT(1) AS total, lineindex AS lineindex "
-                    + "FROM analistindexunglv2 "
-                    + "WHERE result IN (1,0) "
-                    + "AND fechaNum < {0} "
-                    + "GROUP BY lineindex "
-                    + "ORDER BY 1 DESC, 2";
 
         public const string QUERY_MAX_FECHA_TABINDEX =
                     "SELECT MAX(fechaNum) AS FechaNum, tabindex AS tabindex "
@@ -61,32 +48,22 @@ namespace LectorCvsResultados
                     + "WHERE fechaNum = {0} "
                     + "ORDER BY tabindex";
 
-        public const string QUERY_SELECCION_ORDENADA_MAS_VALORES_FECHA =
-                    "SELECT COUNT(1) AS total, tabindex AS tabindex "
+        public const string QUERY_SELECCION_ORDENADA_MAS_VALORES_FECHA_PROM =
+                    "SELECT COUNT(1)/ MAX(tabindexseq) AS total, tabindex AS tabindex, MAX(tabindexseq) AS apariciones "
                     + "FROM userresulttablesfs "
                     + "WHERE diferenciag != 0 "
                     + "AND fechaNum < {0} "
-                    + "AND fn_cantidad_reg_index_fs(tabindex,{0}) > {2} "
                     + "AND tabindex <= {1} "
                     + "GROUP BY tabindex "
                     + "ORDER BY 1 DESC, 2";
 
-        public const string QUERY_SELECCION_ORDENADA_MAS_VALORES_FECHA_BETWEEN =
-                    "SELECT COUNT(1) AS total, tabindex AS tabindex "
+        public const string QUERY_CONTEO_VALORES_DIA_SEMANA =
+                    "SELECT COUNT(1)/ MAX(tabindexseq) AS total, tabindex AS tabindex, MAX(tabindexseq) AS apariciones "
                     + "FROM userresulttablesfs "
                     + "WHERE diferenciag != 0 "
-                    + "AND fechaNum < {0} "
-                    + "AND fn_cantidad_reg_index_fs(tabindex,{0}) BETWEEN {2} AND {3} "
-                    + "AND tabindex <= {1} "
-                    + "GROUP BY tabindex "
-                    + "ORDER BY 1 DESC";
-
-        public const string QUERY_SELECCION_ORDENADA_MAS_VALORES_FECHA_PROM =
-                    "SELECT COUNT(1)/fn_cantidad_reg_index_fs(tabindex,{0}) AS total, tabindex AS tabindex "
-                    + "FROM userresulttablesfs "
-                    + "WHERE diferenciag != 0 "
-                    + "AND fechaNum < {0} "
-                    + "AND tabindex <= {1} "
+                    + "AND fechanum < {0} "
+                    + "AND tabindex < = {1} "
+                    + "AND diasemnum = {2} "
                     + "GROUP BY tabindex "
                     + "ORDER BY 1 DESC, 2";
 
@@ -98,13 +75,46 @@ namespace LectorCvsResultados
                     + "ORDER BY fechanum DESC";
 
         public const string QUERY_DATOS_IGUALDAD_DIA =
-            "SELECT COUNT(1)/fn_cantidad_reg_index_diaS(tabindex,{0},{2}) AS total, tabindex AS tabindex "
-            + "FROM userresulttablesfs "
-            + "WHERE diferenciag = 0 "
-            + "AND diasemnum = {0} "
-            + "AND tabindex <= {1} "
-            + "AND FECHANUM < {2} "
-            + "GROUP BY tabindex "
-            + "ORDER BY 1 DESC, 2";
+                    "SELECT COUNT(1)/fn_cantidad_reg_index_diaS(tabindex,{0},{2}) AS total, tabindex AS tabindex "
+                    + "FROM userresulttablesfs "
+                    + "WHERE diferenciag = 0 "
+                    + "AND diasemnum = {0} "
+                    + "AND tabindex <= {1} "
+                    + "AND FECHANUM < {2} "
+                    + "GROUP BY tabindex "
+                    + "ORDER BY 1 DESC, 2";
+
+        public const string QUERY_ULTIMO_SPAN =
+                    "SELECT spantiempohist "
+                    + "FROM userresulttablesfs "
+                    + "WHERE tabindex = {0} "
+                    + "AND fechanum = (SELECT MAX(fechanum) "
+                    + "FROM userresulttablesfs "
+                    + "WHERE tabindex = {0} "
+                    + "AND fechanum < {1} "
+                    + ")";
+
+        public const string QUERY_NEXT_TABINDEX_SEQ =
+                    "SELECT COALESCE(MAX(tabindexseq),0) "
+                    + "FROM Userresulttablesfs "
+                    + "WHERE tabindex = {0}";
+
+        public const string QUERY_COUNT_SPANTIEMPOS_DIASEM =
+                    "SELECT COUNT(1) AS total, spantiempo AS spantiempo, RANK () OVER (ORDER BY COUNT(1) DESC) AS rank "
+                    + "FROM userresulttablesfs "
+                    + "WHERE diasemnum = {0} "
+                    + "AND fechanum < {1} "
+                    + "AND spantiempo IS NOT NULL "
+                    + "GROUP BY spantiempo "
+                    + "ORDER BY 3";
+
+        public const string QUERY_COUNT_IGUALDADES_TABINDEX_DIA =
+                    "SELECT COUNT(1)/fn_cantidad_reg_index_dias({0},{1},{2}) "
+                    + "FROM userresulttablesfs "
+                    + "WHERE tabindex = {0} "
+                    + "AND fechanum < {2} "
+                    + "AND diasemnum = {1} "
+                    + "AND diferenciag = 0";
+
     }
 }

@@ -5,8 +5,8 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="14c848ef82a94a7fb353a1577bb6756d" Name="Diagram1">
-        <EntityTypeShape EntityType="SistResultModel.USERRESULTTABLESFS" Width="1.5" PointX="3.375" PointY="0.75" />
         <EntityTypeShape EntityType="SistResultModel.ANALISTINDEXUNG" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SistResultModel.USERRESULTTABLESFS" Width="1.5" PointX="3.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
