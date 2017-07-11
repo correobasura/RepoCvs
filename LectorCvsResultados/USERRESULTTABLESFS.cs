@@ -30,5 +30,9 @@ namespace LectorCvsResultados
         public Nullable<decimal> SPANTIEMPO { get; set; }
         public Nullable<decimal> SPANTIEMPOHIST { get; set; }
         public Nullable<decimal> TABINDEXSEQ { get; set; }
+        public Nullable<decimal> SPANTIEMPOSEM { get; set; }
+        public Nullable<decimal> SPANTIEMPOSEMHIST { get; set; }
+        public Nullable<decimal> SPANTIEMPOMES { get; set; }
+        public Nullable<decimal> SPANTIEMPOMESHIST { get; set; }
     }
 }

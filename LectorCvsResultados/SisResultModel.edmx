@@ -39,6 +39,10 @@
           <Property Name="SPANTIEMPO" Type="number" Precision="38" Scale="0" />
           <Property Name="SPANTIEMPOHIST" Type="number" Precision="38" Scale="0" />
           <Property Name="TABINDEXSEQ" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIEMPOSEM" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIEMPOSEMHIST" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIEMPOMES" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIEMPOMESHIST" Type="number" Precision="38" Scale="0" />
         </EntityType>
         <EntityContainer Name="SistResultModelStoreContainer">
           <EntitySet Name="ANALISTINDEXUNG" EntityType="Self.ANALISTINDEXUNG" Schema="USERRESULTTABLES" store:Type="Tables" />
@@ -86,6 +90,10 @@
           <Property Name="SPANTIEMPO" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="SPANTIEMPOHIST" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="TABINDEXSEQ" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="SPANTIEMPOSEM" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="SPANTIEMPOSEMHIST" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="SPANTIEMPOMES" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="SPANTIEMPOMESHIST" Type="Decimal" Precision="38" Scale="0" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -111,6 +119,10 @@
           <EntitySetMapping Name="USERRESULTTABLESFS">
             <EntityTypeMapping TypeName="SistResultModel.USERRESULTTABLESFS">
               <MappingFragment StoreEntitySet="USERRESULTTABLESFS">
+                <ScalarProperty Name="SPANTIEMPOMESHIST" ColumnName="SPANTIEMPOMESHIST" />
+                <ScalarProperty Name="SPANTIEMPOMES" ColumnName="SPANTIEMPOMES" />
+                <ScalarProperty Name="SPANTIEMPOSEMHIST" ColumnName="SPANTIEMPOSEMHIST" />
+                <ScalarProperty Name="SPANTIEMPOSEM" ColumnName="SPANTIEMPOSEM" />
                 <ScalarProperty Name="TABINDEXSEQ" ColumnName="TABINDEXSEQ" />
                 <ScalarProperty Name="SPANTIEMPOHIST" ColumnName="SPANTIEMPOHIST" />
                 <ScalarProperty Name="SPANTIEMPO" ColumnName="SPANTIEMPO" />

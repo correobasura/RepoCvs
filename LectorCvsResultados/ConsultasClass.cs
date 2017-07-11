@@ -71,9 +71,22 @@ namespace LectorCvsResultados
         /// </summary>
         /// <param name="contexto">Instancia del contexto para realizar la consulta</param>
         /// <returns>Valor del máximo tabindex</returns>
-        public static int ConsultarMaxFechaTabindex(SisResultEntities contexto, int maxindex)
+        public static int ConsultarMaxFechaTabindex(SisResultEntities contexto, int maxindex, int caso, int valor)
         {
-            string query = string.Format(ConstantesConsulta.QUERY_MAX_FECHA_TABINDEX, maxindex);
+            string filtro;
+            switch (caso)
+            {
+                case 1:
+                    filtro = "AND diasemnum = " + valor;
+                    break;
+                case 2:
+                    filtro = "AND diamesnum = " + valor;
+                    break;
+                default:
+                    filtro = "";
+                    break;
+            }
+            string query = string.Format(ConstantesConsulta.QUERY_MAX_FECHA_TABINDEX, maxindex, filtro);
             return contexto.Database.SqlQuery<AgrupadorFechaNumTabindex>(query).AsEnumerable().First().FechaNum;
         }
 
@@ -170,9 +183,27 @@ namespace LectorCvsResultados
         /// <param name="contexto">Instancia para realizar la consulta</param>
         /// <param name="tabIndex">Tabindex sobre el que se realiza la validación</param>
         /// <returns></returns>
-        public static int ConsultarUltimoTimeSpan(SisResultEntities contexto, int tabIndex, string fechaFormat)
+        public static int ConsultarUltimoTimeSpan(SisResultEntities contexto, int tabIndex, string fechaFormat, int caso = 0)
         {
-            string query = string.Format(ConstantesConsulta.QUERY_ULTIMO_SPAN, tabIndex, fechaFormat);
+            string columna;
+            string filtroAnd;
+            DateTime dt = DateTime.ParseExact(fechaFormat, "yyyyMMdd", CultureInfo.InvariantCulture);
+            switch (caso)
+            {
+                case 1:
+                    columna = "spantiemposemhist";
+                    filtroAnd = "AND diasemnum = " + (int)dt.DayOfWeek;
+                    break;
+                case 2:
+                    columna = "spantiempomeshist";
+                    filtroAnd = "AND diasemnum = " + dt.Day;
+                    break;
+                default:
+                    columna = "spantiempohist";
+                    filtroAnd = "";
+                    break;
+            }
+            string query = string.Format(ConstantesConsulta.QUERY_ULTIMO_SPAN, tabIndex, fechaFormat, columna, filtroAnd);
             return contexto.Database.SqlQuery<int>(query).FirstOrDefault();
         }
 

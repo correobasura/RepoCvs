@@ -340,24 +340,68 @@ namespace LectorCvsResultados
         /// <param name="contexto">Instancia del contexto para la consulta de datos</param>
         /// <param name="listTabindex">Lista con los tabindex para realizar la consulta</param>
         /// <param name="listElementosAgregados">Lista con los elementos adicionados, para realizar el análisis</param>
-        public static void ValidarSpanDatosDiaAnterior(SisResultEntities contexto, List<decimal?> listTabindex, List<USERRESULTTABLESFS> listElementosAgregados)
+        public static void ValidarSpanDatosDiaAnterior(SisResultEntities contexto, List<decimal?> listTabindex, List<USERRESULTTABLESFS> listElementosAgregados,
+            int diasemnum, int diamesnum)
         {
             int maxTabindex = ConsultasClass.ConsultarMaxIndexResultados(contexto);
             maxTabindex = (int)listTabindex.Last() > maxTabindex ? maxTabindex : (int)listTabindex.Last();
-            int maxFechaNumIndex = ConsultasClass.ConsultarMaxFechaTabindex(contexto, maxTabindex);
-            var listaDatosUltimosSpan = (from b in contexto.USERRESULTTABLESFS
-                                         where listTabindex.Contains(b.TABINDEX)
-                                         && b.SPANTIEMPO != null
-                                         && b.FECHANUM >= maxFechaNumIndex
-                                         select b).OrderByDescending(b => b.FECHANUM).ThenBy(x => x.TABINDEX).AsEnumerable().ToList()
-                         .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
-            for (int i = 0; i < listTabindex.Count; i++)
+            int maxFechaNumIndex;
+            List<USERRESULTTABLESFS> listaDatosUltimosSpan;
+            for (int r = 0; r < 3; r++)
             {
-                int tabIndex = (int)listTabindex.ElementAt(i);
-                var uAnt = listaDatosUltimosSpan.Where(x=>x.TABINDEX == tabIndex).FirstOrDefault();
-                var uActual = listElementosAgregados.Where(x => x.TABINDEX == tabIndex).FirstOrDefault();
-                if (uActual.DIFERENCIAG == 0)
+                switch (r)
                 {
+                    case 1:
+                        maxFechaNumIndex = ConsultasClass.ConsultarMaxFechaTabindex(contexto, maxTabindex, 1, diasemnum);
+                        listaDatosUltimosSpan = (from b in contexto.USERRESULTTABLESFS
+                                                 where listTabindex.Contains(b.TABINDEX)
+                                                 && b.SPANTIEMPOSEM != null
+                                                 && b.FECHANUM >= maxFechaNumIndex
+                                                 && b.DIASEMNUM == diasemnum
+                                                 select b).OrderByDescending(b => b.FECHANUM).ThenBy(x => x.TABINDEX).AsEnumerable().ToList()
+                             .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
+                        break;
+                    case 2:
+                        maxFechaNumIndex = ConsultasClass.ConsultarMaxFechaTabindex(contexto, maxTabindex, 2, diamesnum);
+                        listaDatosUltimosSpan = (from b in contexto.USERRESULTTABLESFS
+                                                 where listTabindex.Contains(b.TABINDEX)
+                                                 && b.SPANTIEMPOMES != null
+                                                 && b.FECHANUM >= maxFechaNumIndex
+                                                 && b.DIAMESNUM == diamesnum
+                                                 select b).OrderByDescending(b => b.FECHANUM).ThenBy(x => x.TABINDEX).AsEnumerable().ToList()
+                             .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
+                        break;
+                    default:
+                        maxFechaNumIndex = ConsultasClass.ConsultarMaxFechaTabindex(contexto, maxTabindex, 0, 0);
+                        listaDatosUltimosSpan = (from b in contexto.USERRESULTTABLESFS
+                                                 where listTabindex.Contains(b.TABINDEX)
+                                                 && b.SPANTIEMPO != null
+                                                 && b.FECHANUM >= maxFechaNumIndex
+                                                 select b).OrderByDescending(b => b.FECHANUM).ThenBy(x => x.TABINDEX).AsEnumerable().ToList()
+                             .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
+                        break;
+                }
+
+                for (int i = 0; i < listTabindex.Count; i++)
+                {
+                    int tabIndex = (int)listTabindex.ElementAt(i);
+                    var uAnt = listaDatosUltimosSpan.Where(x => x.TABINDEX == tabIndex).FirstOrDefault();
+                    var uActual = listElementosAgregados.Where(x => x.TABINDEX == tabIndex).FirstOrDefault();
+                    if(uAnt != null)
+                    {
+                        ValidarSpanColumna(uAnt, uActual, r);
+                    }
+                    contexto.USERRESULTTABLESFS.Add(uActual);
+                }
+            }
+        }
+
+        private static void ValidarSpanColumna(USERRESULTTABLESFS uAnt, USERRESULTTABLESFS uActual, int casoColumna)
+        {
+            if (uActual.DIFERENCIAG == 0)
+            {
+                if (casoColumna == 0)
+                {                
                     if (uAnt.SPANTIEMPO < 0)
                     {
                         uActual.SPANTIEMPO = --uAnt.SPANTIEMPO;
@@ -368,9 +412,37 @@ namespace LectorCvsResultados
                         uActual.SPANTIEMPO = -1;
 
                     }
-                    contexto.USERRESULTTABLESFS.Add(uActual);
                 }
-                else
+                else if(casoColumna == 1)
+                {
+                    if (uAnt.SPANTIEMPOSEM < 0)
+                    {
+                        uActual.SPANTIEMPOSEM = --uAnt.SPANTIEMPOSEM;
+                        uAnt.SPANTIEMPOSEM = null;
+                    }
+                    else
+                    {
+                        uActual.SPANTIEMPOSEM = -1;
+
+                    }
+                }
+                else if(casoColumna == 2)
+                {
+                    if (uAnt.SPANTIEMPOMES < 0)
+                    {
+                        uActual.SPANTIEMPOMES = --uAnt.SPANTIEMPOMES;
+                        uAnt.SPANTIEMPOMES = null;
+                    }
+                    else
+                    {
+                        uActual.SPANTIEMPOMES = -1;
+
+                    }
+                }
+            }
+            else
+            {
+                if(casoColumna == 0)
                 {
                     if (uAnt.SPANTIEMPO > 0)
                     {
@@ -382,7 +454,32 @@ namespace LectorCvsResultados
                         uActual.SPANTIEMPO = 1;
 
                     }
-                    contexto.USERRESULTTABLESFS.Add(uActual);
+                }
+                else if(casoColumna == 1)
+                {
+                    if (uAnt.SPANTIEMPOSEM > 0)
+                    {
+                        uActual.SPANTIEMPOSEM = ++uAnt.SPANTIEMPOSEM;
+                        uAnt.SPANTIEMPOSEM = null;
+                    }
+                    else
+                    {
+                        uActual.SPANTIEMPOSEM = 1;
+
+                    }
+                }
+                else if(casoColumna == 2)
+                {
+                    if (uAnt.SPANTIEMPOMES > 0)
+                    {
+                        uActual.SPANTIEMPOMES = ++uAnt.SPANTIEMPOMES;
+                        uAnt.SPANTIEMPOMES = null;
+                    }
+                    else
+                    {
+                        uActual.SPANTIEMPOMES = 1;
+
+                    }
                 }
             }
         }
@@ -508,10 +605,10 @@ namespace LectorCvsResultados
         /// <param name="diferenciaG">Valor de la diferencia para validar</param>
         /// <param name="contexto"></param>
         /// <returns></returns>
-        internal static int ValidarSpanTiempo(int tabindex, int diferenciaG, SisResultEntities contexto, string fechaNum)
+        internal static int ValidarSpanTiempo(int tabindex, int diferenciaG, SisResultEntities contexto, string fechaNum, int caso)
         {
             int valorSpan = 0;
-            int ultimoSpan = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaNum);
+            int ultimoSpan = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaNum, caso);
             if (diferenciaG == 0)
             {
                 valorSpan = ultimoSpan >= 0 ? -1 : --ultimoSpan;

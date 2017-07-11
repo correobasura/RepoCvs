@@ -31,6 +31,7 @@ namespace LectorCvsResultados
                     "SELECT MAX(fechaNum) AS FechaNum, tabindex AS tabindex "
                     + "FROM Userresulttablesfs "
                     + "WHERE tabindex <= {0} "
+                    + "{1} "
                     + "GROUP BY tabindex ORDER BY 1";
 
         public const string QUERY_MAX_INDEX_FECHA =
@@ -58,13 +59,23 @@ namespace LectorCvsResultados
                     + "ORDER BY 1 DESC, 2";
 
         public const string QUERY_CONTEO_VALORES_DIA_SEMANA =
-                    "SELECT COUNT(1)/ MAX(tabindexseq) AS total, tabindex AS tabindex, MAX(tabindexseq) AS apariciones "
+                    "SELECT SUM(a.total) AS total, a.tabindex AS tabindex, SUM(a.apariciones) AS apariciones FROM "
+                    + "(SELECT COUNT(1)/ MAX(tabindexseq) AS total, tabindex AS tabindex, MAX(tabindexseq) AS apariciones "
                     + "FROM userresulttablesfs "
                     + "WHERE diferenciag != 0 "
                     + "AND fechanum < {0} "
                     + "AND tabindex < = {1} "
                     + "AND diasemnum = {2} "
                     + "GROUP BY tabindex "
+                    + "UNION ALL "
+                    + "SELECT COUNT(1)/ MAX(tabindexseq) AS total, tabindex AS tabindex, MAX(tabindexseq) AS apariciones "
+                    + "FROM userresulttablesfs "
+                    + "WHERE diferenciag != 0 "
+                    + "AND fechanum < {0} "
+                    + "AND tabindex < = {1} "
+                    + "AND diamesnum = {3} "
+                    + "GROUP BY tabindex ) a "
+                    + "GROUP BY a.tabindex "
                     + "ORDER BY 1 DESC, 2";
 
         public const string QUERY_ULTIMO_SPAN_TIEMPO =
@@ -85,14 +96,14 @@ namespace LectorCvsResultados
                     + "ORDER BY 1 DESC, 2";
 
         public const string QUERY_ULTIMO_SPAN =
-                    "SELECT spantiempohist "
+                    "SELECT {2} "
                     + "FROM userresulttablesfs "
                     + "WHERE tabindex = {0} "
                     + "AND fechanum = (SELECT MAX(fechanum) "
                     + "FROM userresulttablesfs "
                     + "WHERE tabindex = {0} "
                     + "AND fechanum < {1} "
-                    + ")";
+                    + ") {3}";
 
         public const string QUERY_NEXT_TABINDEX_SEQ =
                     "SELECT COALESCE(MAX(tabindexseq),0) "

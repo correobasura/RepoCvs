@@ -181,6 +181,8 @@ namespace LectorCvsResultados
             DateTime dt = DateTime.ParseExact(dateFileName, "yyyyMMdd", CultureInfo.InvariantCulture);
             string rutaTemp = rutaBase + dt.ToString("yyyyMM") + "\\" + dateFileName + ".csv";
             fileReader = new StreamReader(rutaTemp);
+            int diamesnum = dt.Day;
+            int diasemnum = dt.DayOfWeek == 0 ? 7 : (int)dt.DayOfWeek;
             while ((line = fileReader.ReadLine()) != null)
             {
                 string[] arreglo = line.Split(';');
@@ -199,14 +201,16 @@ namespace LectorCvsResultados
                 u.TOTALG = Convert.ToInt32(arreglo[10]);
                 u.FECHANUM = laFechaNum;
                 u.MESNUM = dt.Month;
-                u.DIAMESNUM = dt.Day;
-                u.DIASEMNUM = dt.DayOfWeek == 0 ? 7 : (int)dt.DayOfWeek;
+                u.DIAMESNUM = diamesnum;
+                u.DIASEMNUM = diasemnum;
                 u.TABINDEXSEQ = ConsultasClass.ConsultarNextTabindexSeq(contexto, tabindex);
-                u.SPANTIEMPOHIST = AnDataUnGanador.ValidarSpanTiempo(tabindex, diferenciaG, contexto, dt.ToString("yyyyMMdd"));
+                u.SPANTIEMPOHIST = AnDataUnGanador.ValidarSpanTiempo(tabindex, diferenciaG, contexto, dt.ToString("yyyyMMdd"), 0);
+                u.SPANTIEMPOSEMHIST = AnDataUnGanador.ValidarSpanTiempo(tabindex, diferenciaG, contexto, dt.ToString("yyyyMMdd"), 1);
+                u.SPANTIEMPOMESHIST = AnDataUnGanador.ValidarSpanTiempo(tabindex, diferenciaG, contexto, dt.ToString("yyyyMMdd"), 2);
                 listTabindex.Add(tabindex);
                 listElementosAgregados.Add(u);
             }
-            AnDataUnGanador.ValidarSpanDatosDiaAnterior(contexto, listTabindex, listElementosAgregados);
+            AnDataUnGanador.ValidarSpanDatosDiaAnterior(contexto, listTabindex, listElementosAgregados, diasemnum, diamesnum);
             contexto.SaveChanges();
         }
 
@@ -214,14 +218,14 @@ namespace LectorCvsResultados
         {
             contexto = new SisResultEntities();
             //IngresarDatosAllReload();
-            //DateTime fechaMinima = DateTime.Today.AddDays(-2);
-            //for (var i = fechaMinima; i < DateTime.Today;)
-            //{
-            //    string fechaFormat = i.ToString("yyyyMMdd");
-            //AnalizarTabindexResultados("20170622");
-            //    //IngresarDatos(fechaFormat);
-            //    i = i.AddDays(1);
-            //}
+            DateTime fechaMinima = DateTime.Today.AddDays(-9);
+            for (var i = fechaMinima; i < DateTime.Today.AddDays(-1);)
+            {
+                string fechaFormat = i.ToString("yyyyMMdd");
+                //AnalizarTabindexResultados(fechaFormat);
+                IngresarDatos(fechaFormat);
+                i = i.AddDays(1);
+            }
             //for (int i = -5; i < 0; i++)
             //{
             //for (var i = DateTime.Today.AddDays(-16); i < DateTime.Today;)
