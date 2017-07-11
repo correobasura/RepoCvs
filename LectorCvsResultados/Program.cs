@@ -218,11 +218,11 @@ namespace LectorCvsResultados
         {
             contexto = new SisResultEntities();
             //IngresarDatosAllReload();
-            DateTime fechaMinima = DateTime.Today.AddDays(-9);
-            for (var i = fechaMinima; i < DateTime.Today.AddDays(-1);)
+            DateTime fechaMinima = DateTime.Today.AddDays(-2);
+            for (var i = fechaMinima; i < DateTime.Today;)
             {
                 string fechaFormat = i.ToString("yyyyMMdd");
-                //AnalizarTabindexResultados(fechaFormat);
+                AnalizarTabindexResultados(fechaFormat);
                 IngresarDatos(fechaFormat);
                 i = i.AddDays(1);
             }

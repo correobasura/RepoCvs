@@ -103,7 +103,7 @@ namespace LectorCvsResultados
                     + "FROM userresulttablesfs "
                     + "WHERE tabindex = {0} "
                     + "AND fechanum < {1} "
-                    + ") {3}";
+                    + "{3}) {3}";
 
         public const string QUERY_NEXT_TABINDEX_SEQ =
                     "SELECT COALESCE(MAX(tabindexseq),0) "

@@ -191,12 +191,13 @@ namespace LectorCvsResultados
             switch (caso)
             {
                 case 1:
+                    int dayofweek = (int)dt.DayOfWeek == 0 ? 7 : (int)dt.DayOfWeek;
                     columna = "spantiemposemhist";
-                    filtroAnd = "AND diasemnum = " + (int)dt.DayOfWeek;
+                    filtroAnd = "AND diasemnum = " + dayofweek;
                     break;
                 case 2:
                     columna = "spantiempomeshist";
-                    filtroAnd = "AND diasemnum = " + dt.Day;
+                    filtroAnd = "AND diamesnum = " + dt.Day;
                     break;
                 default:
                     columna = "spantiempohist";
