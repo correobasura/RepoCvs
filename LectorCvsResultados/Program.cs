@@ -20,8 +20,8 @@ namespace LectorCvsResultados
             var fecha = DateTime.Today;
             TimeSpan ts = fecha - minFecha;
             //53 % encontrado en consolidado
-            int percent = ts.Days * 87 / 100;
-            List<int> lista = AnDataUnGanador.AnalizarDatosDiaActual(fecha, contexto, 97, percent);
+            int percent = ts.Days * 30 / 100;
+            List<int> lista = AnDataUnGanador.AnalizarDatosDiaActual(fecha, contexto, 89, percent);
             EscribirDatosArchivo(lista, "AnalisisActual" + fecha.ToString("yyyyMMdd"), rutaBase);
         }
 
@@ -37,7 +37,7 @@ namespace LectorCvsResultados
 
                     TimeSpan ts = i - minFecha;
                     //87 % encontrado en consolidado
-                    int percent = ts.Days * 87 / 100;
+                    int percent = ts.Days * 30 / 100;
                     listaAnalizada.Add(AnDataUnGanador.AnalizarDatosDiaTemp(i, contexto, percent));
                     i = i.AddDays(1);
                 }
@@ -54,16 +54,13 @@ namespace LectorCvsResultados
 
         }
 
-        public static void AnalizarUnGanador(List<string> filenames)
+        public static void AnalizarUnGanador(string fechaFormat)
         {
-            for (int i = 0; i < filenames.Count; i++)
-            {
-                DateTime dt = DateTime.ParseExact(filenames[i], "yyyyMMdd", CultureInfo.InvariantCulture);
-                TimeSpan ts = dt - minFecha;
-                //53 % encontrado en consolidado
-                int percent = ts.Days * 53 / 100;
-                AnDataUnGanador.AnalizarDatosDia(dt, contexto, percent);
-            }
+            DateTime dt = DateTime.ParseExact(fechaFormat, "yyyyMMdd", CultureInfo.InvariantCulture);
+            TimeSpan ts = dt - minFecha;
+            //53 % encontrado en consolidado
+            int percent = ts.Days * 30 / 100;
+            AnDataUnGanador.AnalizarDatosDia(dt, contexto, percent);
         }
 
         public static void EscribirDatosArchivo(List<AgrupadorConsolidadoDTO> listaSeleccionados, string cad, string rutabase)
@@ -218,14 +215,15 @@ namespace LectorCvsResultados
         {
             contexto = new SisResultEntities();
             //IngresarDatosAllReload();
-            DateTime fechaMinima = DateTime.Today.AddDays(-2);
-            for (var i = fechaMinima; i < DateTime.Today;)
-            {
-                string fechaFormat = i.ToString("yyyyMMdd");
-                AnalizarTabindexResultados(fechaFormat);
-                IngresarDatos(fechaFormat);
-                i = i.AddDays(1);
-            }
+            //DateTime fechaMinima = DateTime.Today.AddDays(-15);
+            //for (var i = fechaMinima; i < DateTime.Today;)
+            //{
+            //    string fechaFormat = i.ToString("yyyyMMdd");
+            //    //AnalizarTabindexResultados(fechaFormat);
+            //    //IngresarDatos(fechaFormat);
+            //    AnalizarUnGanador(fechaFormat);
+            //    i = i.AddDays(1);
+            //}
             //for (int i = -5; i < 0; i++)
             //{
             //for (var i = DateTime.Today.AddDays(-16); i < DateTime.Today;)
@@ -245,14 +243,14 @@ namespace LectorCvsResultados
             //AnalizarUnGanador(filenames);
             //AnalizarDatos(rutaBase, DateTime.Today, 202);
 
-            //AnalizarDatosListaDias(rutaBase);
+            AnalizarDatosListaDias(rutaBase);
 
             //SeleccionarValoresAleatorios(rutaBase);
             //AnalizarUnGanadorLvl1(rutaBase);
             //AnalizarUnGanadorLvl3(rutaBase);
             //RevisarTimeSpanDatos();
 
-            //AnalizarDatosListaDiaActual(rutaBase);
+            AnalizarDatosListaDiaActual(rutaBase);
         }
 
         private static void AnalizarTabindexResultados(string filename)

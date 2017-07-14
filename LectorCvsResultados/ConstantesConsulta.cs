@@ -19,12 +19,13 @@ namespace LectorCvsResultados
                     + "ORDER BY 1 DESC, 2";
 
         public const string QUERY_COUNT_SPANTIEMPOS =
-                    "SELECT COUNT(1) AS total, spantiempo AS spantiempo, RANK () OVER (ORDER BY COUNT(1) DESC) AS rank "
+                    "SELECT COUNT(1) AS total, {2} AS spantiempo, RANK () OVER (ORDER BY COUNT(1) DESC) AS rank "
                     + "FROM userresulttablesfs "
                     + "WHERE tabindex = {0} "
                     + "AND fechanum < {1} "
-                    + "AND spantiempo IS NOT NULL "
-                    + "GROUP BY spantiempo "
+                    + "AND {2} IS NOT NULL "
+                    + "{3} "
+                    + "GROUP BY {2} "
                     + "ORDER BY 3";
 
         public const string QUERY_MAX_FECHA_TABINDEX =
