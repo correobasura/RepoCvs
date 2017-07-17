@@ -21,7 +21,7 @@ namespace LectorCvsResultados
             TimeSpan ts = fecha - minFecha;
             //53 % encontrado en consolidado
             int percent = ts.Days * 30 / 100;
-            List<int> lista = AnDataUnGanador.AnalizarDatosDiaActual(fecha, contexto, 89, percent);
+            List<int> lista = AnDataUnGanador.AnalizarDatosDiaActual(fecha, contexto, 242, percent);
             EscribirDatosArchivo(lista, "AnalisisActual" + fecha.ToString("yyyyMMdd"), rutaBase);
         }
 
@@ -215,12 +215,12 @@ namespace LectorCvsResultados
         {
             contexto = new SisResultEntities();
             //IngresarDatosAllReload();
-            //DateTime fechaMinima = DateTime.Today.AddDays(-15);
+            //DateTime fechaMinima = DateTime.Today.AddDays(-1);
             //for (var i = fechaMinima; i < DateTime.Today;)
             //{
             //    string fechaFormat = i.ToString("yyyyMMdd");
-            //    //AnalizarTabindexResultados(fechaFormat);
-            //    //IngresarDatos(fechaFormat);
+            //    AnalizarTabindexResultados(fechaFormat);
+            //    IngresarDatos(fechaFormat);
             //    AnalizarUnGanador(fechaFormat);
             //    i = i.AddDays(1);
             //}
@@ -243,7 +243,7 @@ namespace LectorCvsResultados
             //AnalizarUnGanador(filenames);
             //AnalizarDatos(rutaBase, DateTime.Today, 202);
 
-            AnalizarDatosListaDias(rutaBase);
+            //AnalizarDatosListaDias(rutaBase);
 
             //SeleccionarValoresAleatorios(rutaBase);
             //AnalizarUnGanadorLvl1(rutaBase);
@@ -286,10 +286,6 @@ namespace LectorCvsResultados
                     arrayPush[10] = arrayFinal[10];
 
                     linesFinal.Add(String.Join(";", arrayPush));
-                }
-                else
-                {
-                    var algo = "revisar";
                 }
             }
             File.WriteAllLines(rutaFinal, linesFinal, Encoding.UTF8);

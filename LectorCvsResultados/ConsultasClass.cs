@@ -101,7 +101,7 @@ namespace LectorCvsResultados
                     break;
             }
             string query = string.Format(ConstantesConsulta.QUERY_MAX_FECHA_TABINDEX, maxindex, filtro);
-            return contexto.Database.SqlQuery<AgrupadorFechaNumTabindex>(query).AsEnumerable().First().FechaNum;
+            return contexto.Database.SqlQuery<AgrupadorFechaNumValor>(query).AsEnumerable().First().FechaNum;
         }
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace LectorCvsResultados
         /// <param name="contexto">Instancia para realizar la consulta</param>
         /// <param name="tabIndex">Tabindex sobre el que se realiza la validación</param>
         /// <returns></returns>
-        public static int ConsultarUltimoTimeSpan(SisResultEntities contexto, int tabIndex, string fechaFormat, int caso = 0)
+        public static AgrupadorFechaNumValor ConsultarUltimoTimeSpan(SisResultEntities contexto, int tabIndex, string fechaFormat, int caso = 0)
         {
             string columna;
             string filtroAnd;
@@ -219,7 +219,8 @@ namespace LectorCvsResultados
                     break;
             }
             string query = string.Format(ConstantesConsulta.QUERY_ULTIMO_SPAN, tabIndex, fechaFormat, columna, filtroAnd);
-            return contexto.Database.SqlQuery<int>(query).FirstOrDefault();
+            AgrupadorFechaNumValor a = contexto.Database.SqlQuery<AgrupadorFechaNumValor>(query).FirstOrDefault();
+            return a != null ? a: new AgrupadorFechaNumValor();
         }
 
         /// <summary>

@@ -97,7 +97,7 @@ namespace LectorCvsResultados
                     + "ORDER BY 1 DESC, 2";
 
         public const string QUERY_ULTIMO_SPAN =
-                    "SELECT {2} "
+                    "SELECT {2} AS Spantiempo, fechanum AS FechaNum "
                     + "FROM userresulttablesfs "
                     + "WHERE tabindex = {0} "
                     + "AND fechanum = (SELECT MAX(fechanum) "
