@@ -30,7 +30,7 @@ namespace LectorCvsResultados
                 ANALISTINDEXUNG a = new ANALISTINDEXUNG();
                 a.ID = ConsultasClass.ObtenerValorSecuencia(a, contexto);
                 int tabindex = listaResultadosMuestra.ElementAt(j);
-                int spanTabindex = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat);
+                int spanTabindex = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat).Spantiempo;
                 a.LINEINDEX = j + 1;
                 a.FECHA = fechaRevisar;
                 a.FECHANUM = fechaNum;
@@ -79,8 +79,7 @@ namespace LectorCvsResultados
             for (int i = 0; i < listaDatosOpcionados.Count && listaResultadosMuestra.Count < 30; i++)
             {
                 int tabindex = listaDatosOpcionados.ElementAt(i).Tabindex;
-                int spanActual = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat);
-                IngresarElementosListaSeleccionados(spanActual, listaResultadosMuestra, contexto, tabindex, fechaFormat, diaSemana, fechaNum);
+                IngresarElementosListaSeleccionados(listaResultadosMuestra, contexto, tabindex, fechaFormat, diaSemana, fechaNum);
             }
             return listaResultadosMuestra;
         }
@@ -560,12 +559,16 @@ namespace LectorCvsResultados
         /// <param name="contexto">Instancia del contexto para las consultas</param>
         /// <param name="tabindex">Tabindex validado</param>
         /// <param name="fechaFormat">Fecha sobre la que se realizan las validaciones</param>
-        private static void IngresarElementosListaSeleccionados(int spanActual, List<int> listaResultadosMuestra,
+        private static void IngresarElementosListaSeleccionados(List<int> listaResultadosMuestra,
             SisResultEntities contexto, int tabindex, string fechaFormat,
             int diasemana, int fechaNum)
         {
-            //int spanActualSem = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 1);
-            //int spanActualMes = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 2);
+            AgrupadorFechaNumValor objSpanActual = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat);
+            AgrupadorFechaNumValor objSpanActualSem = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 1);
+            AgrupadorFechaNumValor objSpanActualMes = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 2);
+            int total = objSpanActual.Spantiempo + objSpanActualSem.Spantiempo + objSpanActualMes.Spantiempo;
+            if (total >= 15) return;
+
             //DateTime dt = DateTime.ParseExact(fechaFormat, "yyyyMMdd", CultureInfo.InvariantCulture);
             //List<AgrupadorConteosTimeSpanDTO> listaspanActual = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
             //var elemento = (from x in listaspanActual
@@ -579,15 +582,9 @@ namespace LectorCvsResultados
             //var elementomes = (from x in listaspanActualMes
             //                   where x.Spantiempo == spanActualMes
             //                   select x).FirstOrDefault();
-            //if(elemento!=null && elementosem !=null && elementomes != null)
-            //{
-            //    bool flag = 4>= (elemento.Rank + elementosem.Rank + elementomes.Rank);
-            //    if (flag) return;
-            //}
-            int spanActualSem = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 1);
-            int spanActualMes = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 2);
-            int total = spanActual + spanActualSem + spanActualMes;
-            if (total >= 15 || total < -2) return;
+            //elementomes = elementomes == null ? new AgrupadorConteosTimeSpanDTO() : elementomes;
+            //int totalRank = elemento.Rank + elementosem.Rank + elementomes.Rank;
+            //if (totalRank <= 3) return;            
             listaResultadosMuestra.Add(tabindex);
         }
 
@@ -642,14 +639,14 @@ namespace LectorCvsResultados
         internal static int ValidarSpanTiempo(int tabindex, int diferenciaG, SisResultEntities contexto, string fechaNum, int caso)
         {
             int valorSpan = 0;
-            int ultimoSpan = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaNum, caso);
+            AgrupadorFechaNumValor ultimoSpan = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaNum, caso);
             if (diferenciaG == 0)
             {
-                valorSpan = ultimoSpan >= 0 ? -1 : --ultimoSpan;
+                valorSpan = ultimoSpan.Spantiempo >= 0 ? -1 : --ultimoSpan.Spantiempo;
             }
             else
             {
-                valorSpan = ultimoSpan <= 0 ? 1 : ++ultimoSpan;
+                valorSpan = ultimoSpan.Spantiempo <= 0 ? 1 : ++ultimoSpan.Spantiempo;
             }
             return valorSpan;
         }

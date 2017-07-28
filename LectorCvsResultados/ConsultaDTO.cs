@@ -70,7 +70,7 @@ namespace LectorCvsResultados
         }
     }
 
-    public class AgrupadorFechaNumTabindex
+    public class AgrupadorFechaNumValor
     {
         public int FechaNum
         {
@@ -78,6 +78,11 @@ namespace LectorCvsResultados
         }
 
         public int Tabindex
+        {
+            get; set;
+        }
+
+        public int Spantiempo
         {
             get; set;
         }
