@@ -30,7 +30,7 @@ namespace LectorCvsResultados
                 AnalizedTabIndexDTO a = new AnalizedTabIndexDTO();
                 a.Lineindex = i + 1;
                 a.Tabindex = lista.ElementAt(i);
-                a.UltimoSpan = ConsultasClass.ConsultarUltimoTimeSpan(contexto, a.Tabindex, fecha.ToString("yyyyMMdd")).Spantiempo;
+                a.UltimoSpan = ConsultasClass.ConsultarUltimoTimeSpan(contexto, a.Tabindex, fecha.ToString("yyyyMMdd"));
                 var allLines = lines.Where(x => x.IndexOf(a.Tabindex.ToString(), StringComparison.OrdinalIgnoreCase) >= 0);
                 for (int j = 0; j < allLines.Count(); j++)
                 {
