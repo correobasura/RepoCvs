@@ -203,4 +203,32 @@ namespace LectorCvsResultados
             return +TotalDatos + ";" + ResultadosPositivos + ";"+ PromedioPositivo + ";"+ ResultadosNegativos+";"+ PromedioNegativo+";"+ MinimoApariciones+";"+ Fecha+";"+ UltimoParecido+";"+AnalizedData;
         }
     }
+
+    public class AnalizedTabIndexDTO
+    {
+        public int Lineindex
+        {
+            get; set;
+        }
+
+        public int Tabindex
+        {
+            get; set;
+        }
+
+        public int UltimoSpan
+        {
+            get; set;
+        }
+
+        public string TMatch
+        {
+            get; set;
+        }
+
+        public override string ToString()
+        {
+            return +Lineindex + ";" + Tabindex + ";"+UltimoSpan+";" + TMatch + ";";
+        }
     }
+}

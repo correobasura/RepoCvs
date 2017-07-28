@@ -122,7 +122,13 @@ namespace LectorCvsResultados
             List<AgrupadorTotalTabIndexDTO> listaDatosOpcionados)
         {
             List<int> listaResultadosMuestra = ObtenerListaResultadosMuestra(contexto, fechaFormat, listaDatosOpcionados, diaSemana, fechaNum);
-
+            //Dictionary<int, int> dictvalues = new Dictionary<int, int>();
+            //for (int i = 0; i < listaResultadosMuestra.Count; i++)
+            //{
+            //    dictvalues.Add(i + 1, listaResultadosMuestra.ElementAt(i));
+            //}
+            //List<int> listIndexApariciones = ObtenerListIndex(contexto, fechaFormat);
+            //listaResultadosMuestra = (from x in dictvalues where listIndexApariciones.Contains(x.Key) select x.Value).ToList();
             AnalisisDatosDTO a = new AnalisisDatosDTO();
             a.TotalDatos = listaResultadosMuestra.Count();
             a.Fecha = fechaFormat;
@@ -131,37 +137,43 @@ namespace LectorCvsResultados
                 int tabindex = listaResultadosMuestra.ElementAt(i);
                 if (listaTabIndexDifCero.IndexOf(tabindex) != -1)
                 {
-                    int spanActual = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat);
-                    int spanActualSem = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat,1);
-                    int spanActualMes = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat,2);
-                    List<AgrupadorConteosTimeSpanDTO> listaspanActual = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
-                    var elemento = (from x in listaspanActual
-                                    where x.Spantiempo == spanActual
-                                    select x).FirstOrDefault();
-                    List<AgrupadorConteosTimeSpanDTO> listaspanActualSem = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat,1, diaSemana);
-                    var elementosem = (from x in listaspanActualSem
-                                    where x.Spantiempo == spanActualSem
-                                    select x).FirstOrDefault();
-                    List<AgrupadorConteosTimeSpanDTO> listaspanActualMes = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat,2, diaMes);
-                    var elementomes = (from x in listaspanActualMes
-                                       where x.Spantiempo == spanActualMes
-                                       select x).FirstOrDefault();
+                    //int spanActual = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat);
+                    //int spanActualSem = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat,1);
+                    //int spanActualMes = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat,2);
+                    //List<AgrupadorConteosTimeSpanDTO> listaspanActual = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
+                    //var elemento = (from x in listaspanActual
+                    //                where x.Spantiempo == spanActual
+                    //                select x).FirstOrDefault();
+                    //List<AgrupadorConteosTimeSpanDTO> listaspanActualSem = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat,1, diaSemana);
+                    //var elementosem = (from x in listaspanActualSem
+                    //                where x.Spantiempo == spanActualSem
+                    //                select x).FirstOrDefault();
+                    //List<AgrupadorConteosTimeSpanDTO> listaspanActualMes = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat,2, diaMes);
+                    //var elementomes = (from x in listaspanActualMes
+                    //                   where x.Spantiempo == spanActualMes
+                    //                   select x).FirstOrDefault();
 
                     a.ResultadosNegativos++;
-                    string spanActualStr = elemento != null ? elemento.Rank+"" : "NA";
-                    string spanActualSemStr = elementosem != null ? elementosem.Rank + "" : "NA";
-                    string spanActualMesStr = elementomes != null ? elementomes.Rank + "" : "NA";
-                    a.AnalizedData+= spanActualStr+"|"+ spanActualSemStr+"|"+spanActualMesStr +"|"+ ";";
+                    //string spanActualStr = elemento != null ? elemento.Rank+"" : "NA";
+                    //string spanActualSemStr = elementosem != null ? elementosem.Rank + "" : "NA";
+                    //string spanActualMesStr = elementomes != null ? elementomes.Rank + "" : "NA";
+                    //a.AnalizedData+= spanActualStr+"|"+ spanActualSemStr+"|"+spanActualMesStr +"|"+ ";";
                 }
                 else if (listaTabIndexDifNoCero.IndexOf(tabindex) != -1)
                 {
                     a.ResultadosPositivos++;
                 }
             }
-            a.PromedioPositivo = (double)a.ResultadosPositivos / 25;
-            a.PromedioNegativo = (double)a.ResultadosNegativos / 25;
+            a.PromedioPositivo = (double)a.ResultadosPositivos / a.TotalDatos;
+            a.PromedioNegativo = (double)a.ResultadosNegativos / a.TotalDatos;
 
             return a;
+        }
+
+        public static List<int> ObtenerListIndex(SisResultEntities contexto, string fechaFormat)
+        {
+            List<AgrupadorTotalTabIndexDTO> listaIndex = ConsultasClass.ObtenerDatosListIndex(fechaFormat, contexto);
+            return (from x in listaIndex select x.Lineindex).ToList();
         }
 
         /// <summary>
@@ -575,7 +587,7 @@ namespace LectorCvsResultados
             int spanActualSem = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 1);
             int spanActualMes = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 2);
             int total = spanActual + spanActualSem + spanActualMes;
-            if (total >= 15) return;
+            if (total >= 15 || total < -2) return;
             listaResultadosMuestra.Add(tabindex);
         }
 

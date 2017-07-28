@@ -245,5 +245,15 @@ namespace LectorCvsResultados
             string query = string.Format(ConstantesConsulta.QUERY_COUNT_IGUALDADES_TABINDEX_DIA, tabIndex, diaSem, fechaNum);
             return contexto.Database.SqlQuery<double>(query).Single();
         }
+
+        
+        public static List<AgrupadorTotalTabIndexDTO> ObtenerDatosListIndex(string fechaFormat, SisResultEntities contexto)
+        {
+            DateTime dt = DateTime.ParseExact(fechaFormat, "yyyyMMdd", CultureInfo.InvariantCulture);
+            int dayofweek = (int)dt.DayOfWeek == 0 ? 7 : (int)dt.DayOfWeek;
+            string query = string.Format(ConstantesConsulta.QUERY_COUNT_LIST_INDEX, fechaFormat, dayofweek);
+            DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
+            return data.AsEnumerable().Take(20).ToList();
+        }
     }
 }

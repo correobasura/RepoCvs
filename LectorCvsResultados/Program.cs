@@ -20,9 +20,30 @@ namespace LectorCvsResultados
             var fecha = DateTime.Today;
             TimeSpan ts = fecha - minFecha;
             //53 % encontrado en consolidado
-            int percent = ts.Days * 30 / 100;
-            List<int> lista = AnDataUnGanador.AnalizarDatosDiaActual(fecha, contexto, 89, percent);
-            EscribirDatosArchivo(lista, "AnalisisActual" + fecha.ToString("yyyyMMdd"), rutaBase);
+            int percent = ts.Days * 15 / 100;
+            List<int> lista = AnDataUnGanador.AnalizarDatosDiaActual(fecha, contexto, 188, percent);
+            string rutaFileTemp = rutaBase + fecha.ToString("yyyyMM") + "\\" + fecha.ToString("yyyyMMdd") + "T.csv";
+            IEnumerable<string> lines = File.ReadAllLines(rutaFileTemp);
+            Dictionary<int, AnalizedTabIndexDTO> dict = new Dictionary<int, AnalizedTabIndexDTO>();
+            for(int i = 0; i < lista.Count; i++)
+            {
+                AnalizedTabIndexDTO a = new AnalizedTabIndexDTO();
+                a.Lineindex = i + 1;
+                a.Tabindex = lista.ElementAt(i);
+                a.UltimoSpan = ConsultasClass.ConsultarUltimoTimeSpan(contexto, a.Tabindex, fecha.ToString("yyyyMMdd"));
+                var allLines = lines.Where(x => x.IndexOf(a.Tabindex.ToString(), StringComparison.OrdinalIgnoreCase) >= 0);
+                for (int j = 0; j < allLines.Count(); j++)
+                {
+                    string lineTemp = allLines.ElementAt(j);
+                    if (Convert.ToInt32(lineTemp.Split(';')[0]).CompareTo(a.Tabindex) == 0)
+                    {
+                        a.TMatch = lineTemp;
+                        break;
+                    }
+                }
+                dict.Add(i + 1, a);
+            }
+            EscribirDatosArchivo(dict, "AnalisisActual" + fecha.ToString("yyyyMMdd"), rutaBase);
         }
 
         public static void AnalizarDatosListaDias(string rutaBase)
@@ -32,12 +53,12 @@ namespace LectorCvsResultados
             //Dictionary<int, AgrupadorTimeSpanDTO> dict = new Dictionary<int, AgrupadorTimeSpanDTO>();
             //for (int k = 5; k < 94; k++)
             //{
-                for (var i = DateTime.Today.AddDays(-15); i < DateTime.Today;)
+                for (var i = DateTime.Today.AddDays(-5); i < DateTime.Today;)
                 {
 
                     TimeSpan ts = i - minFecha;
                     //87 % encontrado en consolidado
-                    int percent = ts.Days * 30 / 100;
+                    int percent = ts.Days * 15 / 100;
                     listaAnalizada.Add(AnDataUnGanador.AnalizarDatosDiaTemp(i, contexto, percent));
                     i = i.AddDays(1);
                 }
@@ -59,7 +80,7 @@ namespace LectorCvsResultados
             DateTime dt = DateTime.ParseExact(fechaFormat, "yyyyMMdd", CultureInfo.InvariantCulture);
             TimeSpan ts = dt - minFecha;
             //53 % encontrado en consolidado
-            int percent = ts.Days * 30 / 100;
+            int percent = ts.Days * 15 / 100;
             AnDataUnGanador.AnalizarDatosDia(dt, contexto, percent);
         }
 
@@ -77,14 +98,14 @@ namespace LectorCvsResultados
             sw.Close();
         }
 
-        public static void EscribirDatosArchivo(List<int> listaSeleccionados, string cad, string rutabase)
+        public static void EscribirDatosArchivo(Dictionary<int, AnalizedTabIndexDTO> dict, string cad, string rutabase)
         {
 
             string fic = rutabase + cad + ".csv";
             StreamWriter sw = new StreamWriter(fic);
-            foreach (var item in listaSeleccionados)
+            foreach (var item in dict)
             {
-                sw.WriteLine(item.ToString());
+                sw.WriteLine(item.Value.ToString());
             }
             sw.Close();
         }
@@ -215,7 +236,8 @@ namespace LectorCvsResultados
         {
             contexto = new SisResultEntities();
             //IngresarDatosAllReload();
-            //DateTime fechaMinima = DateTime.Today.AddDays(-15);
+            //DateTime fechaMinima = DateTime.Today.AddDays(-1);
+            //DateTime fechaMinima = DateTime.ParseExact("20170702", "yyyyMMdd", CultureInfo.InvariantCulture);
             //for (var i = fechaMinima; i < DateTime.Today;)
             //{
             //    string fechaFormat = i.ToString("yyyyMMdd");
@@ -243,7 +265,7 @@ namespace LectorCvsResultados
             //AnalizarUnGanador(filenames);
             //AnalizarDatos(rutaBase, DateTime.Today, 202);
 
-            AnalizarDatosListaDias(rutaBase);
+            //AnalizarDatosListaDias(rutaBase);
 
             //SeleccionarValoresAleatorios(rutaBase);
             //AnalizarUnGanadorLvl1(rutaBase);
@@ -286,10 +308,6 @@ namespace LectorCvsResultados
                     arrayPush[10] = arrayFinal[10];
 
                     linesFinal.Add(String.Join(";", arrayPush));
-                }
-                else
-                {
-                    var algo = "revisar";
                 }
             }
             File.WriteAllLines(rutaFinal, linesFinal, Encoding.UTF8);

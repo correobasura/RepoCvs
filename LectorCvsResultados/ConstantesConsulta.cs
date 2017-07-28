@@ -128,5 +128,13 @@ namespace LectorCvsResultados
                     + "AND diasemnum = {1} "
                     + "AND diferenciag = 0";
 
+        public const string QUERY_COUNT_LIST_INDEX =
+                    "SELECT COUNT(1) AS Total, lineindex AS Lineindex "
+                    + "FROM analistindexung "
+                    + "WHERE result = 1 "
+                    + "AND fechanum < {0} "
+                    + "AND diasemnum = {1} "
+                    + "GROUP BY lineindex "
+                    + "ORDER BY 1 desc, 2";
     }
 }
