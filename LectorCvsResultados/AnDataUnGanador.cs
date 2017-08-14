@@ -121,42 +121,42 @@ namespace LectorCvsResultados
             List<AgrupadorTotalTabIndexDTO> listaDatosOpcionados)
         {
             List<int> listaResultadosMuestra = ObtenerListaResultadosMuestra(contexto, fechaFormat, listaDatosOpcionados, diaSemana, fechaNum);
-            Dictionary<int, AnalizedTabIndexDTO> dictvalues = new Dictionary<int, AnalizedTabIndexDTO>();
+            //Dictionary<int, AnalizedTabIndexDTO> dictvalues = new Dictionary<int, AnalizedTabIndexDTO>();
 
-            List<AgrupadorTotalPercentSpanDTO> listaSpanGral = ConsultasClass.ConsultarPercentTimeSpan(contexto, fechaFormat);
-            List<AgrupadorTotalPercentSpanDTO> listaSpanDia = ConsultasClass.ConsultarPercentTimeSpan(contexto, fechaFormat, 1);
+            //List<AgrupadorTotalPercentSpanDTO> listaSpanGral = ConsultasClass.ConsultarPercentTimeSpan(contexto, fechaFormat);
+            //List<AgrupadorTotalPercentSpanDTO> listaSpanDia = ConsultasClass.ConsultarPercentTimeSpan(contexto, fechaFormat, 1);
 
-            for (int i = 0; i < listaResultadosMuestra.Count; i++)
-            {
-                int tabindex = listaResultadosMuestra.ElementAt(i);
-                int spanActual = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat).Spantiempo;
-                var rankGral = listaSpanGral.Where(x => x.Span == spanActual).FirstOrDefault();
-                var rankDia = listaSpanDia.Where(x => x.Span == spanActual).FirstOrDefault();
-                int rankGralRank = rankGral == null ? 0 : rankGral.Rank;
-                int rankDiaRank = rankDia == null ? 0 : rankDia.Rank;
-                AnalizedTabIndexDTO algo = new AnalizedTabIndexDTO();
-                algo.Tabindex = tabindex;
-                algo.UltimoSpan = spanActual;
-                algo.RankUltimoSpanDia = rankDiaRank;
-                algo.RankUltimoSpanGral = rankGralRank;
-                dictvalues.Add(i + 1, algo);
-            }
-            dictvalues = (from entry in dictvalues
-                          orderby entry.Value.RankUltimoSpanDia descending,
-                          entry.Value.RankUltimoSpanGral descending
-                          select entry).ToDictionary(x => x.Key, x => x.Value);
-            //List<int> listIndexApariciones = ObtenerListIndex(contexto, fechaFormat);
-            //listaResultadosMuestra = (from x in dictvalues where listIndexApariciones.Contains(x.Key) select x.Value).ToList();
-            List<int> resultadosFinales = IndexFibonacci();
-            //for (int i = 0; i < listaResultadosMuestra.Count && resultadosFinales.Count<1; i++)
+            //for (int i = 0; i < listaResultadosMuestra.Count; i++)
             //{
-                
-            //    if (rankGral !=null && rankGral.Rank >= 4 && rankDia != null && rankDia.Rank >= 4)
-            //    {
-            //        resultadosFinales.Add(tabindex);
-            //    }
+            //    int tabindex = listaResultadosMuestra.ElementAt(i);
+            //    int spanActual = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat).Spantiempo;
+            //    var rankGral = listaSpanGral.Where(x => x.Span == spanActual).FirstOrDefault();
+            //    var rankDia = listaSpanDia.Where(x => x.Span == spanActual).FirstOrDefault();
+            //    int rankGralRank = rankGral == null ? 0 : rankGral.Rank;
+            //    int rankDiaRank = rankDia == null ? 0 : rankDia.Rank;
+            //    AnalizedTabIndexDTO algo = new AnalizedTabIndexDTO();
+            //    algo.Tabindex = tabindex;
+            //    algo.UltimoSpan = spanActual;
+            //    algo.RankUltimoSpanDia = rankDiaRank;
+            //    algo.RankUltimoSpanGral = rankGralRank;
+            //    dictvalues.Add(i + 1, algo);
             //}
-            listaResultadosMuestra = resultadosFinales;
+            //dictvalues = (from entry in dictvalues
+            //              orderby entry.Value.RankUltimoSpanDia descending,
+            //              entry.Value.RankUltimoSpanGral descending
+            //              select entry).ToDictionary(x => x.Key, x => x.Value);
+            ////List<int> listIndexApariciones = ObtenerListIndex(contexto, fechaFormat);
+            ////listaResultadosMuestra = (from x in dictvalues where listIndexApariciones.Contains(x.Key) select x.Value).ToList();
+            //List<int> resultadosFinales = IndexFibonacci();
+            ////for (int i = 0; i < listaResultadosMuestra.Count && resultadosFinales.Count<1; i++)
+            ////{
+                
+            ////    if (rankGral !=null && rankGral.Rank >= 4 && rankDia != null && rankDia.Rank >= 4)
+            ////    {
+            ////        resultadosFinales.Add(tabindex);
+            ////    }
+            ////}
+            //listaResultadosMuestra = resultadosFinales;
             AnalisisDatosDTO a = new AnalisisDatosDTO();
             a.TotalDatos = listaResultadosMuestra.Count();
             a.Fecha = fechaFormat;
