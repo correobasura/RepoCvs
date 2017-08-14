@@ -136,5 +136,22 @@ namespace LectorCvsResultados
                     + "AND diasemnum = {1} "
                     + "GROUP BY lineindex "
                     + "ORDER BY 1 desc, 2";
+
+        public const string QUERY_PERCENT_SPAN =
+            "SELECT b.cuenta/a.cuenta AS Total, a.timespan AS Span, RANK () OVER (ORDER BY b.cuenta/a.cuenta DESC) AS rank "
+            + "FROM "
+            + "(SELECT count(1) AS cuenta, ULTIMOTIMESPAN AS timespan "
+            + "FROM ANALISTINDEXUNG "
+            + "WHERE fechanum < {0} "
+            + "{1}"
+            + "GROUP BY ULTIMOTIMESPAN) a, "
+            + "(SELECT count(1) AS cuenta, ULTIMOTIMESPAN AS timespan "
+            + "FROM ANALISTINDEXUNG "
+            + "WHERE fechanum < {0} "
+            + "AND result = -1 "
+            + "{1} "
+            + "GROUP BY ULTIMOTIMESPAN) b "
+            + "WHERE a.timespan = b.timespan "
+            + "ORDER BY 1 DESC";
     }
 }

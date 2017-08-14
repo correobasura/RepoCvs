@@ -15,17 +15,18 @@ namespace LectorCvsResultados
         static DateTime minFecha = DateTime.ParseExact("20170202", "yyyyMMdd", CultureInfo.InvariantCulture);
         static string rutaBase = @"D:\OneDrive\Estimaciones\FS\";
 
-        public static void AnalizarDatosListaDiaActual(string rutaBase)
+        public static void AnalizarDatosListaDiaActual(string rutaBase, int maxTabindex, DateTime fecha)
         {
-            var fecha = DateTime.Today;
             TimeSpan ts = fecha - minFecha;
             //53 % encontrado en consolidado
             int percent = ts.Days * 15 / 100;
-            List<int> lista = AnDataUnGanador.AnalizarDatosDiaActual(fecha, contexto, 188, percent);
+            List<int> lista = AnDataUnGanador.AnalizarDatosDiaActual(fecha, contexto, maxTabindex, percent);
             string rutaFileTemp = rutaBase + fecha.ToString("yyyyMM") + "\\" + fecha.ToString("yyyyMMdd") + "T.csv";
             IEnumerable<string> lines = File.ReadAllLines(rutaFileTemp);
             Dictionary<int, AnalizedTabIndexDTO> dict = new Dictionary<int, AnalizedTabIndexDTO>();
-            for(int i = 0; i < lista.Count; i++)
+            List<AgrupadorTotalPercentSpanDTO> listaSpanGral = ConsultasClass.ConsultarPercentTimeSpan(contexto, fecha.ToString("yyyyMMdd"));
+            List< AgrupadorTotalPercentSpanDTO> listaSpanDia = ConsultasClass.ConsultarPercentTimeSpan(contexto, fecha.ToString("yyyyMMdd"), 1);
+            for (int i = 0; i < lista.Count; i++)
             {
                 AnalizedTabIndexDTO a = new AnalizedTabIndexDTO();
                 a.Lineindex = i + 1;
@@ -41,6 +42,8 @@ namespace LectorCvsResultados
                         break;
                     }
                 }
+                a.RankUltimoSpanGral = (from x in listaSpanGral where x.Span == a.UltimoSpan select x.Rank).FirstOrDefault();
+                a.RankUltimoSpanDia = (from x in listaSpanDia where x.Span == a.UltimoSpan select x.Rank).FirstOrDefault();
                 dict.Add(i + 1, a);
             }
             EscribirDatosArchivo(dict, "AnalisisActual" + fecha.ToString("yyyyMMdd"), rutaBase);
@@ -53,7 +56,7 @@ namespace LectorCvsResultados
             //Dictionary<int, AgrupadorTimeSpanDTO> dict = new Dictionary<int, AgrupadorTimeSpanDTO>();
             //for (int k = 5; k < 94; k++)
             //{
-                for (var i = DateTime.Today.AddDays(-5); i < DateTime.Today;)
+                for (var i = DateTime.Today.AddDays(-7); i < DateTime.Today;)
                 {
 
                     TimeSpan ts = i - minFecha;
@@ -237,12 +240,12 @@ namespace LectorCvsResultados
             contexto = new SisResultEntities();
             //IngresarDatosAllReload();
             //DateTime fechaMinima = DateTime.Today.AddDays(-1);
-            //DateTime fechaMinima = DateTime.ParseExact("20170702", "yyyyMMdd", CultureInfo.InvariantCulture);
+            //DateTime fechaMinima = DateTime.ParseExact("20170730", "yyyyMMdd", CultureInfo.InvariantCulture);
             //for (var i = fechaMinima; i < DateTime.Today;)
             //{
             //    string fechaFormat = i.ToString("yyyyMMdd");
-            //    //AnalizarTabindexResultados(fechaFormat);
-            //    //IngresarDatos(fechaFormat);
+            //    AnalizarTabindexResultados(fechaFormat);
+            //    IngresarDatos(fechaFormat);
             //    AnalizarUnGanador(fechaFormat);
             //    i = i.AddDays(1);
             //}
@@ -265,14 +268,15 @@ namespace LectorCvsResultados
             //AnalizarUnGanador(filenames);
             //AnalizarDatos(rutaBase, DateTime.Today, 202);
 
-            //AnalizarDatosListaDias(rutaBase);
+            AnalizarDatosListaDias(rutaBase);
 
             //SeleccionarValoresAleatorios(rutaBase);
             //AnalizarUnGanadorLvl1(rutaBase);
             //AnalizarUnGanadorLvl3(rutaBase);
             //RevisarTimeSpanDatos();
 
-            AnalizarDatosListaDiaActual(rutaBase);
+            //AnalizarDatosListaDiaActual(rutaBase, 410, DateTime.Today.AddDays(-7));
+            //AnalizarDatosListaDiaActual(rutaBase, 66, DateTime.Today.AddDays(-6));
         }
 
         private static void AnalizarTabindexResultados(string filename)

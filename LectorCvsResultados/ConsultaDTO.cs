@@ -156,6 +156,25 @@ namespace LectorCvsResultados
             get;set;
         }
     }
+
+    public class AgrupadorTotalPercentSpanDTO
+    {
+        public double Total
+        {
+            get; set;
+        }
+
+        public int Span
+        {
+            get; set;
+        }
+
+        public int Rank
+        {
+            get; set;
+        }
+    }
+
     public class AnalisisDatosDTO
     {
         public string AnalizedData
@@ -226,6 +245,16 @@ namespace LectorCvsResultados
             get; set;
         }
 
+        public int RankUltimoSpanDia
+        {
+            get; set;
+        }
+
+        public int RankUltimoSpanGral
+        {
+            get; set;
+        }
+
         public string TMatch
         {
             get; set;
@@ -233,7 +262,7 @@ namespace LectorCvsResultados
 
         public override string ToString()
         {
-            return +Lineindex + ";" + Tabindex + ";"+UltimoSpan+";" + TMatch + ";";
+            return +Lineindex + ";" + Tabindex + ";"+UltimoSpan+";"+ RankUltimoSpanDia + ";" + RankUltimoSpanGral + ";" + TMatch + ";";
         }
     }
 }

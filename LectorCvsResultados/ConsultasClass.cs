@@ -256,5 +256,29 @@ namespace LectorCvsResultados
             DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
             return data.AsEnumerable().Take(20).ToList();
         }
+
+        /// <summary>
+        /// Método que retorna el máximo valor de la secuencia de un tabindex
+        /// </summary>
+        /// <param name="contexto">Instancia para realizar la consulta</param>
+        /// <param name="tabIndex">Tabindex sobre el que se realiza la validación</param>
+        /// <returns></returns>
+        public static List<AgrupadorTotalPercentSpanDTO> ConsultarPercentTimeSpan(SisResultEntities contexto, string fechaFormat, int caso = 0)
+        {
+            string filtroAnd;
+            DateTime dt = DateTime.ParseExact(fechaFormat, "yyyyMMdd", CultureInfo.InvariantCulture);
+            switch (caso)
+            {
+                case 1:
+                    int dayofweek = (int)dt.DayOfWeek == 0 ? 7 : (int)dt.DayOfWeek;
+                    filtroAnd = "AND diasemnum = " + dayofweek;
+                    break;
+                default:
+                    filtroAnd = "";
+                    break;
+            }
+            string query = string.Format(ConstantesConsulta.QUERY_PERCENT_SPAN, fechaFormat, filtroAnd);
+            return contexto.Database.SqlQuery<AgrupadorTotalPercentSpanDTO>(query).ToList();
+        }
     }
 }
