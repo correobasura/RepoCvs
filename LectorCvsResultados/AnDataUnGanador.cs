@@ -165,13 +165,13 @@ namespace LectorCvsResultados
                 int tabindex = listaResultadosMuestra.ElementAt(i);
                 if (listaTabIndexDifCero.IndexOf(tabindex) != -1)
                 {
-                    //int spanActual = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat);
+                    int spanActual = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat).Spantiempo;
                     //int spanActualSem = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat,1);
                     //int spanActualMes = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat,2);
-                    //List<AgrupadorConteosTimeSpanDTO> listaspanActual = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
-                    //var elemento = (from x in listaspanActual
-                    //                where x.Spantiempo == spanActual
-                    //                select x).FirstOrDefault();
+                    List<AgrupadorConteosTimeSpanDTO> listaspanActual = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
+                    var elemento = (from x in listaspanActual
+                                    where x.Spantiempo == spanActual
+                                    select x).FirstOrDefault();
                     //List<AgrupadorConteosTimeSpanDTO> listaspanActualSem = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat,1, diaSemana);
                     //var elementosem = (from x in listaspanActualSem
                     //                where x.Spantiempo == spanActualSem
@@ -182,7 +182,7 @@ namespace LectorCvsResultados
                     //                   select x).FirstOrDefault();
 
                     a.ResultadosNegativos++;
-                    //string spanActualStr = elemento != null ? elemento.Rank+"" : "NA";
+                    a.AnalizedData += (elemento != null ? elemento.Rank + "" : "NA") + ";";
                     //string spanActualSemStr = elementosem != null ? elementosem.Rank + "" : "NA";
                     //string spanActualMesStr = elementomes != null ? elementomes.Rank + "" : "NA";
                     //a.AnalizedData+= spanActualStr+"|"+ spanActualSemStr+"|"+spanActualMesStr +"|"+ ";";
@@ -599,10 +599,10 @@ namespace LectorCvsResultados
             if (total >= 15) return;
 
             //DateTime dt = DateTime.ParseExact(fechaFormat, "yyyyMMdd", CultureInfo.InvariantCulture);
-            //List<AgrupadorConteosTimeSpanDTO> listaspanActual = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
-            //var elemento = (from x in listaspanActual
-            //                where x.Spantiempo == spanActual
-            //                select x).FirstOrDefault();
+            List<AgrupadorConteosTimeSpanDTO> listaspanActual = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat);
+            var elemento = (from x in listaspanActual
+                            where x.Spantiempo == objSpanActual.Spantiempo
+                            select x).FirstOrDefault();
             //List<AgrupadorConteosTimeSpanDTO> listaspanActualSem = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat, 1, diasemana);
             //var elementosem = (from x in listaspanActualSem
             //                   where x.Spantiempo == spanActualSem
@@ -613,7 +613,7 @@ namespace LectorCvsResultados
             //                   select x).FirstOrDefault();
             //elementomes = elementomes == null ? new AgrupadorConteosTimeSpanDTO() : elementomes;
             //int totalRank = elemento.Rank + elementosem.Rank + elementomes.Rank;
-            //if (totalRank <= 3) return;            
+            if (elemento != null && (elemento.Rank == 3 || elemento.Rank == 5)) return;
             listaResultadosMuestra.Add(tabindex);
         }
 

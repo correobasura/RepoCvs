@@ -56,27 +56,27 @@ namespace LectorCvsResultados
             List<AgrupadorConsolidadoDTO> listaConsolidada = new List<AgrupadorConsolidadoDTO>();
             Dictionary<int, AgrupadorTimeSpanDTO> dict = new Dictionary<int, AgrupadorTimeSpanDTO>();
             DateTime fechaMinima = DateTime.ParseExact("20170727", "yyyyMMdd", CultureInfo.InvariantCulture);
-            for (int k = 5; k < 93; k++)
-            {
-                for (var i = fechaMinima; i < DateTime.Today;)
+            //for (int k = 5; k < 93; k++)
+            //{
+            for (var i = fechaMinima; i < DateTime.Today;)
                 {
 
                     TimeSpan ts = i - minFecha;
                     //87 % encontrado en consolidado
-                    int percent = ts.Days * k / 100;
+                    int percent = ts.Days * PercentAnalisis / 100;
                     listaAnalizada.Add(AnDataUnGanador.AnalizarDatosDiaTemp(i, contexto, percent));
                     i = i.AddDays(1);
                 }
-            //EscribirDatosArchivo(listaAnalizada, "AnalisisDatosDepurados", rutaBase);
-                AgrupadorConsolidadoDTO a = new AgrupadorConsolidadoDTO();
-                a.MaxValue = (from x in listaAnalizada select x.ResultadosPositivos).Max();
-                a.MinValue = (from x in listaAnalizada select x.ResultadosPositivos).Min();
-                a.Porcentaje = k;
-                a.TotalPositivosMuestras = (from x in listaAnalizada select x.ResultadosPositivos).Sum();
-                listaAnalizada.Clear();
-                listaConsolidada.Add(a);
-            }
-            EscribirDatosArchivo(listaConsolidada, "AnalisisConsolidado", rutaBase);
+            EscribirDatosArchivo(listaAnalizada, "AnalisisDatosDepurados", rutaBase);
+            //    AgrupadorConsolidadoDTO a = new AgrupadorConsolidadoDTO();
+            //    a.MaxValue = (from x in listaAnalizada select x.ResultadosPositivos).Max();
+            //    a.MinValue = (from x in listaAnalizada select x.ResultadosPositivos).Min();
+            //    a.Porcentaje = k;
+            //    a.TotalPositivosMuestras = (from x in listaAnalizada select x.ResultadosPositivos).Sum();
+            //    listaAnalizada.Clear();
+            //    listaConsolidada.Add(a);
+            //}
+            //EscribirDatosArchivo(listaConsolidada, "AnalisisConsolidado", rutaBase);
 
         }
 
