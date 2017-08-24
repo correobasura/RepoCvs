@@ -695,5 +695,21 @@ namespace LectorCvsResultados
             }
             return lista;
         }
+
+        public static int RetornarPercent(int diasemnum)
+        {
+            switch (diasemnum)
+            {
+                case 1: return 5;
+                case 2: return 55;
+                case 3: return 81;
+                case 4: return 80;
+                case 5: return 27;
+                case 6: return 79;
+                case 7: return 20;
+                default:
+                    return 80;
+            }
+        }
     }
 }
