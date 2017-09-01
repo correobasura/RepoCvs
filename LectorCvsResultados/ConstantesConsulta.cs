@@ -28,6 +28,15 @@ namespace LectorCvsResultados
                     + "GROUP BY {2} "
                     + "ORDER BY 3";
 
+        public const string QUERY_COUNT_SPANTIEMPOS_DIA_SEM =
+                    "SELECT COUNT(1) AS total, {1} AS spantiempo, RANK () OVER (ORDER BY COUNT(1) DESC) AS rank "
+                    + "FROM userresulttablesfs "
+                    + "WHERE fechanum < {0} "
+                    + "AND {1} IS NOT NULL "
+                    + "{2} "
+                    + "GROUP BY {1} "
+                    + "ORDER BY 3";
+
         public const string QUERY_MAX_FECHA_TABINDEX =
                     "SELECT MAX(fechaNum) AS FechaNum, tabindex AS tabindex "
                     + "FROM Userresulttablesfs "

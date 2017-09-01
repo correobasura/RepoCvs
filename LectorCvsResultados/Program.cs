@@ -56,40 +56,40 @@ namespace LectorCvsResultados
             List<AgrupadorConsolidadoDTO> listaConsolidada = new List<AgrupadorConsolidadoDTO>();
             Dictionary<int, AgrupadorTimeSpanDTO> dict = new Dictionary<int, AgrupadorTimeSpanDTO>();
             DateTime fechaMinima = DateTime.ParseExact("20170727", "yyyyMMdd", CultureInfo.InvariantCulture);
-            for (int j = 1; j <= 7; j++)
-            {
-                for (int k = 5; k < 93; k++)
-                {
-                    for (var i = fechaMinima; i < DateTime.Today;)
+            //for (int j = 1; j <= 7; j++)
+            //{
+            //    for (int k = 5; k < 93; k++)
+            //    {
+                    for (var i = fechaMinima; i < DateTime.Today.AddDays(-5);)
                     {
                         int dayOfWeek = (int)i.DayOfWeek == 0 ? 7 : (int)i.DayOfWeek;
                         TimeSpan ts = i.AddDays(-1) - minFecha;
-                        if (dayOfWeek != j)
-                        {
-                            i = i.AddDays(1);
-                            continue;
-                        }
-                        //87 % encontrado en consolidado
-                        int percent = ts.Days * k / 100;
+                if (dayOfWeek != 1)
+                {
+                    i = i.AddDays(1);
+                    continue;
+                }
+                //87 % encontrado en consolidado
+                int percent = ts.Days * AnDataUnGanador.RetornarPercent(dayOfWeek) / 100;
                         listaAnalizada.Add(AnDataUnGanador.AnalizarDatosDiaTemp(i, contexto, percent));
                         i = i.AddDays(1);
                     }
-                    //EscribirDatosArchivo(listaAnalizada, "AnalisisDatosDepurados", rutaBase);
-                    AgrupadorConsolidadoDTO a = new AgrupadorConsolidadoDTO();
-                    a.MaxValue = (from x in listaAnalizada select x.ResultadosPositivos).Max();
-                    a.MinValue = (from x in listaAnalizada select x.ResultadosPositivos).Min();
-                    a.Porcentaje = k;
-                    a.TotalPositivosMuestras = (from x in listaAnalizada select x.ResultadosPositivos).Sum();
-                    listaAnalizada.Clear();
-                    listaConsolidada.Add(a);
-                }
-                listaConsolidada = (from x in listaConsolidada
-                                    orderby x.TotalPositivosMuestras descending, x.MaxValue descending,
-                                    x.MinValue descending
-                                    select x).ToList();
-                EscribirDatosArchivo(listaConsolidada, "AnalisisConsolidado" + j, rutaBase);
-                listaConsolidada.Clear();
-            }
+            EscribirDatosArchivo(listaAnalizada, "AnalisisDatosDepuradosD1", rutaBase);
+            //        AgrupadorConsolidadoDTO a = new AgrupadorConsolidadoDTO();
+            //        a.MaxValue = (from x in listaAnalizada select x.ResultadosPositivos).Max();
+            //        a.MinValue = (from x in listaAnalizada select x.ResultadosPositivos).Min();
+            //        a.Porcentaje = k;
+            //        a.TotalPositivosMuestras = (from x in listaAnalizada select x.ResultadosPositivos).Sum();
+            //        listaAnalizada.Clear();
+            //        listaConsolidada.Add(a);
+            //    }
+            //    listaConsolidada = (from x in listaConsolidada
+            //                        orderby x.TotalPositivosMuestras descending, x.MaxValue descending,
+            //                        x.MinValue descending
+            //                        select x).ToList();
+            //    EscribirDatosArchivo(listaConsolidada, "AnalisisConsolidado" + j, rutaBase);
+            //    listaConsolidada.Clear();
+            //}
 
         }
 
@@ -158,8 +158,8 @@ namespace LectorCvsResultados
             string line;
             List<string> filenames = new List<string>();
             //DateTime fechaMinima = DateTime.Today.AddDays(-36);
-            //DateTime fechaMax = DateTime.ParseExact("20170301", "yyyyMMdd", CultureInfo.InvariantCulture);
-            for (var i = minFecha; i < DateTime.Today;)
+            DateTime fechaMax = DateTime.ParseExact("20170727", "yyyyMMdd", CultureInfo.InvariantCulture);
+            for (var i = minFecha; i < fechaMax;)
             {
                 filenames.Add(i.ToString("yyyyMMdd"));
                 i = i.AddDays(1);
@@ -255,16 +255,16 @@ namespace LectorCvsResultados
         {
             contexto = new SisResultEntities();
             //IngresarDatosAllReload();
-            //DateTime fechaMinima = DateTime.Today.AddDays(-1);
-            DateTime fechaMinima = DateTime.ParseExact("20170727", "yyyyMMdd", CultureInfo.InvariantCulture);
-            for (var i = fechaMinima; i < DateTime.Today;)
-            {
-                string fechaFormat = i.ToString("yyyyMMdd");
-                //AnalizarTabindexResultados(fechaFormat);
-                //IngresarDatos(fechaFormat);
-                AnalizarUnGanador(fechaFormat);
-                i = i.AddDays(1);
-            }
+            //DateTime fechaMinima = DateTime.Today.AddDays(-7);
+            //DateTime fechaMinima = DateTime.ParseExact("20170727", "yyyyMMdd", CultureInfo.InvariantCulture);
+            //for (var i = fechaMinima; i < DateTime.Today;)
+            //{
+            //    string fechaFormat = i.ToString("yyyyMMdd");
+            //    //AnalizarTabindexResultados(fechaFormat);
+            //    //IngresarDatos(fechaFormat);
+            //    //AnalizarUnGanador(fechaFormat);
+            //    i = i.AddDays(1);
+            //}
             //for (int i = -5; i < 0; i++)
             //{
             //for (var i = DateTime.Today.AddDays(-16); i < DateTime.Today;)
@@ -291,16 +291,14 @@ namespace LectorCvsResultados
             //AnalizarUnGanadorLvl3(rutaBase);
             //RevisarTimeSpanDatos();
 
-            AnalizarDatosListaDiaActual(rutaBase, 268, DateTime.Today);
-            AnalizarDatosListaDiaActual(rutaBase, 160, DateTime.Today.AddDays(-8));
-            AnalizarDatosListaDiaActual(rutaBase, 210, DateTime.Today.AddDays(-7));
-            AnalizarDatosListaDiaActual(rutaBase, 72, DateTime.Today.AddDays(-6));
-            AnalizarDatosListaDiaActual(rutaBase, 264, DateTime.Today.AddDays(-5));
-            AnalizarDatosListaDiaActual(rutaBase, 770, DateTime.Today.AddDays(-4));
-            AnalizarDatosListaDiaActual(rutaBase, 466, DateTime.Today.AddDays(-3));
-            AnalizarDatosListaDiaActual(rutaBase, 86, DateTime.Today.AddDays(-2));
-            AnalizarDatosListaDiaActual(rutaBase, 181, DateTime.Today.AddDays(-1));
-            //AnalizarDatosListaDiaActual(rutaBase, 66, DateTime.Today.AddDays(-6));
+            AnalizarDatosListaDiaActual(rutaBase, 270, DateTime.Today.AddDays(-7));
+            AnalizarDatosListaDiaActual(rutaBase, 764, DateTime.Today.AddDays(-6));
+            AnalizarDatosListaDiaActual(rutaBase, 499, DateTime.Today.AddDays(-5));
+            AnalizarDatosListaDiaActual(rutaBase, 111, DateTime.Today.AddDays(-4));
+            AnalizarDatosListaDiaActual(rutaBase, 115, DateTime.Today.AddDays(-3));
+            AnalizarDatosListaDiaActual(rutaBase, 167, DateTime.Today.AddDays(-2));
+            AnalizarDatosListaDiaActual(rutaBase, 73, DateTime.Today.AddDays(-1));
+            AnalizarDatosListaDiaActual(rutaBase, 185, DateTime.Today);
         }
 
         private static void AnalizarTabindexResultados(string filename)

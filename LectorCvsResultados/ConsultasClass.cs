@@ -42,6 +42,37 @@ namespace LectorCvsResultados
         }
 
         /// <summary>
+        /// Método que realiza el conteo de los spandatos agrupados hasta la fecha
+        /// </summary>
+        /// <param name="contexto">Instancia del contexto para realizar la consulta</param>
+        /// <param name="indexConsultar">Tabindex para realizar la consulta</param>
+        /// <param name="fechaNumMaxima">Fecha númerica máxima para realizar la consulta</param>
+        /// <returns></returns>
+        public static List<AgrupadorConteosTimeSpanDTO> ConsultarConteoSpanTiempoDiaSem(SisResultEntities contexto, string fechaNumMaxima, int caso = 0, int valor = 0)
+        {
+            string columna;
+            string filtro = "";
+            switch (caso)
+            {
+                case 1:
+                    columna = "SPANTIEMPOSEM";
+                    filtro = "AND diasemnum = " + valor;
+                    break;
+                case 2:
+                    columna = "SPANTIEMPOMES";
+                    filtro = "AND diamesnum = " + valor;
+                    break;
+                default:
+                    columna = "spantiempo";
+                    filtro = "";
+                    break;
+            }
+            string query = string.Format(ConstantesConsulta.QUERY_COUNT_SPANTIEMPOS_DIA_SEM, fechaNumMaxima, columna, filtro);
+            DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
+            return data.AsEnumerable().ToList();
+        }
+
+        /// <summary>
         /// Método que realiza la consulta de acumulada de los datos para el día de la semana y del mes
         /// Retorna las igualdades sumadas para el día semana y mes
         /// </summary>
@@ -68,6 +99,8 @@ namespace LectorCvsResultados
         /// <returns></returns>
         public static List<AgrupadorTotalTabIndexDTO> ConsultarDatosParaDiaSeleccion(int maxListIndex, string fechaFormat, SisResultEntities contexto)
         {
+            //DateTime dt = DateTime.ParseExact(fechaFormat, "yyyyMMdd", CultureInfo.InvariantCulture);
+            //int dayofweek = (int)dt.DayOfWeek == 0 ? 7 : (int)dt.DayOfWeek;
             string query = string.Format(ConstantesConsulta.QUERY_SELECCION_ORDENADA_MAS_VALORES_FECHA_PROM, fechaFormat, maxListIndex);
             DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
             return data.AsEnumerable().ToList();

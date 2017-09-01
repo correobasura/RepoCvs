@@ -18,6 +18,8 @@
           <Property Name="DIAMESNUM" Type="number" Precision="38" Scale="0" />
           <Property Name="DIASEMNUM" Type="number" Precision="38" Scale="0" />
           <Property Name="ULTIMOTIMESPAN" Type="number" Precision="38" Scale="0" />
+          <Property Name="ULTIMOTIMESPANSEM" Type="number" Precision="38" Scale="0" />
+          <Property Name="ULTIMOTIMESPANMES" Type="number" Precision="38" Scale="0" />
         </EntityType>
         <EntityType Name="USERRESULTTABLESFS">
           <Key>
@@ -69,6 +71,8 @@
           <Property Name="DIAMESNUM" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="DIASEMNUM" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="ULTIMOTIMESPAN" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="ULTIMOTIMESPANSEM" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="ULTIMOTIMESPANMES" Type="Decimal" Precision="38" Scale="0" />
         </EntityType>
         <EntityType Name="USERRESULTTABLESFS">
           <Key>
@@ -104,6 +108,8 @@
           <EntitySetMapping Name="ANALISTINDEXUNG">
             <EntityTypeMapping TypeName="SistResultModel.ANALISTINDEXUNG">
               <MappingFragment StoreEntitySet="ANALISTINDEXUNG">
+                <ScalarProperty Name="ULTIMOTIMESPANMES" ColumnName="ULTIMOTIMESPANMES" />
+                <ScalarProperty Name="ULTIMOTIMESPANSEM" ColumnName="ULTIMOTIMESPANSEM" />
                 <ScalarProperty Name="ULTIMOTIMESPAN" ColumnName="ULTIMOTIMESPAN" />
                 <ScalarProperty Name="DIASEMNUM" ColumnName="DIASEMNUM" />
                 <ScalarProperty Name="DIAMESNUM" ColumnName="DIAMESNUM" />
