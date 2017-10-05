@@ -93,7 +93,7 @@ namespace LectorCvsResultados
         /// </summary>
         /// <param name="fechaRevisar">fecha para revisar la información</param>
         /// <param name="contexto">Instancia del contexto para la consulta de datos.</param>
-        public static AnalisisDatosDTO AnalizarDatosDiaTemp(DateTime fechaRevisar, SisResultEntities contexto, int cantidadQuitar = 10)
+        public static AnalisisDatosDTO AnalizarDatosDiaTemp(DateTime fechaRevisar, SisResultEntities contexto, string consulta, int cantidadQuitar = 10)
         {
             string fechaFormat = fechaRevisar.ToString("yyyyMMdd");
             int fechaNum = Convert.ToInt32(fechaFormat);
@@ -102,7 +102,7 @@ namespace LectorCvsResultados
             int maxIndex = ConsultasClass.ConsultarMaxIndexFecha(fechaFormat, contexto);
             List<int> listaTabIndexDifCero, listaTabIndexDifNoCero;
             List<AgrupadorTabIndexDiferenciaDTO> listaTodosResultados;
-            List<AgrupadorTotalTabIndexDTO> listaDatosOpcionados = AnalizarListIndexDatosTemp(contexto, fechaFormat, diaSemana, diaMes, maxIndex, fechaNum, fechaRevisar, out listaTodosResultados, out listaTabIndexDifCero, out listaTabIndexDifNoCero, cantidadQuitar);
+            List<AgrupadorTotalTabIndexDTO> listaDatosOpcionados = AnalizarListIndexDatosTemp(contexto, fechaFormat, diaSemana, diaMes, maxIndex, fechaNum, fechaRevisar, consulta, out listaTodosResultados, out listaTabIndexDifCero, out listaTabIndexDifNoCero, cantidadQuitar);
             listaDatosOpcionados = (from x in listaDatosOpcionados where x.Apariciones >= cantidadQuitar select x).ToList();
             return AnalizarSpanDatosDiaTemp(contexto, fechaFormat, diaSemana, diaMes, maxIndex, fechaNum, fechaRevisar, listaTodosResultados, listaTabIndexDifCero, listaTabIndexDifNoCero, listaDatosOpcionados);
         }
@@ -572,10 +572,10 @@ namespace LectorCvsResultados
         /// <param name="listaTodosResultados">Lista que contiene todos los resultados para consultar</param>
         /// <param name="cantidadQuitar">Cantidad de elementos para quitar de la lista si no ecibe nada, el valor por default es 10</param>
         private static List<AgrupadorTotalTabIndexDTO> AnalizarListIndexDatosTemp(SisResultEntities contexto, string fechaFormat, int diaSemana,
-            int diaMes, int maxIndex, int fechaNum, DateTime fechaRevisar,
+            int diaMes, int maxIndex, int fechaNum, DateTime fechaRevisar, string consulta,
              out List<AgrupadorTabIndexDiferenciaDTO> listaTodosResultados, out List<int> listaTabIndexDifCero, out List<int> listaTabIndexDifNoCero, int cantidadQuitar = 10)
         {
-            List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccion(maxIndex, fechaFormat, contexto);
+            List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccionTemp(maxIndex, fechaFormat, contexto, consulta);
             listaTodosResultados = ConsultasClass.ConsultarResultadosDia(fechaFormat, contexto);
             //List<AgrupadorTotalTabIndexDTO> listaConteoIgualdadDia = ConsultasClass.ConsultarDatosIgualdadDia(contexto, diaSemana, maxIndex, fechaFormat);
             //List<int> listaIgualdades = (from x in listaConteoIgualdadDia select x.Tabindex).Take(cantidadQuitar).ToList();

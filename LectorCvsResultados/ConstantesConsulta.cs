@@ -63,12 +63,22 @@ namespace LectorCvsResultados
                     "SELECT COUNT(1)/ MAX(tabindexseq) AS total, tabindex AS tabindex, MAX(tabindexseq) AS apariciones "
                     + "FROM userresulttablesfs "
                     + "WHERE diferenciag != 0 "
-                    + "AND fechaNum < {0} "
-                    + "AND tabindex <= {1} "
+                    + "AND fechanum < {0} "
+                    + "AND tabindex < = {1} "
                     + "GROUP BY tabindex "
                     + "ORDER BY 1 DESC, 2";
 
-        public const string QUERY_CONTEO_VALORES_DIA_SEMANA =
+        public const string QUERY_SELECCION_ORDENADA_MAS_VALORES_DIASEM =
+                    "SELECT COUNT(1)/ MAX(tabindexseq) AS total, tabindex AS tabindex, MAX(tabindexseq) AS apariciones "
+                    + "FROM userresulttablesfs "
+                    + "WHERE diferenciag != 0 "
+                    + "AND fechanum < {0} "
+                    + "AND tabindex < = {1} "
+                    + "AND diasemnum = {2} "
+                    + "GROUP BY tabindex "
+                    + "ORDER BY 1 DESC, 2";
+
+        public const string QUERY_CONTEO_VALORES_DIA_SEMANA_DIAMES =
                     "SELECT SUM(a.total) AS total, a.tabindex AS tabindex, SUM(a.apariciones) AS apariciones FROM "
                     + "(SELECT COUNT(1)/ MAX(tabindexseq) AS total, tabindex AS tabindex, MAX(tabindexseq) AS apariciones "
                     + "FROM userresulttablesfs "
