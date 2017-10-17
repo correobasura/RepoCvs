@@ -323,13 +323,13 @@ namespace LectorCvsResultados
         {
             contexto = new SisResultEntities();
             //IngresarDatosAllReload();
-            //DateTime fechaMinima = DateTime.Today.AddDays(-2);
+            //DateTime fechaMinima = DateTime.Today.AddDays(-1);
             //DateTime fechaMinima = DateTime.ParseExact("20170727", "yyyyMMdd", CultureInfo.InvariantCulture);
             //for (var i = fechaMinima; i < DateTime.Today;)
             //{
             //    string fechaFormat = i.ToString("yyyyMMdd");
             //    //AnalizarTabindexResultados(fechaFormat);
-            //    IngresarDatos(fechaFormat);
+            //    //IngresarDatos(fechaFormat);
             //    AnalizarUnGanador(fechaFormat);
             //    i = i.AddDays(1);
             //}
@@ -352,7 +352,7 @@ namespace LectorCvsResultados
             //AnalizarUnGanador(filenames);
             //AnalizarDatos(rutaBase, DateTime.Today, 202);
 
-            AnalizarDatosListaDias(rutaBase);
+            //AnalizarDatosListaDias(rutaBase);
 
             //SeleccionarValoresAleatorios(rutaBase);
             //AnalizarUnGanadorLvl1(rutaBase);
@@ -360,13 +360,13 @@ namespace LectorCvsResultados
             //RevisarTimeSpanDatos();
 
             //AnalizarDatosListaDiaActual(rutaBase, 270, DateTime.Today.AddDays(-7));
-            //AnalizarDatosListaDiaActual(rutaBase, 764, DateTime.Today.AddDays(-6));
-            //AnalizarDatosListaDiaActual(rutaBase, 499, DateTime.Today.AddDays(-5));
-            //AnalizarDatosListaDiaActual(rutaBase, 111, DateTime.Today.AddDays(-4));
-            //AnalizarDatosListaDiaActual(rutaBase, 115, DateTime.Today.AddDays(-3));
-            //AnalizarDatosListaDiaActual(rutaBase, 167, DateTime.Today.AddDays(-2));
-            //AnalizarDatosListaDiaActual(rutaBase, 73, DateTime.Today.AddDays(-1));
-            //AnalizarDatosListaDiaActual(rutaBase, 230, DateTime.Today);
+            AnalizarDatosListaDiaActual(rutaBase, 130, DateTime.Today.AddDays(-6));
+            AnalizarDatosListaDiaActual(rutaBase, 133, DateTime.Today.AddDays(-5));
+            AnalizarDatosListaDiaActual(rutaBase, 54, DateTime.Today.AddDays(-4));
+            AnalizarDatosListaDiaActual(rutaBase, 225, DateTime.Today.AddDays(-3));
+            AnalizarDatosListaDiaActual(rutaBase, 796, DateTime.Today.AddDays(-2));
+            AnalizarDatosListaDiaActual(rutaBase, 569, DateTime.Today.AddDays(-1));
+            //AnalizarDatosListaDiaActual(rutaBase, 116, DateTime.Today);
         }
 
         private static void AnalizarTabindexResultados(string filename)
