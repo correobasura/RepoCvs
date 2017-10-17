@@ -26,7 +26,7 @@ namespace LectorCvsResultados
             IEnumerable<string> lines = File.ReadAllLines(rutaFileTemp);
             Dictionary<int, AnalizedTabIndexDTO> dict = new Dictionary<int, AnalizedTabIndexDTO>();
             List<AgrupadorTotalPercentSpanDTO> listaSpanGral = ConsultasClass.ConsultarPercentTimeSpan(contexto, fecha.ToString("yyyyMMdd"));
-            List< AgrupadorTotalPercentSpanDTO> listaSpanDia = ConsultasClass.ConsultarPercentTimeSpan(contexto, fecha.ToString("yyyyMMdd"), 1);
+            List<AgrupadorTotalPercentSpanDTO> listaSpanDia = ConsultasClass.ConsultarPercentTimeSpan(contexto, fecha.ToString("yyyyMMdd"), 1);
             for (int i = 0; i < lista.Count; i++)
             {
                 AnalizedTabIndexDTO a = new AnalizedTabIndexDTO();
@@ -56,7 +56,7 @@ namespace LectorCvsResultados
             dictValues.Add("AnConProm", ConstantesConsulta.QUERY_SELECCION_ORDENADA_MAS_VALORES_FECHA_PROM);
             dictValues.Add("AnConDiaSem", ConstantesConsulta.QUERY_SELECCION_ORDENADA_MAS_VALORES_DIASEM);
             dictValues.Add("AnConDiaSemDiaMes", ConstantesConsulta.QUERY_CONTEO_VALORES_DIA_SEMANA_DIAMES);
-            DateTime fechaMinima = DateTime.ParseExact("20170928", "yyyyMMdd", CultureInfo.InvariantCulture);
+            DateTime fechaMinima = DateTime.Today.AddDays(-7);
             foreach (var itemDict in dictValues)
             {
                 List<AnalisisDatosDTO> listaAnalizada = new List<AnalisisDatosDTO>();
@@ -101,7 +101,7 @@ namespace LectorCvsResultados
                 }
             }
 
-            //ConsolidarResultados();
+            ConsolidarResultados();
 
         }
 
@@ -151,9 +151,9 @@ namespace LectorCvsResultados
                     }
                     listaConsolidada = listaConsolidada
                         .OrderByDescending(b => b.TotalPositivosMuestras)
+                        .ThenByDescending(x => x.MinValue)
                         .ThenBy(b => b.Porcentaje)
                         .ThenByDescending(x => x.MaxValue)
-                        .ThenBy(x => x.MinValue)
                         .AsEnumerable().ToList();
                     string rutaFinal = "\\Consolidados\\" + item + i;
                     EscribirDatosArchivo(listaConsolidada, rutaFinal, rutaBase);
@@ -323,16 +323,16 @@ namespace LectorCvsResultados
         {
             contexto = new SisResultEntities();
             //IngresarDatosAllReload();
-            //DateTime fechaMinima = DateTime.Today.AddDays(-2);
+            DateTime fechaMinima = DateTime.Today.AddDays(-1);
             //DateTime fechaMinima = DateTime.ParseExact("20170727", "yyyyMMdd", CultureInfo.InvariantCulture);
-            //for (var i = fechaMinima; i < DateTime.Today;)
-            //{
-            //    string fechaFormat = i.ToString("yyyyMMdd");
-            //    //AnalizarTabindexResultados(fechaFormat);
-            //    IngresarDatos(fechaFormat);
-            //    AnalizarUnGanador(fechaFormat);
-            //    i = i.AddDays(1);
-            //}
+            for (var i = fechaMinima; i < DateTime.Today;)
+            {
+                string fechaFormat = i.ToString("yyyyMMdd");
+                AnalizarTabindexResultados(fechaFormat);
+                IngresarDatos(fechaFormat);
+                AnalizarUnGanador(fechaFormat);
+                i = i.AddDays(1);
+            }
             //for (int i = -5; i < 0; i++)
             //{
             //for (var i = DateTime.Today.AddDays(-16); i < DateTime.Today;)
@@ -352,7 +352,6 @@ namespace LectorCvsResultados
             //AnalizarUnGanador(filenames);
             //AnalizarDatos(rutaBase, DateTime.Today, 202);
 
-            AnalizarDatosListaDias(rutaBase);
 
             //SeleccionarValoresAleatorios(rutaBase);
             //AnalizarUnGanadorLvl1(rutaBase);
@@ -366,7 +365,8 @@ namespace LectorCvsResultados
             //AnalizarDatosListaDiaActual(rutaBase, 115, DateTime.Today.AddDays(-3));
             //AnalizarDatosListaDiaActual(rutaBase, 167, DateTime.Today.AddDays(-2));
             //AnalizarDatosListaDiaActual(rutaBase, 73, DateTime.Today.AddDays(-1));
-            //AnalizarDatosListaDiaActual(rutaBase, 230, DateTime.Today);
+            AnalizarDatosListaDiaActual(rutaBase, 569, DateTime.Today);
+            //AnalizarDatosListaDias(rutaBase);
         }
 
         private static void AnalizarTabindexResultados(string filename)

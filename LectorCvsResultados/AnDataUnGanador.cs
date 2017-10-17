@@ -575,7 +575,7 @@ namespace LectorCvsResultados
             int diaMes, int maxIndex, int fechaNum, DateTime fechaRevisar, string consulta,
              out List<AgrupadorTabIndexDiferenciaDTO> listaTodosResultados, out List<int> listaTabIndexDifCero, out List<int> listaTabIndexDifNoCero, int cantidadQuitar = 10)
         {
-            List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccionTemp(maxIndex, fechaFormat, contexto, consulta);
+            List<AgrupadorTotalTabIndexDTO> listaResultados = ConsultasClass.ConsultarDatosParaDiaSeleccion(maxIndex, fechaFormat, contexto, consulta);
             listaTodosResultados = ConsultasClass.ConsultarResultadosDia(fechaFormat, contexto);
             //List<AgrupadorTotalTabIndexDTO> listaConteoIgualdadDia = ConsultasClass.ConsultarDatosIgualdadDia(contexto, diaSemana, maxIndex, fechaFormat);
             //List<int> listaIgualdades = (from x in listaConteoIgualdadDia select x.Tabindex).Take(cantidadQuitar).ToList();
@@ -706,13 +706,14 @@ namespace LectorCvsResultados
         {
             switch (diasemnum)
             {
-                case 1: return 5;
-                case 2: return 81;
-                case 3: return 89;
-                case 4: return 75;
-                case 5: return 70;
+                case 1: return 68;
+                case 2: return 75;
+                case 3: return 46;
+                case 4: return 87;
+                case 5: return 72;
+                case 6: return 15;
                 default:
-                    return 91;
+                    return 35;
             }
         }
     }
