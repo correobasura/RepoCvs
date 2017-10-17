@@ -101,7 +101,6 @@ namespace LectorCvsResultados
         {
             DateTime dt = DateTime.ParseExact(fechaFormat, "yyyyMMdd", CultureInfo.InvariantCulture);
             int dayofweek = (int)dt.DayOfWeek == 0 ? 7 : (int)dt.DayOfWeek;
-            //string query = string.Format(ConstantesConsulta.QUERY_CONTEO_VALORES_DIA_SEMANA_DIAMES, fechaFormat, maxListIndex, dayofweek, dt.Day);
             string query = "";
             if (consulta.Trim() != string.Empty)
             {
@@ -113,27 +112,19 @@ namespace LectorCvsResultados
                 {
                     case 1:
                     case 2:
-                        query = query = string.Format(ConstantesConsulta.QUERY_SELECCION_ORDENADA_MAS_VALORES_FECHA_PROM, fechaFormat, maxListIndex);
+                        query = string.Format(ConstantesConsulta.QUERY_SELECCION_ORDENADA_MAS_VALORES_FECHA_PROM, fechaFormat, maxListIndex);
                         break;
                     case 3:
                     case 4:
                     case 5:
-                        query = query = string.Format(ConstantesConsulta.QUERY_SELECCION_ORDENADA_MAS_VALORES_DIASEM, fechaFormat, maxListIndex, dayofweek);
+                        query = string.Format(ConstantesConsulta.QUERY_SELECCION_ORDENADA_MAS_VALORES_DIASEM, fechaFormat, maxListIndex, dayofweek);
                         break;
                     default:
                         query = query = string.Format(ConstantesConsulta.QUERY_CONTEO_VALORES_DIA_SEMANA_DIAMES, fechaFormat, maxListIndex, dayofweek, dt.Day);
                         break;
                 }
             }
-            DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
-            return data.AsEnumerable().ToList();
-        }
 
-        public static List<AgrupadorTotalTabIndexDTO> ConsultarDatosParaDiaSeleccionTemp(int maxListIndex, string fechaFormat, SisResultEntities contexto, string consulta)
-        {
-            DateTime dt = DateTime.ParseExact(fechaFormat, "yyyyMMdd", CultureInfo.InvariantCulture);
-            int dayofweek = (int)dt.DayOfWeek == 0 ? 7 : (int)dt.DayOfWeek;
-            string query = string.Format(consulta, fechaFormat, maxListIndex, dayofweek, dt.Day);
             DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
             return data.AsEnumerable().ToList();
         }

@@ -26,7 +26,7 @@ namespace LectorCvsResultados
             IEnumerable<string> lines = File.ReadAllLines(rutaFileTemp);
             Dictionary<int, AnalizedTabIndexDTO> dict = new Dictionary<int, AnalizedTabIndexDTO>();
             List<AgrupadorTotalPercentSpanDTO> listaSpanGral = ConsultasClass.ConsultarPercentTimeSpan(contexto, fecha.ToString("yyyyMMdd"));
-            List<AgrupadorTotalPercentSpanDTO> listaSpanDia = ConsultasClass.ConsultarPercentTimeSpan(contexto, fecha.ToString("yyyyMMdd"), 1);
+            List< AgrupadorTotalPercentSpanDTO> listaSpanDia = ConsultasClass.ConsultarPercentTimeSpan(contexto, fecha.ToString("yyyyMMdd"), 1);
             for (int i = 0; i < lista.Count; i++)
             {
                 AnalizedTabIndexDTO a = new AnalizedTabIndexDTO();
@@ -352,6 +352,7 @@ namespace LectorCvsResultados
             //AnalizarUnGanador(filenames);
             //AnalizarDatos(rutaBase, DateTime.Today, 202);
 
+            AnalizarDatosListaDias(rutaBase);
 
             //SeleccionarValoresAleatorios(rutaBase);
             //AnalizarUnGanadorLvl1(rutaBase);

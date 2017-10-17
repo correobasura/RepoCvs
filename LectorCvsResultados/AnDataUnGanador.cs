@@ -707,7 +707,7 @@ namespace LectorCvsResultados
             switch (diasemnum)
             {
                 case 1: return 68;
-                case 2: return 75;
+                case 2: return 74;
                 case 3: return 46;
                 case 4: return 87;
                 case 5: return 72;
