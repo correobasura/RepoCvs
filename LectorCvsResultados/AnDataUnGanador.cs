@@ -167,34 +167,34 @@ namespace LectorCvsResultados
             for (int i = 0; i < listaResultadosMuestra.Count(); i++)
             {
                 int tabindex = listaResultadosMuestra.ElementAt(i);
-                AgrupadorFechaNumValor objSpanActual = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat);
-                AgrupadorFechaNumValor objSpanActualSem = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 1);
-                //AgrupadorFechaNumValor objSpanActualMes = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 2);
-                List<AgrupadorConteosTimeSpanDTO> listaspanActual = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, objSpanActual.FechaNum.ToString());
-                var elemento = (from x in listaspanActual
-                                where x.Spantiempo == objSpanActual.Spantiempo
-                                select x).FirstOrDefault();
-                List<AgrupadorConteosTimeSpanDTO> listaspanActualSem = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, objSpanActualSem.FechaNum.ToString(), 1, diaSemana);
-                var elementosem = (from x in listaspanActualSem
-                                   where x.Spantiempo == objSpanActualSem.Spantiempo
-                                   select x).FirstOrDefault();
-                //List<AgrupadorConteosTimeSpanDTO> listaspanActualMes = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat,2, diaMes);
-                //var elementomes = (from x in listaspanActualMes
-                //                   where x.Spantiempo == spanActualMes
-                //                   select x).FirstOrDefault();
+                //    AgrupadorFechaNumValor objSpanActual = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat);
+                //    AgrupadorFechaNumValor objSpanActualSem = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 1);
+                //    //AgrupadorFechaNumValor objSpanActualMes = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 2);
+                //    List<AgrupadorConteosTimeSpanDTO> listaspanActual = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, objSpanActual.FechaNum.ToString());
+                //    var elemento = (from x in listaspanActual
+                //                    where x.Spantiempo == objSpanActual.Spantiempo
+                //                    select x).FirstOrDefault();
+                //    List<AgrupadorConteosTimeSpanDTO> listaspanActualSem = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, objSpanActualSem.FechaNum.ToString(), 1, diaSemana);
+                //    var elementosem = (from x in listaspanActualSem
+                //                       where x.Spantiempo == objSpanActualSem.Spantiempo
+                //                       select x).FirstOrDefault();
+                //    //List<AgrupadorConteosTimeSpanDTO> listaspanActualMes = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, fechaFormat,2, diaMes);
+                //    //var elementomes = (from x in listaspanActualMes
+                //    //                   where x.Spantiempo == spanActualMes
+                //    //                   select x).FirstOrDefault();
 
-                a.AnalizedData += (elemento != null ? elemento.Rank + "" : "NA") + "|" + (elementosem != null ? elementosem.Rank + "" : "NA");
-                //string spanActualSemStr = elementosem != null ? elementosem.Rank + "" : "NA";
-                //string spanActualMesStr = elementomes != null ? elementomes.Rank + "" : "NA";
-                //a.AnalizedData+= spanActualStr+"|"+ spanActualSemStr+"|"+spanActualMesStr +"|"+ ";";
+                //    a.AnalizedData += (elemento != null ? elemento.Rank + "" : "NA") + "|" + (elementosem != null ? elementosem.Rank + "" : "NA");
+                //    //string spanActualSemStr = elementosem != null ? elementosem.Rank + "" : "NA";
+                //    //string spanActualMesStr = elementomes != null ? elementomes.Rank + "" : "NA";
+                //    //a.AnalizedData+= spanActualStr+"|"+ spanActualSemStr+"|"+spanActualMesStr +"|"+ ";";
                 if (listaTabIndexDifCero.IndexOf(tabindex) != -1)
                 {
-                    a.AnalizedData += "|F;";
+                    //a.AnalizedData += "|F;";
                     a.ResultadosNegativos++;
                 }
                 else if (listaTabIndexDifNoCero.IndexOf(tabindex) != -1)
                 {
-                    a.AnalizedData += "|T;";
+                    //a.AnalizedData += "|T;";
                     a.ResultadosPositivos++;
                 }
             }
@@ -598,11 +598,90 @@ namespace LectorCvsResultados
             SisResultEntities contexto, int tabindex, string fechaFormat,
             int diasemana, int fechaNum)
         {
+            List<int> listaSpansDiarioNo = new List<int>();
+            List<int> listaSpansDiaSemNo = new List<int>();
+            //List<int> listaSpansDiaSemDiaMesNo = new List<int>();
             AgrupadorFechaNumValor objSpanActual = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat);
             AgrupadorFechaNumValor objSpanActualSem = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 1);
-            AgrupadorFechaNumValor objSpanActualMes = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 2);
-            int total = objSpanActual.Spantiempo + objSpanActualSem.Spantiempo + objSpanActualMes.Spantiempo;
-            if (total >= 15) return;
+            //AgrupadorFechaNumValor objSpanActualMes = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 2);
+            if (diasemana == 1)
+            {
+                if (objSpanActual.Spantiempo >= 18) return;
+                else if (objSpanActualSem.Spantiempo >= 11) return;
+                listaSpansDiarioNo.Add(12);
+                listaSpansDiarioNo.Add(10);
+                listaSpansDiarioNo.Add(6);
+                listaSpansDiaSemNo.Add(-2);
+                //listaSpansDiaSemDiaMesNo.Add(-2);
+                //listaSpansDiaSemDiaMesNo.Add(4);
+            }
+            else if (diasemana == 2)
+            {
+                if (objSpanActual.Spantiempo >= 11) return;
+                listaSpansDiarioNo.Add(9);
+                listaSpansDiarioNo.Add(6);
+                listaSpansDiaSemNo.Add(12);
+                listaSpansDiaSemNo.Add(-2);
+                listaSpansDiaSemNo.Add(17);
+                //listaSpansDiaSemDiaMesNo.Add(8);
+            }
+            else if (diasemana == 3)
+            {
+                if (objSpanActualSem.Spantiempo >= 14) return;
+                listaSpansDiarioNo.Add(14);
+                listaSpansDiarioNo.Add(9);
+                listaSpansDiarioNo.Add(6);
+                listaSpansDiarioNo.Add(7);
+                listaSpansDiaSemNo.Add(7);
+            }
+            else if (diasemana == 4)
+            {
+                if (objSpanActual.Spantiempo >=15) return;
+                else if (objSpanActualSem.Spantiempo >= 14) return;
+                listaSpansDiarioNo.Add(-2);
+                listaSpansDiarioNo.Add(-3);
+                listaSpansDiarioNo.Add(-4);
+                listaSpansDiarioNo.Add(7);
+                listaSpansDiarioNo.Add(11);
+                listaSpansDiaSemNo.Add(12);
+                listaSpansDiaSemNo.Add(-3);
+            }
+            else if(diasemana == 5)
+            {
+                listaSpansDiarioNo.Add(9);
+                listaSpansDiarioNo.Add(19);
+                listaSpansDiarioNo.Add(14);
+                listaSpansDiarioNo.Add(-5);
+                listaSpansDiarioNo.Add(12);
+                listaSpansDiaSemNo.Add(10);
+                listaSpansDiaSemNo.Add(19);
+                listaSpansDiaSemNo.Add(16);
+                listaSpansDiaSemNo.Add(22);
+            }
+            else if (diasemana == 6)
+            {
+                if (objSpanActual.Spantiempo >= 14) return;
+                listaSpansDiarioNo.Add(11);
+                listaSpansDiarioNo.Add(9);
+                listaSpansDiaSemNo.Add(-3);
+                listaSpansDiaSemNo.Add(20);
+            }
+            else if(diasemana == 7)
+            {
+                if (objSpanActual.Spantiempo >= 13) return;
+                else if (objSpanActualSem.Spantiempo >= 13) return;
+                listaSpansDiarioNo.Add(9);
+                listaSpansDiaSemNo.Add(-3);
+                listaSpansDiaSemNo.Add(10);
+                listaSpansDiaSemNo.Add(12);
+                listaSpansDiaSemNo.Add(8);
+            }
+            if (listaSpansDiarioNo.IndexOf(objSpanActual.Spantiempo) != -1) return;
+            else if (listaSpansDiaSemNo.IndexOf(objSpanActualSem.Spantiempo) != -1) return;
+
+            
+            //int total = objSpanActual.Spantiempo + objSpanActualSem.Spantiempo + objSpanActualMes.Spantiempo;
+
 
             //DateTime dt = DateTime.ParseExact(fechaFormat, "yyyyMMdd", CultureInfo.InvariantCulture);
             //List<AgrupadorConteosTimeSpanDTO> listaspanActual = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, objSpanActual.FechaNum + "");
@@ -706,14 +785,14 @@ namespace LectorCvsResultados
         {
             switch (diasemnum)
             {
-                case 1: return 68;
-                case 2: return 74;
-                case 3: return 46;
+                case 1: return 63;
+                case 2: return 62;
+                case 3: return 80;
                 case 4: return 87;
-                case 5: return 72;
-                case 6: return 15;
+                case 5: return 51;
+                case 6: return 17;
                 default:
-                    return 35;
+                    return 68;
             }
         }
     }
