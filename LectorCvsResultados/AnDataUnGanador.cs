@@ -600,10 +600,10 @@ namespace LectorCvsResultados
         {
             List<int> listaSpansDiarioNo = new List<int>();
             List<int> listaSpansDiaSemNo = new List<int>();
-            //List<int> listaSpansDiaSemDiaMesNo = new List<int>();
+            List<int> listaSpansDiaSemDiaMesNo = new List<int>();
             AgrupadorFechaNumValor objSpanActual = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat);
             AgrupadorFechaNumValor objSpanActualSem = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 1);
-            //AgrupadorFechaNumValor objSpanActualMes = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 2);
+            AgrupadorFechaNumValor objSpanActualMes = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 2);
             if (diasemana == 1)
             {
                 if (objSpanActual.Spantiempo >= 18) return;
@@ -612,8 +612,8 @@ namespace LectorCvsResultados
                 listaSpansDiarioNo.Add(10);
                 listaSpansDiarioNo.Add(6);
                 listaSpansDiaSemNo.Add(-2);
-                //listaSpansDiaSemDiaMesNo.Add(-2);
-                //listaSpansDiaSemDiaMesNo.Add(4);
+                listaSpansDiaSemDiaMesNo.Add(-2);
+                listaSpansDiaSemDiaMesNo.Add(4);
             }
             else if (diasemana == 2)
             {
@@ -623,7 +623,6 @@ namespace LectorCvsResultados
                 listaSpansDiaSemNo.Add(12);
                 listaSpansDiaSemNo.Add(-2);
                 listaSpansDiaSemNo.Add(17);
-                //listaSpansDiaSemDiaMesNo.Add(8);
             }
             else if (diasemana == 3)
             {
@@ -645,6 +644,8 @@ namespace LectorCvsResultados
                 listaSpansDiarioNo.Add(11);
                 listaSpansDiaSemNo.Add(12);
                 listaSpansDiaSemNo.Add(-3);
+                listaSpansDiaSemDiaMesNo.Add(8);
+                listaSpansDiaSemDiaMesNo.Add(2);
             }
             else if(diasemana == 5)
             {
@@ -657,6 +658,7 @@ namespace LectorCvsResultados
                 listaSpansDiaSemNo.Add(19);
                 listaSpansDiaSemNo.Add(16);
                 listaSpansDiaSemNo.Add(22);
+                listaSpansDiaSemDiaMesNo.Add(-3);
             }
             else if (diasemana == 6)
             {
@@ -678,6 +680,7 @@ namespace LectorCvsResultados
             }
             if (listaSpansDiarioNo.IndexOf(objSpanActual.Spantiempo) != -1) return;
             else if (listaSpansDiaSemNo.IndexOf(objSpanActualSem.Spantiempo) != -1) return;
+            else if (listaSpansDiaSemDiaMesNo.IndexOf(objSpanActualMes.Spantiempo) != -1) return;
 
             
             //int total = objSpanActual.Spantiempo + objSpanActualSem.Spantiempo + objSpanActualMes.Spantiempo;
@@ -785,10 +788,10 @@ namespace LectorCvsResultados
         {
             switch (diasemnum)
             {
-                case 1: return 63;
-                case 2: return 62;
+                case 1: return 5;
+                case 2: return 63;
                 case 3: return 80;
-                case 4: return 87;
+                case 4: return 83;
                 case 5: return 51;
                 case 6: return 17;
                 default:

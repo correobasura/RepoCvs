@@ -58,18 +58,27 @@ namespace LectorCvsResultados
             dictValues.Add("AnConDiaSemDiaMes", ConstantesConsulta.QUERY_CONTEO_VALORES_DIA_SEMANA_DIAMES);
             //DateTime fechaMinima = DateTime.Today.AddDays(-7);
             DateTime fechaMinima = DateTime.ParseExact("20170727", "yyyyMMdd", CultureInfo.InvariantCulture);
+            List<int> indexDias = new List<int>();
+            indexDias.Add(1);
+            indexDias.Add(2);
+            //indexDias.Add(3);
+            indexDias.Add(4);
+            indexDias.Add(5);
+            //indexDias.Add(6);
+            //indexDias.Add(7);
             foreach (var itemDict in dictValues)
             {
                 List<AnalisisDatosDTO> listaAnalizada = new List<AnalisisDatosDTO>();
                 List<AgrupadorConsolidadoDTO> listaConsolidada = new List<AgrupadorConsolidadoDTO>();
                 Dictionary<int, AgrupadorTimeSpanDTO> dict = new Dictionary<int, AgrupadorTimeSpanDTO>();
-                for (int j = 1; j <= 7; j++)
+                for (int m = 0;  m < indexDias.Count; m++)
                 {
+                    var elementoIndex = indexDias.ElementAt(m);
                     List<DateTime> listaFechas = new List<DateTime>();
                     for (var i = fechaMinima; i < DateTime.Today;)
                     {
                         int dayOfWeek = (int)i.DayOfWeek == 0 ? 7 : (int)i.DayOfWeek;
-                        if (dayOfWeek == j)
+                        if (dayOfWeek == elementoIndex)
                         {
                             listaFechas.Add(i);
                         }
@@ -99,7 +108,7 @@ namespace LectorCvsResultados
                                             orderby x.TotalPositivosMuestras descending, x.MaxValue descending,
                                             x.MinValue descending
                                             select x).ToList();
-                        EscribirDatosArchivo(listaConsolidada, itemDict.Key + j, rutaBase);
+                        EscribirDatosArchivo(listaConsolidada, itemDict.Key + elementoIndex, rutaBase);
                         listaConsolidada.Clear();
                     }
                 }
