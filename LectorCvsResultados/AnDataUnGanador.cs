@@ -606,11 +606,12 @@ namespace LectorCvsResultados
             AgrupadorFechaNumValor objSpanActualMes = ConsultasClass.ConsultarUltimoTimeSpan(contexto, tabindex, fechaFormat, 2);
             if (diasemana == 1)
             {
-                if (objSpanActual.Spantiempo >= 18) return;
+                if (objSpanActual.Spantiempo >= 16) return;
                 else if (objSpanActualSem.Spantiempo >= 11) return;
                 listaSpansDiarioNo.Add(12);
                 listaSpansDiarioNo.Add(10);
                 listaSpansDiarioNo.Add(6);
+
                 listaSpansDiaSemNo.Add(-2);
                 listaSpansDiaSemDiaMesNo.Add(-2);
                 listaSpansDiaSemDiaMesNo.Add(4);
@@ -620,6 +621,8 @@ namespace LectorCvsResultados
                 if (objSpanActual.Spantiempo >= 11) return;
                 listaSpansDiarioNo.Add(9);
                 listaSpansDiarioNo.Add(6);
+                listaSpansDiarioNo.Add(-2);
+
                 listaSpansDiaSemNo.Add(12);
                 listaSpansDiaSemNo.Add(-2);
                 listaSpansDiaSemNo.Add(17);
@@ -642,6 +645,7 @@ namespace LectorCvsResultados
                 listaSpansDiarioNo.Add(-4);
                 listaSpansDiarioNo.Add(7);
                 listaSpansDiarioNo.Add(11);
+
                 listaSpansDiaSemNo.Add(12);
                 listaSpansDiaSemNo.Add(-3);
                 listaSpansDiaSemDiaMesNo.Add(8);
@@ -665,14 +669,19 @@ namespace LectorCvsResultados
                 if (objSpanActual.Spantiempo >= 14) return;
                 listaSpansDiarioNo.Add(11);
                 listaSpansDiarioNo.Add(9);
+                listaSpansDiarioNo.Add(6);
+
                 listaSpansDiaSemNo.Add(-3);
                 listaSpansDiaSemNo.Add(20);
             }
             else if(diasemana == 7)
             {
-                if (objSpanActual.Spantiempo >= 13) return;
+                if (objSpanActual.Spantiempo >= 12) return;
                 else if (objSpanActualSem.Spantiempo >= 13) return;
                 listaSpansDiarioNo.Add(9);
+                listaSpansDiarioNo.Add(4);
+                listaSpansDiarioNo.Add(7);
+
                 listaSpansDiaSemNo.Add(-3);
                 listaSpansDiaSemNo.Add(10);
                 listaSpansDiaSemNo.Add(12);
@@ -789,13 +798,13 @@ namespace LectorCvsResultados
             switch (diasemnum)
             {
                 case 1: return 5;
-                case 2: return 63;
+                case 2: return 60;
                 case 3: return 80;
                 case 4: return 83;
-                case 5: return 51;
-                case 6: return 17;
+                case 5: return 57;
+                case 6: return 47;
                 default:
-                    return 68;
+                    return 71;
             }
         }
     }

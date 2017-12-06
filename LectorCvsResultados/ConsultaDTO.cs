@@ -260,9 +260,14 @@ namespace LectorCvsResultados
             get; set;
         }
 
+        public int Result
+        {
+            get;set;
+        }
+
         public override string ToString()
         {
-            return +Lineindex + ";" + Tabindex + ";"+UltimoSpan+";"+ RankUltimoSpanDia + ";" + RankUltimoSpanGral + ";" + TMatch + ";";
+            return Result+";"+Lineindex + ";" + Tabindex + ";"+UltimoSpan+";"+ RankUltimoSpanDia + ";" + RankUltimoSpanGral + ";" + TMatch + ";";
         }
     }
 }

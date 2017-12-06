@@ -112,12 +112,12 @@ namespace LectorCvsResultados
                 {
                     case 1:
                     case 2:
-                    case 5:
+                    //case 5:
                         query = string.Format(ConstantesConsulta.QUERY_SELECCION_ORDENADA_MAS_VALORES_FECHA_PROM, fechaFormat, maxListIndex);
                         break;
                     case 3:
                     case 4:
-                    //case 5:
+                    case 5:
                     case 7:
                         query = string.Format(ConstantesConsulta.QUERY_SELECCION_ORDENADA_MAS_VALORES_DIASEM, fechaFormat, maxListIndex, dayofweek);
                         break;
