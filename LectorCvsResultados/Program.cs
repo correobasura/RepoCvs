@@ -442,18 +442,56 @@ namespace LectorCvsResultados
             doc.Load(@"D:\OneDrive\Estimaciones\FS\201712\20171203.html");
 
             var htmlNodes = doc.DocumentNode.SelectNodes("//tr");
+            List<HtmlDTO> lista = new List<HtmlDTO>();
             foreach (HtmlNode  item in htmlNodes)
             {
                 var htmlDoc = new HtmlDocument();
                 htmlDoc.LoadHtml(item.InnerHtml);
 
                 var htmltdNodes = htmlDoc.DocumentNode.SelectNodes("//td");
-                foreach (var item2 in htmltdNodes)
+                HtmlDTO htmlDTO = new HtmlDTO();
+                var htmlAfter = false;
+                var theNodes = htmltdNodes.ToString();
+                StringBuilder sb = new StringBuilder();
+                bool esAfter = false;
+                for (int i = 0; i < htmltdNodes.Count; i++)
                 {
-                    var data = item2.InnerText.Replace("&nbsp;","");
-                    var data2 = "";
+                    var item2 = htmltdNodes.ElementAt(i);
+                    var data = item2.InnerText.Replace("&nbsp;", "");
+                    if(i.Equals(2) && item2.InnerText.ToLower().Contains("after"))
+                    {
+                        esAfter = true;
+                    }
+                    if(i.Equals(4) && esAfter)
+                    {
+                        var htmlDocTd = new HtmlDocument();
+                        htmlDocTd.LoadHtml(item2.InnerHtml);
+                        var data2 = htmlDocTd.DocumentNode.SelectNodes("//span");
+                        var result = data2.ElementAt(0).InnerText.Replace("&nbsp;", "").Replace("(", "").Replace(")", "");
+                        sb.Append(result);
+                        sb.Append(";");
+                    }
+                    else {
+                        sb.Append(data);
+                        sb.Append(";");
+                    }
                 }
+                string[] datos = sb.ToString().Split(';');
+                htmlDTO.Hora = datos[1];
+                htmlDTO.Estado = datos[2];
+                htmlDTO.Home = datos[3];
+                htmlDTO.Result = datos[4];
+                htmlDTO.Away = datos[5];
+                htmlDTO.Half = datos[6];
+                lista.Add(htmlDTO);
             }
+            lista = lista.OrderBy(x => x.Home).ThenBy(x => x.Away).ToList();
+            int indexer = 0;
+            foreach (var item in lista)
+            {
+                item.IndexOrdered = ++indexer;
+            }
+            lista = lista.Where(x => x.Estado.ToLower().Equals("finished")).ToList();
             var cosa = "";
         }
 

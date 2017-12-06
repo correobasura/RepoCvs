@@ -270,4 +270,36 @@ namespace LectorCvsResultados
             return Result+";"+Lineindex + ";" + Tabindex + ";"+UltimoSpan+";"+ RankUltimoSpanDia + ";" + RankUltimoSpanGral + ";" + TMatch + ";";
         }
     }
+
+    public class HtmlDTO
+    {
+        public int IndexOrdered
+        {
+            get;set;
+        }
+        public string Hora
+        {
+            get;set;
+        }
+        public String Estado
+        {
+            get;set;
+        }
+        public String Home
+        {
+            get;set;
+        }
+        public String Result
+        {
+            get;set;
+        }
+        public String Away
+        {
+            get;set;
+        }
+        public String Half
+        {
+            get;set;
+        }
+    }
 }
