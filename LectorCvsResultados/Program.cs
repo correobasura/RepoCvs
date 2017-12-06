@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Globalization;
@@ -373,65 +374,87 @@ namespace LectorCvsResultados
 
         static void Main(string[] args)
         {
-            contexto = new SisResultEntities();
-            //IngresarDatosAllReload();
-            DateTime fechaMinima = DateTime.Today.AddDays(-1);
-            ////DateTime fechaMinima = DateTime.ParseExact("20170727", "yyyyMMdd", CultureInfo.InvariantCulture);
-            for (var i = fechaMinima; i < DateTime.Today;)
+            //contexto = new SisResultEntities();
+            ////IngresarDatosAllReload();
+            //DateTime fechaMinima = DateTime.Today.AddDays(-1);
+            //////DateTime fechaMinima = DateTime.ParseExact("20170727", "yyyyMMdd", CultureInfo.InvariantCulture);
+            //for (var i = fechaMinima; i < DateTime.Today;)
+            //{
+            //    string fechaFormat = i.ToString("yyyyMMdd");
+            //    AnalizarTabindexResultados(fechaFormat);
+            //    IngresarDatos(fechaFormat);
+            //    AnalizarUnGanador(fechaFormat);
+            //    i = i.AddDays(1);
+            //}
+            ////for (int i = -5; i < 0; i++)
+            ////{
+            ////for (var i = DateTime.Today.AddDays(-16); i < DateTime.Today;)
+            ////{
+            ////    AnalizarDiaAnterior(i.AddDays(-1));
+            ////    i = i.AddDays(1);
+            ////}
+            ////var laFecha = DateTime.ParseExact("20170322", "yyyyMMdd", CultureInfo.InvariantCulture);
+            ////AnDataUnGanador.AnalizarDiaAnteriorUnGanador(DateTime.Today.AddDays(-1), contexto);
+            ////AnDataMayorUno.AnalizarDiaAnteriorMayorUno(DateTime.Today.AddDays(-1), contexto);
+            ////List<string> filenames = new List<string>();
+            ////for (var i = DateTime.Today.AddDays(-30); i < DateTime.Today;)
+            ////{
+            ////    filenames.Add(i.ToString("yyyyMMdd"));
+            ////    i = i.AddDays(1);
+            ////}
+            ////AnalizarUnGanador(filenames);
+            ////AnalizarDatos(rutaBase, DateTime.Today, 202);
+
+            ////SeleccionarValoresAleatorios(rutaBase);
+            ////AnalizarUnGanadorLvl1(rutaBase);
+            ////AnalizarUnGanadorLvl3(rutaBase);
+            ////RevisarTimeSpanDatos();
+
+            ////AnalizarDatosListaDiaActual(rutaBase, 270, DateTime.Today.AddDays(-7));
+            ////AnalizarDatosListaDiaActual(rutaBase, 764, DateTime.Today.AddDays(-6));
+            ////AnalizarDatosListaDiaActual(rutaBase, 499, DateTime.Today.AddDays(-5));
+            ////AnalizarDatosListaDiaActual(rutaBase, 111, DateTime.Today.AddDays(-4));
+            ////AnalizarDatosListaDiaActual(rutaBase, 115, DateTime.Today.AddDays(-3));
+            ////AnalizarDatosListaDiaActual(rutaBase, 167, DateTime.Today.AddDays(-2));
+            //AnalizarDatosListaDiaActual(rutaBase, DateTime.Today.AddDays(-1));
+
+
+
+            ////dictionaryHist = new Dictionary<int, List<int>>();
+            ////for (int i = 1; i <= 30; i++)
+            ////{
+            ////    dictionaryHist.Add(i, new List<int>());
+            ////}
+            ////var laFecha = DateTime.ParseExact("20171010", "yyyyMMdd", CultureInfo.InvariantCulture);
+            ////for (var i = laFecha; i < DateTime.Today; i = i.AddDays(1))
+            ////{
+            ////    AnalizarDatosListaDiaActual(rutaBase, i);
+            ////}
+            //AnalizarDatosListaDiaActual(rutaBase, DateTime.Today, 195);
+            ////EscribirHistoriales();
+            ////AnalizarDatosListaDias(rutaBase);
+            LeerHtml();
+        }
+
+        public static void LeerHtml()
+        {
+            var doc = new HtmlDocument();
+            doc.Load(@"D:\OneDrive\Estimaciones\FS\201712\20171203.html");
+
+            var htmlNodes = doc.DocumentNode.SelectNodes("//tr");
+            foreach (HtmlNode  item in htmlNodes)
             {
-                string fechaFormat = i.ToString("yyyyMMdd");
-                AnalizarTabindexResultados(fechaFormat);
-                IngresarDatos(fechaFormat);
-                AnalizarUnGanador(fechaFormat);
-                i = i.AddDays(1);
+                var htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(item.InnerHtml);
+
+                var htmltdNodes = htmlDoc.DocumentNode.SelectNodes("//td");
+                foreach (var item2 in htmltdNodes)
+                {
+                    var data = item2.InnerText.Replace("&nbsp;","");
+                    var data2 = "";
+                }
             }
-            //for (int i = -5; i < 0; i++)
-            //{
-            //for (var i = DateTime.Today.AddDays(-16); i < DateTime.Today;)
-            //{
-            //    AnalizarDiaAnterior(i.AddDays(-1));
-            //    i = i.AddDays(1);
-            //}
-            //var laFecha = DateTime.ParseExact("20170322", "yyyyMMdd", CultureInfo.InvariantCulture);
-            //AnDataUnGanador.AnalizarDiaAnteriorUnGanador(DateTime.Today.AddDays(-1), contexto);
-            //AnDataMayorUno.AnalizarDiaAnteriorMayorUno(DateTime.Today.AddDays(-1), contexto);
-            //List<string> filenames = new List<string>();
-            //for (var i = DateTime.Today.AddDays(-30); i < DateTime.Today;)
-            //{
-            //    filenames.Add(i.ToString("yyyyMMdd"));
-            //    i = i.AddDays(1);
-            //}
-            //AnalizarUnGanador(filenames);
-            //AnalizarDatos(rutaBase, DateTime.Today, 202);
-
-            //SeleccionarValoresAleatorios(rutaBase);
-            //AnalizarUnGanadorLvl1(rutaBase);
-            //AnalizarUnGanadorLvl3(rutaBase);
-            //RevisarTimeSpanDatos();
-
-            //AnalizarDatosListaDiaActual(rutaBase, 270, DateTime.Today.AddDays(-7));
-            //AnalizarDatosListaDiaActual(rutaBase, 764, DateTime.Today.AddDays(-6));
-            //AnalizarDatosListaDiaActual(rutaBase, 499, DateTime.Today.AddDays(-5));
-            //AnalizarDatosListaDiaActual(rutaBase, 111, DateTime.Today.AddDays(-4));
-            //AnalizarDatosListaDiaActual(rutaBase, 115, DateTime.Today.AddDays(-3));
-            //AnalizarDatosListaDiaActual(rutaBase, 167, DateTime.Today.AddDays(-2));
-            AnalizarDatosListaDiaActual(rutaBase, DateTime.Today.AddDays(-1));
-
-
-
-            //dictionaryHist = new Dictionary<int, List<int>>();
-            //for (int i = 1; i <= 30; i++)
-            //{
-            //    dictionaryHist.Add(i, new List<int>());
-            //}
-            //var laFecha = DateTime.ParseExact("20171010", "yyyyMMdd", CultureInfo.InvariantCulture);
-            //for (var i = laFecha; i < DateTime.Today; i = i.AddDays(1))
-            //{
-            //    AnalizarDatosListaDiaActual(rutaBase, i);
-            //}
-            AnalizarDatosListaDiaActual(rutaBase, DateTime.Today, 195);
-            //EscribirHistoriales();
-            //AnalizarDatosListaDias(rutaBase);
+            var cosa = "";
         }
 
         public static void EscribirHistoriales()
