@@ -301,5 +301,33 @@ namespace LectorCvsResultados
         {
             get;set;
         }
+        public int GHome
+        {
+            get;set;
+        }
+        public int GAway
+        {
+            get;set;
+        }
+        public int DiferenciaG
+        {
+            get;set;
+        }
+        public int TotalG
+        {
+            get;set;
+        }
+        public char GroupLetter
+        {
+            get;set;
+        }
+        public int GroupIndexLetter
+        {
+            get;set;
+        }
+        public override string ToString()
+        {
+            return IndexOrdered + ";" + Hora + ";" + Estado + ";" + Home + ";" + Result + ";" + Away + ";" + Half + ";" + GHome + ";" + GAway + ";" + DiferenciaG + ";" + TotalG + ";" + GroupLetter + ";" + GroupIndexLetter;
+        }
     }
 }

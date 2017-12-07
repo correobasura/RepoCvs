@@ -433,13 +433,42 @@ namespace LectorCvsResultados
             //AnalizarDatosListaDiaActual(rutaBase, DateTime.Today, 195);
             ////EscribirHistoriales();
             ////AnalizarDatosListaDias(rutaBase);
-            LeerHtml();
+            var laFecha = DateTime.ParseExact("20170202", "yyyyMMdd", CultureInfo.InvariantCulture);
+            for (var i = laFecha; i < DateTime.Today;)
+            {
+                if (File.Exists(@"D:\OneDrive\Estimaciones\FS\" + i.ToString("yyyyMM") + @"\" + i.ToString("yyyyMMdd") + ".html"))
+                {
+                    LeerHtml(i.ToString("yyyyMM"), i.ToString("yyyyMMdd"));
+                }
+                else
+                {
+                    LeerHtml(i.ToString("yyyyMM"), i.ToString("yyyyMMdd") + "F");
+                }
+                i = i.AddDays(1);
+            }
+            laFecha = DateTime.ParseExact("20171025", "yyyyMMdd", CultureInfo.InvariantCulture);
+            for (var i = laFecha; i < DateTime.Today;)
+            {
+                if (File.Exists(@"D:\OneDrive\Estimaciones\RC\" + i.ToString("yyyyMM") + @"\" + i.ToString("yyyyMMdd") + ".html"))
+                {
+                    LeerHtmlRC(i.ToString("yyyyMM"), i.ToString("yyyyMMdd"));
+                }
+                else
+                {
+                    LeerHtmlRC(i.ToString("yyyyMM"), i.ToString("yyyyMMdd") + "F");
+                }
+                i = i.AddDays(1);
+            }
         }
 
-        public static void LeerHtml()
+        public static void LeerHtmlRC(String fechaMes, String fechaDia)
         {
-            var doc = new HtmlDocument();
-            doc.Load(@"D:\OneDrive\Estimaciones\FS\201712\20171203.html");
+            string path = @"D:\OneDrive\Estimaciones\RC\" + fechaMes + @"\" + fechaDia + ".html";
+            string pathWriteFile = @"D:\OneDrive\Estimaciones\RCO\" + fechaMes + @"\" + fechaDia + ".csv";
+            string pathWrite = @"D:\OneDrive\Estimaciones\RCO\" + fechaMes;
+            var htmlWeb = new HtmlWeb();
+            htmlWeb.OverrideEncoding = Encoding.UTF8;
+            var doc = htmlWeb.Load(path);
 
             var htmlNodes = doc.DocumentNode.SelectNodes("//tr");
             List<HtmlDTO> lista = new List<HtmlDTO>();
@@ -450,19 +479,19 @@ namespace LectorCvsResultados
 
                 var htmltdNodes = htmlDoc.DocumentNode.SelectNodes("//td");
                 HtmlDTO htmlDTO = new HtmlDTO();
-                var htmlAfter = false;
                 var theNodes = htmltdNodes.ToString();
                 StringBuilder sb = new StringBuilder();
                 bool esAfter = false;
                 for (int i = 0; i < htmltdNodes.Count; i++)
                 {
                     var item2 = htmltdNodes.ElementAt(i);
-                    var data = item2.InnerText.Replace("&nbsp;", "");
-                    if(i.Equals(2) && item2.InnerText.ToLower().Contains("after"))
+                    var data = item2.InnerText.Replace("&nbsp;", "").Replace("&amp;","&");
+                    if(i.Equals(1) && data.ToLower().Contains("tras"))
                     {
+                        data = "Finalizado";
                         esAfter = true;
                     }
-                    if(i.Equals(4) && esAfter)
+                    if(i.Equals(3) && esAfter)
                     {
                         var htmlDocTd = new HtmlDocument();
                         htmlDocTd.LoadHtml(item2.InnerHtml);
@@ -477,22 +506,136 @@ namespace LectorCvsResultados
                     }
                 }
                 string[] datos = sb.ToString().Split(';');
+                htmlDTO.Hora = datos[0];
+                htmlDTO.Estado = datos[1];
+                htmlDTO.Home = datos[2];
+                htmlDTO.Result = datos[3];
+                htmlDTO.Away = datos[4];
+                htmlDTO.Half = datos[5].Replace("&nbsp;", "").Replace("(", "").Replace(")", "").Replace(" ","");
+                lista.Add(htmlDTO);
+            }
+            lista = lista.OrderBy(x => x.Home).ThenBy(x => x.Away).ToList();
+            int indexer = 0;
+            char letter = lista.ElementAt(0).Home[0];
+            int indexLetter = 1;
+            foreach (var item in lista)
+            {
+                item.IndexOrdered = ++indexer;
+                if (!item.Home[0].Equals(letter))
+                {
+                    indexLetter = 1;
+                    letter = item.Home[0];
+                }
+                if (item.Estado.ToLower().Equals("finalizado"))
+                {
+                    string[] score = item.Result.Split('-');
+                    item.GHome = Convert.ToInt32(score[0]);
+                    item.GAway = Convert.ToInt32(score[1]);
+                    item.DiferenciaG = item.GHome - item.GAway;
+                    item.TotalG = item.GHome + item.GAway;
+                }
+                item.GroupLetter = letter;
+                item.GroupIndexLetter = indexLetter++;
+            }
+            lista = lista.Where(x => x.Estado.ToLower().Equals("finalizado")).ToList();
+            EscribirArchivoCsv(lista, pathWriteFile, pathWrite);
+        }
+
+        public static void LeerHtml(String fechaMes, String fechaDia)
+        {
+            string path = @"D:\OneDrive\Estimaciones\FS\" + fechaMes + @"\" + fechaDia + ".html";
+            string pathWriteFile = @"D:\OneDrive\Estimaciones\FSO\" + fechaMes + @"\" + fechaDia + ".csv";
+            string pathWrite = @"D:\OneDrive\Estimaciones\FSO\" + fechaMes;
+            var htmlWeb = new HtmlWeb();
+            htmlWeb.OverrideEncoding = Encoding.UTF8;
+            var doc = htmlWeb.Load(path);
+
+            var htmlNodes = doc.DocumentNode.SelectNodes("//tr");
+            List<HtmlDTO> lista = new List<HtmlDTO>();
+            foreach (HtmlNode item in htmlNodes)
+            {
+                var htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(item.InnerHtml);
+
+                var htmltdNodes = htmlDoc.DocumentNode.SelectNodes("//td");
+                HtmlDTO htmlDTO = new HtmlDTO();
+                var theNodes = htmltdNodes.ToString();
+                StringBuilder sb = new StringBuilder();
+                bool esAfter = false;
+                for (int i = 0; i < htmltdNodes.Count; i++)
+                {
+                    var item2 = htmltdNodes.ElementAt(i);
+                    var data = item2.InnerText.Replace("&nbsp;", "").Replace("&amp;", "&");
+                    if (i.Equals(2) && data.ToLower().Contains("after"))
+                    {
+                        data = "Finished";
+                        esAfter = true;
+                    }
+                    if (i.Equals(4) && esAfter)
+                    {
+                        var htmlDocTd = new HtmlDocument();
+                        htmlDocTd.LoadHtml(item2.InnerHtml);
+                        var data2 = htmlDocTd.DocumentNode.SelectNodes("//span");
+                        var result = data2.ElementAt(0).InnerText.Replace("&nbsp;", "").Replace("(", "").Replace(")", "");
+                        sb.Append(result);
+                        sb.Append(";");
+                    }
+                    else
+                    {
+                        sb.Append(data);
+                        sb.Append(";");
+                    }
+                }
+                string[] datos = sb.ToString().Split(';');
                 htmlDTO.Hora = datos[1];
                 htmlDTO.Estado = datos[2];
                 htmlDTO.Home = datos[3];
                 htmlDTO.Result = datos[4];
                 htmlDTO.Away = datos[5];
-                htmlDTO.Half = datos[6];
+                htmlDTO.Half = datos[6].Replace("&nbsp;", "").Replace("(", "").Replace(")", "").Replace(" ", "");
                 lista.Add(htmlDTO);
             }
             lista = lista.OrderBy(x => x.Home).ThenBy(x => x.Away).ToList();
             int indexer = 0;
+            char letter = lista.ElementAt(0).Home[0];
+            int indexLetter = 1;
             foreach (var item in lista)
             {
                 item.IndexOrdered = ++indexer;
+                if (!item.Home[0].Equals(letter))
+                {
+                    indexLetter = 1;
+                    letter = item.Home[0];
+                }
+                if (item.Estado.ToLower().Equals("finished"))
+                {
+                    string[] score = item.Result.Split('-');
+                    item.GHome = Convert.ToInt32(score[0]);
+                    item.GAway = Convert.ToInt32(score[1]);
+                    item.DiferenciaG = item.GHome - item.GAway;
+                    item.TotalG = item.GHome + item.GAway;
+                }
+                item.GroupLetter = letter;
+                item.GroupIndexLetter = indexLetter++;
             }
             lista = lista.Where(x => x.Estado.ToLower().Equals("finished")).ToList();
-            var cosa = "";
+            EscribirArchivoCsv(lista, pathWriteFile, pathWrite);
+        }
+
+        public static void EscribirArchivoCsv(List<HtmlDTO> lista, string pathWriteFile, string pathWrite)
+        {
+            if (!Directory.Exists(pathWrite))
+            {
+                Directory.CreateDirectory(pathWrite);
+            }
+            StreamWriter sw = new StreamWriter(pathWriteFile);
+            var i = 0;
+            foreach (var item in lista)
+            {
+                sw.WriteLine(item);
+                i++;
+            }
+            sw.Close();
         }
 
         public static void EscribirHistoriales()
