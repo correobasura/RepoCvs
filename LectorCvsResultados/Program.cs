@@ -433,30 +433,38 @@ namespace LectorCvsResultados
             //AnalizarDatosListaDiaActual(rutaBase, DateTime.Today, 195);
             ////EscribirHistoriales();
             ////AnalizarDatosListaDias(rutaBase);
-            var laFecha = DateTime.ParseExact("20170202", "yyyyMMdd", CultureInfo.InvariantCulture);
+            //var laFecha = DateTime.ParseExact("20170202", "yyyyMMdd", CultureInfo.InvariantCulture);
+            //for (var i = laFecha; i < DateTime.Today;)
+            //{
+            //    if (File.Exists(@"D:\OneDrive\Estimaciones\FS\" + i.ToString("yyyyMM") + @"\" + i.ToString("yyyyMMdd") + ".html"))
+            //    {
+            //        LeerHtml(i.ToString("yyyyMM"), i.ToString("yyyyMMdd"));
+            //    }
+            //    else
+            //    {
+            //        LeerHtml(i.ToString("yyyyMM"), i.ToString("yyyyMMdd") + "F");
+            //    }
+            //    i = i.AddDays(1);
+            //}
+            //laFecha = DateTime.ParseExact("20171025", "yyyyMMdd", CultureInfo.InvariantCulture);
+            //for (var i = laFecha; i < DateTime.Today;)
+            //{
+            //    if (File.Exists(@"D:\OneDrive\Estimaciones\RC\" + i.ToString("yyyyMM") + @"\" + i.ToString("yyyyMMdd") + ".html"))
+            //    {
+            //        LeerHtmlRC(i.ToString("yyyyMM"), i.ToString("yyyyMMdd"));
+            //    }
+            //    else
+            //    {
+            //        LeerHtmlRC(i.ToString("yyyyMM"), i.ToString("yyyyMMdd") + "F");
+            //    }
+            //    i = i.AddDays(1);
+            //}
+
+            var laFecha = DateTime.ParseExact("20171211", "yyyyMMdd", CultureInfo.InvariantCulture);
             for (var i = laFecha; i < DateTime.Today;)
             {
-                if (File.Exists(@"D:\OneDrive\Estimaciones\FS\" + i.ToString("yyyyMM") + @"\" + i.ToString("yyyyMMdd") + ".html"))
-                {
-                    LeerHtml(i.ToString("yyyyMM"), i.ToString("yyyyMMdd"));
-                }
-                else
-                {
-                    LeerHtml(i.ToString("yyyyMM"), i.ToString("yyyyMMdd") + "F");
-                }
-                i = i.AddDays(1);
-            }
-            laFecha = DateTime.ParseExact("20171025", "yyyyMMdd", CultureInfo.InvariantCulture);
-            for (var i = laFecha; i < DateTime.Today;)
-            {
-                if (File.Exists(@"D:\OneDrive\Estimaciones\RC\" + i.ToString("yyyyMM") + @"\" + i.ToString("yyyyMMdd") + ".html"))
-                {
-                    LeerHtmlRC(i.ToString("yyyyMM"), i.ToString("yyyyMMdd"));
-                }
-                else
-                {
-                    LeerHtmlRC(i.ToString("yyyyMM"), i.ToString("yyyyMMdd") + "F");
-                }
+                UtilGeneral.UtilHtml.LeerHtml(i, 1);
+                UtilGeneral.UtilHtml.LeerHtml(i, 2);
                 i = i.AddDays(1);
             }
         }
