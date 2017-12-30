@@ -460,11 +460,17 @@ namespace LectorCvsResultados
             //    i = i.AddDays(1);
             //}
 
-            var laFecha = DateTime.ParseExact("20171211", "yyyyMMdd", CultureInfo.InvariantCulture);
+            var laFecha = DateTime.ParseExact("20170202", "yyyyMMdd", CultureInfo.InvariantCulture);
             for (var i = laFecha; i < DateTime.Today;)
             {
-                UtilGeneral.UtilHtml.LeerHtml(i, 1);
-                UtilGeneral.UtilHtml.LeerHtml(i, 2);
+                string pathWriteFile = "";
+                string pathWrite = "";
+                List<HtmlDTO> lista = UtilGeneral.UtilHtml.LeerInfoHtml(i, 1, out pathWriteFile, out pathWrite);
+                EscribirArchivoCsv(lista, pathWriteFile, pathWrite);
+                pathWriteFile = "";
+                pathWrite = "";
+                lista = UtilGeneral.UtilHtml.LeerInfoHtml(i, 1, out pathWriteFile, out pathWrite);
+                EscribirArchivoCsv(lista, pathWriteFile, pathWrite);
                 i = i.AddDays(1);
             }
         }

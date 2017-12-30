@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,34 +16,8 @@ namespace LectorCvsResultados.UtilGeneral
         private const string fs = @"FS\";
         private const string fso = @"FSO\";
 
-        public static void LeerHtml(DateTime fecha, int caso)
+        public static List<HtmlDTO> LeerHtml(int indexInicio, string strAfter, string strFinal, string path)
         {
-            string fechaMes = fecha.ToString("yyyyMM");
-            string fechaDia = fecha.ToString("yyyyMMdd");
-            int indexInicio;
-            string strAfter = "";
-            string strFinal = "";
-            string path = "";
-            string pathWriteFile = "";
-            string pathWrite ="";
-            if (caso == 1)
-            {
-                path = pathBase + fs + fechaMes + "\\" + fechaDia + ".html";
-                pathWriteFile = pathBase+fso + fechaMes + "\\" + fechaDia + ".csv";
-                pathWrite = pathBase + fso + fechaMes;
-                indexInicio = 1;
-                strAfter = "after";
-                strFinal = "finished";
-            }
-            else
-            {
-                path = pathBase + rc + fechaMes + "\\" + fechaDia + ".html";
-                pathWriteFile = pathBase + rco + fechaMes + "\\" + fechaDia + ".csv";
-                pathWrite = pathBase + rco + fechaMes;
-                indexInicio = 0;
-                strAfter = "tras";
-                strFinal = "finalizado";
-            }
             var htmlWeb = new HtmlWeb();
             htmlWeb.OverrideEncoding = Encoding.UTF8;
             var doc = htmlWeb.Load(path);
@@ -115,7 +90,66 @@ namespace LectorCvsResultados.UtilGeneral
                 item.GroupLetter = letter;
                 item.GroupIndexLetter = indexLetter++;
             }
-            lista = lista.Where(x => x.Estado.ToLower().Equals(strFinal)).ToList();
+            return lista;
+        }
+
+        public static List<HtmlDTO> LeerInfoHtml(
+            DateTime fecha, int caso, out string pathWriteFile, out string pathWrite)
+        {
+            List<HtmlDTO> listaHtmlFinal = new List<HtmlDTO>();
+            string fechaMes = fecha.ToString("yyyyMM");
+            string fechaDia = fecha.ToString("yyyyMMdd");
+            string strAfter = "";
+            string strFinal = "";
+            string path = "";
+            int indexInicio;
+            if (caso == 1)
+            {
+                path = pathBase + fs + fechaMes + "\\" + fechaDia;
+                pathWriteFile = pathBase + fso + fechaMes + "\\" + fechaDia + ".csv";
+                pathWrite = pathBase + fso + fechaMes;
+                indexInicio = 1;
+                strAfter = "after";
+                strFinal = "finished";
+            }
+            else
+            {
+                path = pathBase + rc + fechaMes + "\\" + fechaDia;
+                pathWriteFile = pathBase + rco + fechaMes + "\\" + fechaDia + ".csv";
+                pathWrite = pathBase + rco + fechaMes;
+                indexInicio = 0;
+                strAfter = "tras";
+                strFinal = "finalizado";
+            }
+
+            if (!File.Exists(path+".html"))
+            {
+                var pathTemp = path + "T" + ".html";
+                var pathFinal = path + "F" + ".html";
+                List<HtmlDTO> listaHtmlTemp = LeerHtml(indexInicio, strAfter, strFinal, pathTemp);
+
+                List<HtmlDTO> listaFinal = LeerHtml(indexInicio, strAfter, strFinal, pathFinal);
+                foreach (var item in listaHtmlTemp)
+                {
+                    HtmlDTO dto = (from x in listaFinal
+                                   where x.Home == item.Home
+                                   && x.Away == item.Away
+                                   select x).FirstOrDefault();
+                    if (dto != null)
+                    {
+                        dto.IndexOrdered = item.IndexOrdered;
+                        dto.GroupIndexLetter = item.GroupIndexLetter;
+                        listaHtmlFinal.Add(dto);
+                    }
+                }
+                listaHtmlFinal = listaHtmlFinal.Where(x => x.Estado.ToLower().Equals(strFinal)).ToList();
+            }
+            else
+            {
+                listaHtmlFinal = LeerHtml(indexInicio, strAfter, strFinal, path + ".html");
+                listaHtmlFinal = listaHtmlFinal.Where(x => x.Estado.ToLower().Equals(strFinal)).ToList();
+            }
+            return listaHtmlFinal;
         }
     }
 }
