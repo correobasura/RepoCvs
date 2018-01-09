@@ -16,21 +16,21 @@ namespace LectorCvsResultados.UtilGeneral
         private const string fs = @"FS\";
         private const string fso = @"FSO\";
 
-        public static List<HtmlDTO> LeerHtml(int indexInicio, string strAfter, string strFinal, string path)
+        public static List<FLASHORDERED> LeerHtml(int indexInicio, string strAfter, string strFinal, string path)
         {
             var htmlWeb = new HtmlWeb();
             htmlWeb.OverrideEncoding = Encoding.UTF8;
             var doc = htmlWeb.Load(path);
 
             var htmlNodes = doc.DocumentNode.SelectNodes("//tr");
-            List<HtmlDTO> lista = new List<HtmlDTO>();
+            List<FLASHORDERED> lista = new List<FLASHORDERED>();
             foreach (HtmlNode item in htmlNodes)
             {
                 var htmlDoc = new HtmlDocument();
                 htmlDoc.LoadHtml(item.InnerHtml);
 
                 var htmltdNodes = htmlDoc.DocumentNode.SelectNodes("//td");
-                HtmlDTO htmlDTO = new HtmlDTO();
+                FLASHORDERED infoFs = new FLASHORDERED();
                 var theNodes = htmltdNodes.ToString();
                 StringBuilder sb = new StringBuilder();
                 bool esAfter = false;
@@ -59,50 +59,73 @@ namespace LectorCvsResultados.UtilGeneral
                     }
                 }
                 string[] datos = sb.ToString().Split(';');
-                htmlDTO.Hora = datos[0];
-                htmlDTO.Estado = datos[1];
-                htmlDTO.Home = datos[2];
-                htmlDTO.Result = datos[3];
-                htmlDTO.Away = datos[4];
-                htmlDTO.Half = datos[5].Replace("&nbsp;", "").Replace("(", "").Replace(")", "").Replace(" ", "");
-                lista.Add(htmlDTO);
+                infoFs.Hora = datos[0];
+                infoFs.Estado = datos[1];
+                infoFs.Home = datos[2];
+                infoFs.RESULT = datos[3];
+                infoFs.Away = datos[4];
+                infoFs.Half = datos[5].Replace("&nbsp;", "").Replace("(", "").Replace(")", "").Replace(" ", "");
+                lista.Add(infoFs);
             }
-            lista = lista.OrderBy(x => x.Home).ThenBy(x => x.Away).ToList();
+            List<FLASHORDERED> listaTemp = new List<FLASHORDERED>();
+            listaTemp.AddRange(lista);
+            lista.Clear();
+            foreach (var item in listaTemp)
+            {
+                FLASHORDERED added = (from x in lista
+                                      where x.Away == item.Away
+                                      && x.Home == item.Home
+                                      && x.Hora.Trim().Substring(0, 2).Equals(item.Hora.Trim().Substring(0, 2))
+                                      select x)
+                                   .FirstOrDefault();
+                if (added == null)
+                {
+                    item.intChar = Convert.ToInt32(item.Home[0]);
+                    lista.Add(item);
+                }
+
+            }
+
+            lista = lista.OrderBy(x => x.intChar).ThenBy(x => x.Home).ThenBy(x => x.Away).ToList();
+            
             int indexer = 0;
-            char letter = lista.ElementAt(0).Home[0];
+            string letter = lista.ElementAt(0).Home[0].ToString();
             int indexLetter = 1;
             foreach (var item in lista)
             {
-                item.IndexOrdered = ++indexer;
-                if (!item.Home[0].Equals(letter))
+                item.TABINDEX = ++indexer;
+                if (!item.Home[0].ToString().Equals(letter))
                 {
                     indexLetter = 1;
-                    letter = item.Home[0];
+                    letter = item.Home[0].ToString();
                 }
                 if (item.Estado.ToLower().Equals(strFinal))
                 {
-                    string[] score = item.Result.Split('-');
-                    item.GHome = Convert.ToInt32(score[0]);
-                    item.GAway = Convert.ToInt32(score[1]);
-                    item.DiferenciaG = item.GHome - item.GAway;
-                    item.TotalG = item.GHome + item.GAway;
+                    string[] score = item.RESULT.Split('-');
+                    item.GHOME = Convert.ToInt32(score[0]);
+                    item.GAWAY = Convert.ToInt32(score[1]);
+                    item.DIFERENCIAG = item.GHOME - item.GAWAY;
+                    item.TOTALG = item.GHOME + item.GAWAY;
                 }
-                item.GroupLetter = letter;
-                item.GroupIndexLetter = indexLetter++;
+                item.GROUPLETTER = letter;
+                item.TABINDEXLETTER = indexLetter++;
             }
             return lista;
         }
 
-        public static List<HtmlDTO> LeerInfoHtml(
-            DateTime fecha, int caso, out string pathWriteFile, out string pathWrite)
+        public static List<FLASHORDERED> LeerInfoHtml(
+            DateTime fecha, int caso, out string pathWriteFile, out string pathWrite, decimal idInicio)
         {
-            List<HtmlDTO> listaHtmlFinal = new List<HtmlDTO>();
+            List<FLASHORDERED> listaHtmlFinal = new List<FLASHORDERED>();
             string fechaMes = fecha.ToString("yyyyMM");
             string fechaDia = fecha.ToString("yyyyMMdd");
             string strAfter = "";
             string strFinal = "";
             string path = "";
             int indexInicio;
+            int diaSem = (int)fecha.DayOfWeek == 0 ? 7:(int)fecha.DayOfWeek;
+            int diaMes = fecha.Day;
+            int diaAnio = fecha.DayOfYear;
             if (caso == 1)
             {
                 path = pathBase + fs + fechaMes + "\\" + fechaDia;
@@ -126,20 +149,37 @@ namespace LectorCvsResultados.UtilGeneral
             {
                 var pathTemp = path + "T" + ".html";
                 var pathFinal = path + "F" + ".html";
-                List<HtmlDTO> listaHtmlTemp = LeerHtml(indexInicio, strAfter, strFinal, pathTemp);
+                List<FLASHORDERED> listaHtmlTemp = LeerHtml(indexInicio, strAfter, strFinal, pathTemp);
 
-                List<HtmlDTO> listaFinal = LeerHtml(indexInicio, strAfter, strFinal, pathFinal);
+                List<FLASHORDERED> listaFinal = LeerHtml(indexInicio, strAfter, strFinal, pathFinal);
                 foreach (var item in listaHtmlTemp)
                 {
-                    HtmlDTO dto = (from x in listaFinal
+                    List<FLASHORDERED> listaElementos = (from x in listaFinal
                                    where x.Home == item.Home
                                    && x.Away == item.Away
-                                   select x).FirstOrDefault();
-                    if (dto != null)
+                                   select x).ToList();
+                    if (listaElementos.Any())
                     {
-                        dto.IndexOrdered = item.IndexOrdered;
-                        dto.GroupIndexLetter = item.GroupIndexLetter;
-                        listaHtmlFinal.Add(dto);
+                        if (listaElementos.Count > 1)
+                        {
+                            FLASHORDERED elementoAdd = (from x in listaElementos
+                                               where x.Hora.Trim().Substring(0, 2).Equals(item.Hora.Trim().Substring(0, 2))
+                                               select x)
+                                               .FirstOrDefault();
+                            
+                            if (elementoAdd != null)
+                            {
+                                elementoAdd.TABINDEX = item.TABINDEX;
+                                elementoAdd.TABINDEXLETTER = item.TABINDEXLETTER;
+                                listaHtmlFinal.Add(elementoAdd);
+                            }
+                        }
+                        else
+                        {
+                            listaElementos[0].TABINDEX = item.TABINDEX;
+                            listaElementos[0].TABINDEXLETTER = item.TABINDEXLETTER;
+                            listaHtmlFinal.Add(listaElementos[0]);
+                        }
                     }
                 }
                 listaHtmlFinal = listaHtmlFinal.Where(x => x.Estado.ToLower().Equals(strFinal)).ToList();
@@ -148,6 +188,16 @@ namespace LectorCvsResultados.UtilGeneral
             {
                 listaHtmlFinal = LeerHtml(indexInicio, strAfter, strFinal, path + ".html");
                 listaHtmlFinal = listaHtmlFinal.Where(x => x.Estado.ToLower().Equals(strFinal)).ToList();
+            }
+            foreach (var item in listaHtmlFinal)
+            {
+                item.DIASEM = diaSem;
+                item.DIAMES = diaMes;
+                item.DIAANIO = diaAnio;
+                item.FECHA = fecha;
+                item.ID = idInicio++;
+                item.SPANANIOHISTORICO = item.DIFERENCIAG == 0 ? -1 : 1;
+                item.SPANANIOACTUAL = item.SPANANIOHISTORICO;
             }
             return listaHtmlFinal;
         }

@@ -10,7 +10,7 @@ namespace LectorCvsResultados
         /// <summary>
         /// Método que maneja el análisis de los datos para los tabindex y los timespan de los datos para cada tabindex
         /// </summary>
-        /// <param name="fechaRevisar">fecha para revisar la información</param>
+        /// <param name="fechaRevisar">Fecha para revisar la información</param>
         /// <param name="contexto">Instancia del contexto para la consulta de datos.</param>
         public static void AnalizarDatosDia(DateTime fechaRevisar, SisResultEntities contexto, int cantidadQuitar = 53)
         {
@@ -62,7 +62,7 @@ namespace LectorCvsResultados
         /// <summary>
         /// Método que maneja el análisis de los datos para los tabindex y los timespan de los datos para cada tabindex
         /// </summary>
-        /// <param name="fechaRevisar">fecha para revisar la información</param>
+        /// <param name="fechaRevisar">Fecha para revisar la información</param>
         /// <param name="contexto">Instancia del contexto para la consulta de datos.</param>
         public static List<int> AnalizarDatosDiaActual(DateTime fechaRevisar, SisResultEntities contexto, int maxIndex, int porcentajeDatos)
         {
@@ -91,7 +91,7 @@ namespace LectorCvsResultados
         /// <summary>
         /// Método que maneja el análisis de los datos para los tabindex y los timespan de los datos para cada tabindex
         /// </summary>
-        /// <param name="fechaRevisar">fecha para revisar la información</param>
+        /// <param name="fechaRevisar">Fecha para revisar la información</param>
         /// <param name="contexto">Instancia del contexto para la consulta de datos.</param>
         public static AnalisisDatosDTO AnalizarDatosDiaTemp(DateTime fechaRevisar, SisResultEntities contexto, string consulta, int cantidadQuitar = 10)
         {
@@ -230,7 +230,7 @@ namespace LectorCvsResultados
         /// </summary>
         /// <param name="FechaMax">Fecha máxima hasta donde se realiza el análisis</param>
         /// <param name="contexto">Instancia del contexto para la consulta de datos</param>
-        /// <param name="listaTodosResultados">Lista con todos los resultados de la fecha a analizar</param>
+        /// <param name="listaTodosResultados">Lista con todos los resultados de la Fecha a analizar</param>
         /// <returns></returns>
         public static Dictionary<int, AgrupadorTimeSpanDTO> RevisarTimeSpanDatos(DateTime FechaMax, SisResultEntities contexto)
         {
@@ -535,7 +535,7 @@ namespace LectorCvsResultados
         }
 
         /// <summary>
-        /// Realiza la validación de los datos para la fecha específica de los que menos aparecen con igualdades
+        /// Realiza la validación de los datos para la Fecha específica de los que menos aparecen con igualdades
         /// depurando los valores tabindex con mas igualdades
         /// </summary>
         /// <param name="contexto">Instancia del contexto para la consulta</param>
@@ -543,7 +543,7 @@ namespace LectorCvsResultados
         /// <param name="diaSemana">Día de la semana para la consulta</param>
         /// <param name="diaMes">Día del mes para la consulta</param>
         /// <param name="maxIndex">Máximo tabindex para realizar la verificación</param>
-        /// <param name="fechaNum">Valor númerico para la fecha formateada</param>
+        /// <param name="fechaNum">Valor númerico para la Fecha formateada</param>
         /// <param name="fechaRevisar">Fecha en formato Date</param>
         /// <param name="listaTodosResultados">Lista que contiene todos los resultados para consultar</param>
         /// <param name="cantidadQuitar">Cantidad de elementos para quitar de la lista si no ecibe nada, el valor por default es 10</param>
@@ -559,7 +559,7 @@ namespace LectorCvsResultados
         }
 
         /// <summary>
-        /// Realiza la validación de los datos para la fecha específica de los que menos aparecen con igualdades
+        /// Realiza la validación de los datos para la Fecha específica de los que menos aparecen con igualdades
         /// depurando los valores tabindex con mas igualdades
         /// </summary>
         /// <param name="contexto">Instancia del contexto para la consulta</param>
@@ -567,7 +567,7 @@ namespace LectorCvsResultados
         /// <param name="diaSemana">Día de la semana para la consulta</param>
         /// <param name="diaMes">Día del mes para la consulta</param>
         /// <param name="maxIndex">Máximo tabindex para realizar la verificación</param>
-        /// <param name="fechaNum">Valor númerico para la fecha formateada</param>
+        /// <param name="fechaNum">Valor númerico para la Fecha formateada</param>
         /// <param name="fechaRevisar">Fecha en formato Date</param>
         /// <param name="listaTodosResultados">Lista que contiene todos los resultados para consultar</param>
         /// <param name="cantidadQuitar">Cantidad de elementos para quitar de la lista si no ecibe nada, el valor por default es 10</param>
@@ -719,7 +719,7 @@ namespace LectorCvsResultados
         /// </summary>
         /// <param name="fechaRevisar">Fecha para realizar la validación del span</param>
         /// <param name="listspantiempo">Lista que contiene los datos de los spantiempo ordenados descendentemente</param>
-        /// <param name="fechaActual">Bandera que sirve para controlar si la validación se hace para la fecha actual
+        /// <param name="fechaActual">Bandera que sirve para controlar si la validación se hace para la Fecha actual
         /// y de esta forma evitar la multiplicación del valor</param>
         /// <returns></returns>
         private static int ObtenerSpanTiempoActual(List<AgrupadorConteosTimeSpanDTO> listspantiempo)

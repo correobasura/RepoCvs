@@ -325,9 +325,64 @@ namespace LectorCvsResultados
         {
             get;set;
         }
+        public int DiaSem
+        {
+            get;set;
+        }
+        public int DiaMes
+        {
+            get;set;
+        }
+        public int DiaAnio
+        {
+            get;set;
+        }
+        public int? SpanDiarioActual
+        {
+            get;set;
+        }
+        public int SpanDiarioHistorico
+        {
+            get;set;
+        }
+        public int? SpanSemanaActual
+        {
+            get;set;
+        }
+        public int SpanSemanaHistorico
+        {
+            get;set;
+        }
+        public int? SpanMesActual
+        {
+            get;set;
+        }
+        public int SpanMesHistorico
+        {
+            get;set;
+        }
+        public int SpanAnioActual
+        {
+            get;set;
+        }
+        public int SpanAnioHistorico
+        {
+            get;set;
+        }
+        public DateTime Fecha
+        {
+            get;set;
+        }
         public override string ToString()
         {
-            return IndexOrdered + ";" + Hora + ";" + Estado + ";" + Home + ";" + Result + ";" + Away + ";" + Half + ";" + GHome + ";" + GAway + ";" + DiferenciaG + ";" + TotalG + ";" + GroupLetter + ";" + GroupIndexLetter;
+            return IndexOrdered + ";" + Hora + ";" + Estado + ";" + Home + ";" + Result
+                + ";" + Away + ";" + Half + ";" + GHome + ";" + GAway + ";" + DiferenciaG + ";" + TotalG
+                + ";" + GroupLetter + ";" + GroupIndexLetter+";"
+                +SpanDiarioHistorico + ";"+SpanDiarioActual+";"
+                + DiaSem + ";" +SpanSemanaHistorico + ";"+SpanSemanaActual+";"
+                + DiaMes + ";" + SpanMesHistorico +";"+SpanMesActual+";"
+                + DiaAnio + ";" + SpanAnioHistorico +";"
+                +Fecha.ToString("yyyyMMdd");
         }
     }
 }

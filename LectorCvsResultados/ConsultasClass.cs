@@ -11,7 +11,7 @@ namespace LectorCvsResultados
     public class ConsultasClass
     {
         /// <summary>
-        /// Método que realiza el conteo de los spandatos agrupados hasta la fecha
+        /// Método que realiza el conteo de los spandatos agrupados hasta la Fecha
         /// </summary>
         /// <param name="contexto">Instancia del contexto para realizar la consulta</param>
         /// <param name="indexConsultar">Tabindex para realizar la consulta</param>
@@ -42,7 +42,7 @@ namespace LectorCvsResultados
         }
 
         /// <summary>
-        /// Método que realiza el conteo de los spandatos agrupados hasta la fecha
+        /// Método que realiza el conteo de los spandatos agrupados hasta la Fecha
         /// </summary>
         /// <param name="contexto">Instancia del contexto para realizar la consulta</param>
         /// <param name="indexConsultar">Tabindex para realizar la consulta</param>
@@ -79,7 +79,7 @@ namespace LectorCvsResultados
         /// <param name="contexto">Instancia del contexto</param>
         /// <param name="diaSemana">Número del día de la semana</param>
         /// <param name="maxTabIndex">Máximo tabindex para realizar la comparación</param>
-        /// <param name="fechaNum">Valor Número para la fecha</param>
+        /// <param name="fechaNum">Valor Número para la Fecha</param>
         /// <param name="diaMes">Día del més a realizar la consulta</param>
         /// <returns></returns>
         public static List<AgrupadorTotalTabIndexDTO> ConsultarDatosAcumuladosIgualdadDiaSemanaMes(SisResultEntities contexto, int diaSemana, int maxTabIndex, string fechaNum, int diaMes)
@@ -163,7 +163,7 @@ namespace LectorCvsResultados
         }
 
         /// <summary>
-        /// Método que retorna el máximo tabindex para la fecha ingresada
+        /// Método que retorna el máximo tabindex para la Fecha ingresada
         /// </summary>
         /// <param name="fecha">Fecha para realizar la consulta</param>
         /// <param name="contexto">Contexto para realizar la consulta</param>
@@ -198,11 +198,11 @@ namespace LectorCvsResultados
         }
 
         /// <summary>
-        /// Método que realiza la consulta del último span de datos para un tabindex y una fecha máxima para realizar la consulta
+        /// Método que realiza la consulta del último span de datos para un tabindex y una Fecha máxima para realizar la consulta
         /// </summary>
         /// <param name="contexto">Instancia del contexto para realizar la consulta</param>
         /// <param name="indexConsultar">Tabindex para realizar la consulta</param>
-        /// <param name="fechaNumMaxima">Máxima fecha numérica para la consulta de datos anteriores</param>
+        /// <param name="fechaNumMaxima">Máxima Fecha numérica para la consulta de datos anteriores</param>
         /// <returns></returns>
         public static List<AgrupadorConteosTimeSpanDTO> ConsultarUltimoSpanTiempo(SisResultEntities contexto, int indexConsultar, string fechaNumMaxima)
         {
