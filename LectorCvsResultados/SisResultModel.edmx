@@ -46,6 +46,8 @@
           <Property Name="SPANANIOACTUAL" Type="number" Precision="38" Scale="0" />
           <Property Name="SPANANIOHISTORICO" Type="number" Precision="38" Scale="0" />
           <Property Name="FECHA" Type="date" />
+          <Property Name="FECHANUM" Type="number" Precision="38" Scale="0" />
+          <Property Name="TABINDEXSEQ" Type="number" Precision="38" Scale="0" />
         </EntityType>
         <EntityType Name="USERRESULTTABLESFS">
           <Key>
@@ -132,26 +134,28 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="TABINDEX" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="TABINDEX" Type="Int32" />
           <Property Name="RESULT" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="GHOME" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="GAWAY" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="DIFERENCIAG" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="TOTALG" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="GHOME" Type="Int32" />
+          <Property Name="GAWAY" Type="Int32" />
+          <Property Name="DIFERENCIAG" Type="Int32" />
+          <Property Name="TOTALG" Type="Int32" />
           <Property Name="GROUPLETTER" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="TABINDEXLETTER" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="DIASEM" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="DIAMES" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="DIAANIO" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="SPANDIARIOACTUAL" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="SPANDIARIOHISTORICO" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="SPANSEMANAACTUAL" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="SPANSEMANAHISTORICO" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="SPANMESACTUAL" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="SPANMESHISTORICO" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="SPANANIOACTUAL" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="SPANANIOHISTORICO" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="TABINDEXLETTER" Type="Int32" />
+          <Property Name="DIASEM" Type="Int32" />
+          <Property Name="DIAMES" Type="Int32" />
+          <Property Name="DIAANIO" Type="Int32" Nullable="true" />
+          <Property Name="SPANDIARIOACTUAL" Type="Int32" />
+          <Property Name="SPANDIARIOHISTORICO" Type="Int32" />
+          <Property Name="SPANSEMANAACTUAL" Type="Int32" />
+          <Property Name="SPANSEMANAHISTORICO" Type="Int32" />
+          <Property Name="SPANMESACTUAL" Type="Int32" />
+          <Property Name="SPANMESHISTORICO" Type="Int32" />
+          <Property Name="SPANANIOACTUAL" Type="Int32" />
+          <Property Name="SPANANIOHISTORICO" Type="Int32" />
           <Property Name="FECHA" Type="DateTime" />
+          <Property Name="FECHANUM" Type="Int32" />
+          <Property Name="TABINDEXSEQ" Type="Int32" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -205,6 +209,8 @@
           <EntitySetMapping Name="FLASHORDERED">
             <EntityTypeMapping TypeName="SistResultModel.FLASHORDERED">
               <MappingFragment StoreEntitySet="FLASHORDERED">
+                <ScalarProperty Name="TABINDEXSEQ" ColumnName="TABINDEXSEQ" />
+                <ScalarProperty Name="FECHANUM" ColumnName="FECHANUM" />
                 <ScalarProperty Name="FECHA" ColumnName="FECHA" />
                 <ScalarProperty Name="SPANANIOHISTORICO" ColumnName="SPANANIOHISTORICO" />
                 <ScalarProperty Name="SPANANIOACTUAL" ColumnName="SPANANIOACTUAL" />

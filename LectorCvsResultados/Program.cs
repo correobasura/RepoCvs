@@ -385,8 +385,8 @@ namespace LectorCvsResultados
             //{
             //    string fechaFormat = i.ToString("yyyyMMdd");
             //    AnalizarTabindexResultados(fechaFormat);
-            //    IngresarDatos(fechaFormat);
-            //    AnalizarUnGanador(fechaFormat);
+            //IngresarDatos(fechaFormat);
+            //AnalizarUnGanador(fechaFormat);
             //    i = i.AddDays(1);
             //}
             ////for (int i = -5; i < 0; i++)
@@ -462,6 +462,27 @@ namespace LectorCvsResultados
             //    }
             //    i = i.AddDays(1);
             //}
+            //ReiniciarDatosFlashOrdered();
+            InsertarFORecientes();
+
+        }
+
+        private static void InsertarFORecientes()
+        {
+            List<FLASHORDERED> lista = new List<FLASHORDERED>();
+            var laFecha = DateTime.ParseExact("20180108", "yyyyMMdd", CultureInfo.InvariantCulture);
+            int idInicio = ConsultasClassFO.ConsultarMaxIdActual(contexto);
+            for (var i = laFecha; i < DateTime.Today;)
+            {
+                lista.AddRange(UtilGeneral.UtilHtml.LeerInfoHtml(i, 1, idInicio));
+                idInicio = idInicio + lista.Count + 1;
+                i = i.AddDays(1);
+            }
+            AnDataFlashOrdered.InsertarElementosActuales(lista, contexto);
+        }
+
+        private static void ReiniciarDatosFlashOrdered()
+        {
             List<FLASHORDERED> lista = new List<FLASHORDERED>();
             var laFecha = DateTime.ParseExact("20170202", "yyyyMMdd", CultureInfo.InvariantCulture);
             for (var i = laFecha; i < DateTime.Today.AddDays(-1);)
@@ -518,8 +539,7 @@ namespace LectorCvsResultados
             ////    i = i.AddDays(1);
             ////}
             //var stop = "";
-            AnDataFlashOrdered.GuardarElementos(contexto, part);
-
+            AnDataFlashOrdered.GuardarElementosGeneral(contexto, part);
         }
 
         //public static void LeerHtmlRC(String fechaMes, String fechaDia)

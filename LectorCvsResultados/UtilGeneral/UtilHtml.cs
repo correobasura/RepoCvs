@@ -119,6 +119,7 @@ namespace LectorCvsResultados.UtilGeneral
             List<FLASHORDERED> listaHtmlFinal = new List<FLASHORDERED>();
             string fechaMes = fecha.ToString("yyyyMM");
             string fechaDia = fecha.ToString("yyyyMMdd");
+            int fechaNum = Convert.ToInt32(fechaDia);
             string strAfter = "";
             string strFinal = "";
             string path = "";
@@ -198,6 +199,94 @@ namespace LectorCvsResultados.UtilGeneral
                 item.ID = idInicio++;
                 item.SPANANIOHISTORICO = item.DIFERENCIAG == 0 ? -1 : 1;
                 item.SPANANIOACTUAL = item.SPANANIOHISTORICO;
+                item.FECHANUM = fechaNum;
+            }
+            return listaHtmlFinal;
+        }
+
+        public static List<FLASHORDERED> LeerInfoHtml(
+            DateTime fecha, int caso, decimal idInicio)
+        {
+            List<FLASHORDERED> listaHtmlFinal = new List<FLASHORDERED>();
+            string fechaMes = fecha.ToString("yyyyMM");
+            string fechaDia = fecha.ToString("yyyyMMdd");
+            int fechaNum = Convert.ToInt32(fechaDia);
+            string strAfter = "";
+            string strFinal = "";
+            string path = "";
+            int indexInicio;
+            int diaSem = (int)fecha.DayOfWeek == 0 ? 7 : (int)fecha.DayOfWeek;
+            int diaMes = fecha.Day;
+            int diaAnio = fecha.DayOfYear;
+            if (caso == 1)
+            {
+                path = pathBase + fs + fechaMes + "\\" + fechaDia;
+                indexInicio = 1;
+                strAfter = "after";
+                strFinal = "finished";
+            }
+            else
+            {
+                path = pathBase + rc + fechaMes + "\\" + fechaDia;
+                indexInicio = 0;
+                strAfter = "tras";
+                strFinal = "finalizado";
+            }
+
+            if (!File.Exists(path + ".html"))
+            {
+                var pathTemp = path + "T" + ".html";
+                var pathFinal = path + "F" + ".html";
+                List<FLASHORDERED> listaHtmlTemp = LeerHtml(indexInicio, strAfter, strFinal, pathTemp);
+
+                List<FLASHORDERED> listaFinal = LeerHtml(indexInicio, strAfter, strFinal, pathFinal);
+                foreach (var item in listaHtmlTemp)
+                {
+                    List<FLASHORDERED> listaElementos = (from x in listaFinal
+                                                         where x.Home == item.Home
+                                                         && x.Away == item.Away
+                                                         select x).ToList();
+                    if (listaElementos.Any())
+                    {
+                        if (listaElementos.Count > 1)
+                        {
+                            FLASHORDERED elementoAdd = (from x in listaElementos
+                                                        where x.Hora.Trim().Substring(0, 2).Equals(item.Hora.Trim().Substring(0, 2))
+                                                        select x)
+                                               .FirstOrDefault();
+
+                            if (elementoAdd != null)
+                            {
+                                elementoAdd.TABINDEX = item.TABINDEX;
+                                elementoAdd.TABINDEXLETTER = item.TABINDEXLETTER;
+                                listaHtmlFinal.Add(elementoAdd);
+                            }
+                        }
+                        else
+                        {
+                            listaElementos[0].TABINDEX = item.TABINDEX;
+                            listaElementos[0].TABINDEXLETTER = item.TABINDEXLETTER;
+                            listaHtmlFinal.Add(listaElementos[0]);
+                        }
+                    }
+                }
+                listaHtmlFinal = listaHtmlFinal.Where(x => x.Estado.ToLower().Equals(strFinal)).ToList();
+            }
+            else
+            {
+                listaHtmlFinal = LeerHtml(indexInicio, strAfter, strFinal, path + ".html");
+                listaHtmlFinal = listaHtmlFinal.Where(x => x.Estado.ToLower().Equals(strFinal)).ToList();
+            }
+            foreach (var item in listaHtmlFinal)
+            {
+                item.DIASEM = diaSem;
+                item.DIAMES = diaMes;
+                item.DIAANIO = diaAnio;
+                item.FECHA = fecha;
+                item.ID = idInicio++;
+                item.SPANANIOHISTORICO = item.DIFERENCIAG == 0 ? -1 : 1;
+                item.SPANANIOACTUAL = item.SPANANIOHISTORICO;
+                item.FECHANUM = fechaNum;
             }
             return listaHtmlFinal;
         }

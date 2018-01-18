@@ -1,20 +1,21 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Script.Serialization;
 
 namespace LectorCvsResultados.FlashOrdered
 {
     public class AnDataFlashOrdered
     {
+        /// <summary>
+        /// Valida los elementos ingresados desde cero
+        /// </summary>
+        /// <param name="lista">elementos a revisar</param>
+        /// <returns>Lista con datos actualizados de los span analizados</returns>
         public static List<FLASHORDERED> AnalizarGeneral(List<FLASHORDERED> lista)
         {
-            List<decimal?> listaDistinctIndex = lista.Select(x => x.TABINDEX).Distinct().ToList();
+            List<int?> listaDistinctIndex = lista.Select(x => x.TABINDEX).Distinct().ToList();
             foreach (var item in listaDistinctIndex)
             {
                 int indexActual = 0;
@@ -158,11 +159,16 @@ namespace LectorCvsResultados.FlashOrdered
                 }
             }
             lista = lista.OrderBy(x => x.ID).ToList();
-            //GuardarElementos(contexto, lista);
+            //GuardarElementosGeneral(contexto, lista);
             return lista;
         }
 
-        public static void GuardarElementos(SisResultEntities contexto, int maxIdFile)
+        /// <summary>
+        /// Guarda los elementos que se leen de los archivos generados del análisis general
+        /// </summary>
+        /// <param name="contexto">instancia para la persistencia de los objetos</param>
+        /// <param name="maxIdFile">Identificador del máximo archivo generado</param>
+        public static void GuardarElementosGeneral(SisResultEntities contexto, int maxIdFile)
         {
             List<FLASHORDERED> lista = new List<FLASHORDERED>();
             for (int i = 1; i < maxIdFile; i++)
@@ -197,6 +203,239 @@ namespace LectorCvsResultados.FlashOrdered
            // }
 
 
+        }
+
+        public static void InsertarElementosActuales(List<FLASHORDERED> lista, SisResultEntities contexto)
+        {
+            List<int?> listaFechaNum = (from x in lista orderby x.FECHANUM select x.FECHANUM).Distinct().ToList();
+            foreach (var fechaNum in listaFechaNum)
+            {
+                List<FLASHORDERED> listaPersist = lista.Where(x => x.FECHANUM == fechaNum).OrderBy(x=>x.ID).ToList();
+                foreach (var obj in listaPersist)
+                {
+                    obj.TABINDEXSEQ = ConsultasClass.ConsultarNextTabindexSeq(contexto, (int)obj.TABINDEX);
+                    obj.SPANDIARIOHISTORICO = ValidarSpanTiempo((int)obj.TABINDEX, (int)obj.DIFERENCIAG, contexto, (int)obj.FECHANUM, 0, (int)obj.DIASEM, (int)obj.DIAMES, (int)obj.DIAANIO);
+                    obj.SPANSEMANAHISTORICO = ValidarSpanTiempo((int)obj.TABINDEX, (int)obj.DIFERENCIAG, contexto, (int)obj.FECHANUM, 1, (int)obj.DIASEM, (int)obj.DIAMES, (int)obj.DIAANIO);
+                    obj.SPANMESHISTORICO = ValidarSpanTiempo((int)obj.TABINDEX, (int)obj.DIFERENCIAG, contexto, (int)obj.FECHANUM, 2, (int)obj.DIASEM, (int)obj.DIAMES, (int)obj.DIAANIO);
+                    obj.SPANANIOHISTORICO = ValidarSpanTiempo((int)obj.TABINDEX, (int)obj.DIFERENCIAG, contexto, (int)obj.FECHANUM, 3, (int)obj.DIASEM, (int)obj.DIAMES, (int)obj.DIAANIO);
+
+                }
+                contexto.FLASHORDERED.AddRange(listaPersist);
+                //contexto.SaveChanges();
+                ValidarSpanDatosAnterior(contexto, listaPersist);
+            }
+        }
+
+        /// <summary>
+        /// Método que realiza el retorno del valor para el span de tiempo del tabindex
+        /// de acuerdo a si la diferencia es cero o no, y dependiendo del último valor del span
+        /// </summary>
+        /// <param name="tabindex">Tabindex a consultar</param>
+        /// <param name="diferenciaG">Valor de la diferencia para validar</param>
+        /// <param name="contexto"></param>
+        /// <returns></returns>
+        private static int ValidarSpanTiempo(int tabindex, int diferenciaG, SisResultEntities contexto, int fechaNum, int caso,
+            int diaSem, int diaMes, int diaAnio)
+        {
+            int valorSpan = 0;
+            AgrupadorFechaNumValor ultimoSpan = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, tabindex, fechaNum, diaSem, diaMes, diaAnio, caso);
+            if (diferenciaG == 0)
+            {
+                valorSpan = ultimoSpan.Spantiempo >= 0 ? -1 : --ultimoSpan.Spantiempo;
+            }
+            else
+            {
+                valorSpan = ultimoSpan.Spantiempo <= 0 ? 1 : ++ultimoSpan.Spantiempo;
+            }
+            return valorSpan;
+        }
+
+        /// <summary>
+        /// Método que realiza la validación de los span del día anterior, y actualizar los datos si es requerido
+        /// y luego asignar los del día acutal
+        /// </summary>
+        /// <param name="contexto">Instancia del contexto para la consulta de datos</param>
+        /// <param name="listTabindex">Lista con los tabindex para realizar la consulta</param>
+        /// <param name="listElementosAgregados">Lista con los elementos adicionados, para realizar el análisis</param>
+        public static void ValidarSpanDatosAnterior(SisResultEntities contexto, List<FLASHORDERED> listElementosAgregados)
+        {
+            int maxTabindex = ConsultasClassFO.ConsultarMaxIndexResultados(contexto);
+            List<int?> listTabindex = (from x in listElementosAgregados select x.TABINDEX).ToList();
+            maxTabindex = (int)listTabindex.Max()> maxTabindex ? maxTabindex : (int)listTabindex.Max();
+            int maxFechaNumIndex;
+            var elementTemp = listElementosAgregados.ElementAt(0);
+            List<FLASHORDERED> listaDatosUltimosSpan;
+            for (int r = 0; r <= 3; r++)
+            {
+                switch (r)
+                {
+                    case 1:
+                        maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, 1, (int)elementTemp.DIASEM);
+                        listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
+                                                 where listTabindex.Contains(b.TABINDEX)
+                                                 && b.SPANSEMANAACTUAL != null
+                                                 && b.FECHANUM >= maxFechaNumIndex
+                                                 && b.DIASEM == elementTemp.DIASEM
+                                                 select b).OrderByDescending(b => b.FECHANUM).ThenBy(x => x.TABINDEX).AsEnumerable().ToList()
+                             .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
+                        break;
+                    case 2:
+                        maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, 2, (int)elementTemp.DIAMES);
+                        listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
+                                                 where listTabindex.Contains(b.TABINDEX)
+                                                 && b.SPANMESACTUAL != null
+                                                 && b.FECHANUM >= maxFechaNumIndex
+                                                 && b.DIAMES == elementTemp.DIAMES
+                                                 select b).OrderByDescending(b => b.FECHANUM).ThenBy(x => x.TABINDEX).AsEnumerable().ToList()
+                             .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
+                        break;
+                    case 3:
+                        //maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, 3, (int)elementTemp.DIAANIO);
+                        //listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
+                        //                         where listTabindex.Contains(b.TABINDEX)
+                        //                         && b.SPANANIOACTUAL != null
+                        //                         && b.FECHANUM >= maxFechaNumIndex
+                        //                         && b.DIAANIO == elementTemp.DIAANIO
+                        //                         select b).OrderByDescending(b => b.FECHANUM).ThenBy(x => x.TABINDEX).AsEnumerable().ToList()
+                        //     .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
+                        listaDatosUltimosSpan = new List<FLASHORDERED>();
+                        break;
+                    default:
+                        maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, 0, 0);
+                        listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
+                                                 where listTabindex.Contains(b.TABINDEX)
+                                                 && b.SPANDIARIOACTUAL != null
+                                                 && b.FECHANUM >= maxFechaNumIndex
+                                                 select b).OrderByDescending(b => b.FECHANUM).ThenBy(x => x.TABINDEX).AsEnumerable().ToList()
+                             .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
+                        break;
+                }
+                for (int i = 0; i < listTabindex.Count; i++)
+                {
+                    int tabIndex = (int)listTabindex.ElementAt(i);
+                    var uAnt = listaDatosUltimosSpan.Where(x => x.TABINDEX == tabIndex).FirstOrDefault();
+                    var uActual = listElementosAgregados.Where(x => x.TABINDEX == tabIndex).FirstOrDefault();
+                    if (uAnt != null)
+                    {
+                        ValidarSpanColumna(uAnt, uActual, r);
+                    }
+                }
+            }
+            contexto.SaveChanges();
+        }
+
+        private static void ValidarSpanColumna(FLASHORDERED uAnt, FLASHORDERED uActual, int casoColumna)
+        {
+            if (uActual.DIFERENCIAG == 0)
+            {
+                if (casoColumna == 0)
+                {
+                    if (uAnt.SPANDIARIOACTUAL < 0)
+                    {
+                        uActual.SPANDIARIOACTUAL = --uAnt.SPANDIARIOACTUAL;
+                        uAnt.SPANDIARIOACTUAL = null;
+                    }
+                    else
+                    {
+                        uActual.SPANDIARIOACTUAL = -1;
+
+                    }
+                }
+                else if (casoColumna == 1)
+                {
+                    if (uAnt.SPANSEMANAACTUAL < 0)
+                    {
+                        uActual.SPANSEMANAACTUAL = --uAnt.SPANSEMANAACTUAL;
+                        uAnt.SPANSEMANAACTUAL = null;
+                    }
+                    else
+                    {
+                        uActual.SPANSEMANAACTUAL = -1;
+
+                    }
+                }
+                else if (casoColumna == 2)
+                {
+                    if (uAnt.SPANMESACTUAL < 0)
+                    {
+                        uActual.SPANMESACTUAL = --uAnt.SPANMESACTUAL;
+                        uAnt.SPANMESACTUAL = null;
+                    }
+                    else
+                    {
+                        uActual.SPANMESACTUAL = -1;
+
+                    }
+                }
+                else if (casoColumna == 3)
+                {
+                    if (uAnt.SPANANIOACTUAL < 0)
+                    {
+                        uActual.SPANANIOACTUAL = --uAnt.SPANANIOACTUAL;
+                        uAnt.SPANANIOACTUAL = null;
+                    }
+                    else
+                    {
+                        uActual.SPANANIOACTUAL = -1;
+
+                    }
+                }
+            }
+            else
+            {
+                if (casoColumna == 0)
+                {
+                    if (uAnt.SPANDIARIOACTUAL > 0)
+                    {
+                        uActual.SPANDIARIOACTUAL = ++uAnt.SPANDIARIOACTUAL;
+                        uAnt.SPANDIARIOACTUAL = null;
+                    }
+                    else
+                    {
+                        uActual.SPANDIARIOACTUAL = 1;
+
+                    }
+                }
+                else if (casoColumna == 1)
+                {
+                    if (uAnt.SPANSEMANAACTUAL > 0)
+                    {
+                        uActual.SPANSEMANAACTUAL = ++uAnt.SPANSEMANAACTUAL;
+                        uAnt.SPANSEMANAACTUAL = null;
+                    }
+                    else
+                    {
+                        uActual.SPANSEMANAACTUAL = 1;
+
+                    }
+                }
+                else if (casoColumna == 2)
+                {
+                    if (uAnt.SPANMESACTUAL > 0)
+                    {
+                        uActual.SPANMESACTUAL = ++uAnt.SPANMESACTUAL;
+                        uAnt.SPANMESACTUAL = null;
+                    }
+                    else
+                    {
+                        uActual.SPANMESACTUAL = 1;
+
+                    }
+                }
+                else if (casoColumna == 3)
+                {
+                    if (uAnt.SPANANIOACTUAL > 0)
+                    {
+                        uActual.SPANANIOACTUAL = ++uAnt.SPANANIOACTUAL;
+                        uAnt.SPANANIOACTUAL = null;
+                    }
+                    else
+                    {
+                        uActual.SPANANIOACTUAL = 1;
+
+                    }
+                }
+            }
         }
     }
 }
