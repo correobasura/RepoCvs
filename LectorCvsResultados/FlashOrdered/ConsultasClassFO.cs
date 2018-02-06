@@ -103,5 +103,29 @@ namespace LectorCvsResultados.FlashOrdered
             }
             return data.FechaNum;
         }
+
+        /// <summary>
+        /// Método que retorna el máximo valor de la secuencia de un tabindex
+        /// </summary>
+        /// <param name="contexto">Instancia para realizar la consulta</param>
+        /// <param name="tabIndex">Tabindex sobre el que se realiza la validación</param>
+        /// <returns></returns>
+        public static int ConsultarNextTabindexSeq(SisResultEntities contexto, decimal? tabIndex)
+        {
+            string query = string.Format(ConstantesConsultaFO.QUERY_NEXT_TABINDEX_SEQ, tabIndex);
+            return contexto.Database.SqlQuery<int>(query).Single() + 1;
+        }
+
+        /// <summary>
+        /// Método que retorna el máximo valor de la secuencia de un tabindex
+        /// </summary>
+        /// <param name="contexto">Instancia para realizar la consulta</param>
+        /// <param name="tabIndex">Tabindex sobre el que se realiza la validación</param>
+        /// <returns></returns>
+        public static int ConsultarNextTabindexLetterSeq(SisResultEntities contexto, string groupLetter, decimal? tabIndexLetter)
+        {
+            string query = string.Format(ConstantesConsultaFO.QUERY_NEXT_TABINDEXLETTER_SEQ, groupLetter , tabIndexLetter);
+            return contexto.Database.SqlQuery<int>(query).Single() + 1;
+        }
     }
 }

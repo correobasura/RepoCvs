@@ -64,6 +64,8 @@ namespace LectorCvsResultados
 
     public Nullable<int> TABINDEXSEQ { get; set; }
 
+    public Nullable<decimal> TABINDEXLETTERSEQ { get; set; }
+
         [NotMapped]
         public string Hora { get; set; }
         [NotMapped]
@@ -77,6 +79,10 @@ namespace LectorCvsResultados
         [NotMapped]
         public int intChar { get; set; }
 
+        public override string ToString()
+        {
+            return TABINDEX + ";" + RESULT + ";" + GHOME + ";" + GAWAY + ";" + DIFERENCIAG + ";" + TOTALG + ";" + GROUPLETTER + ";" + TABINDEXLETTER + ";" + DIASEM + ";" + DIAMES + ";" + DIAANIO + ";" + SPANDIARIOACTUAL + ";" + SPANDIARIOHISTORICO + ";" + SPANSEMANAACTUAL + ";" + SPANSEMANAHISTORICO + ";" + SPANMESACTUAL + ";" + SPANMESHISTORICO + ";" + SPANANIOACTUAL + ";" + SPANANIOHISTORICO + ";" + FECHA + ";" + FECHANUM + ";" + TABINDEXSEQ + ";" + TABINDEXLETTERSEQ + ";" + Hora + ";" + Estado + ";" + Home + ";" + Away + ";" + Half + ";" + intChar;
+        }
     }
 
 }

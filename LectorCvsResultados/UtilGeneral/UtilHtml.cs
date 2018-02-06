@@ -290,5 +290,33 @@ namespace LectorCvsResultados.UtilGeneral
             }
             return listaHtmlFinal;
         }
+
+        public static List<FLASHORDERED> LeerInfoHtmlTempActual(
+            DateTime fecha, int caso)
+        {
+            string path = "";
+            string fechaMes = fecha.ToString("yyyyMM");
+            string fechaDia = fecha.ToString("yyyyMMdd");
+            string strAfter = "";
+            string strFinal = "";
+            int indexInicio;
+            if (caso == 1)
+            {
+                path = pathBase + fs + fechaMes + "\\" + fechaDia;
+                indexInicio = 1;
+                strAfter = "after";
+                strFinal = "finished";
+            }
+            else
+            {
+                path = pathBase + rc + fechaMes + "\\" + fechaDia;
+                indexInicio = 0;
+                strAfter = "tras";
+                strFinal = "finalizado";
+            }
+            var pathTemp = path + "T" + ".html";
+            List<FLASHORDERED> listaHtmlTemp = LeerHtml(indexInicio, strAfter, strFinal, pathTemp);
+            return listaHtmlTemp;
+        }
     }
 }

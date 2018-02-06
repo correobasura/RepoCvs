@@ -103,6 +103,7 @@
     <Compile Include="USERRESULTTABLESFS.cs">
       <DependentUpon>SisResultModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="UtilGeneral\UtilFilesIO.cs" />
     <Compile Include="UtilGeneral\UtilHtml.cs" />
   </ItemGroup>
   <ItemGroup>

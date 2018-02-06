@@ -32,5 +32,16 @@ namespace LectorCvsResultados.FlashOrdered
             + "WHERE tabindex <= {0} "
             + "{1} "
             + "GROUP BY tabindex ORDER BY 1";
+
+        public const string QUERY_NEXT_TABINDEX_SEQ =
+                    "SELECT COALESCE(MAX(tabindexseq),0) "
+                    + "FROM flashordered "
+                    + "WHERE tabindex = {0}";
+
+        public const string QUERY_NEXT_TABINDEXLETTER_SEQ =
+                    "SELECT COALESCE(MAX(tabindexletterseq),0) "
+                    + "FROM flashordered "
+                    + "WHERE groupletter = '{0}' "
+                    + "AND tabindexletter = {1}";
     }
 }

@@ -205,6 +205,12 @@ namespace LectorCvsResultados.FlashOrdered
 
         }
 
+        /// <summary>
+        /// Método que realiza el guardado y la validación de los datos actuales, junto con los 
+        /// span para cada uno de las columnas de span
+        /// </summary>
+        /// <param name="lista">Elementos a persistir</param>
+        /// <param name="contexto">Instancia del contexto</param>
         public static void InsertarElementosActuales(List<FLASHORDERED> lista, SisResultEntities contexto)
         {
             List<int?> listaFechaNum = (from x in lista orderby x.FECHANUM select x.FECHANUM).Distinct().ToList();
@@ -213,7 +219,8 @@ namespace LectorCvsResultados.FlashOrdered
                 List<FLASHORDERED> listaPersist = lista.Where(x => x.FECHANUM == fechaNum).OrderBy(x=>x.ID).ToList();
                 foreach (var obj in listaPersist)
                 {
-                    obj.TABINDEXSEQ = ConsultasClass.ConsultarNextTabindexSeq(contexto, (int)obj.TABINDEX);
+                    obj.TABINDEXSEQ = ConsultasClassFO.ConsultarNextTabindexSeq(contexto, obj.TABINDEX);
+                    obj.TABINDEXLETTERSEQ = ConsultasClassFO.ConsultarNextTabindexLetterSeq(contexto, obj.GROUPLETTER, obj.TABINDEXLETTER);
                     obj.SPANDIARIOHISTORICO = ValidarSpanTiempo((int)obj.TABINDEX, (int)obj.DIFERENCIAG, contexto, (int)obj.FECHANUM, 0, (int)obj.DIASEM, (int)obj.DIAMES, (int)obj.DIAANIO);
                     obj.SPANSEMANAHISTORICO = ValidarSpanTiempo((int)obj.TABINDEX, (int)obj.DIFERENCIAG, contexto, (int)obj.FECHANUM, 1, (int)obj.DIASEM, (int)obj.DIAMES, (int)obj.DIAANIO);
                     obj.SPANMESHISTORICO = ValidarSpanTiempo((int)obj.TABINDEX, (int)obj.DIFERENCIAG, contexto, (int)obj.FECHANUM, 2, (int)obj.DIASEM, (int)obj.DIAMES, (int)obj.DIAANIO);
@@ -221,7 +228,7 @@ namespace LectorCvsResultados.FlashOrdered
 
                 }
                 contexto.FLASHORDERED.AddRange(listaPersist);
-                //contexto.SaveChanges();
+                contexto.SaveChanges();
                 ValidarSpanDatosAnterior(contexto, listaPersist);
             }
         }
@@ -233,7 +240,12 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="tabindex">Tabindex a consultar</param>
         /// <param name="diferenciaG">Valor de la diferencia para validar</param>
         /// <param name="contexto"></param>
-        /// <returns></returns>
+        /// <param name="fechaNum">Fecha de la validación</param>
+        /// <param name="caso">Caso para validar la columna </param>
+        /// <param name="diaSem">Dia sem</param>
+        /// <param name="diaMes">Dia mes</param>
+        /// <param name="diaAnio">Dia anio</param>
+        /// <returns>Valor para asignar al span</returns>
         private static int ValidarSpanTiempo(int tabindex, int diferenciaG, SisResultEntities contexto, int fechaNum, int caso,
             int diaSem, int diaMes, int diaAnio)
         {
@@ -255,7 +267,6 @@ namespace LectorCvsResultados.FlashOrdered
         /// y luego asignar los del día acutal
         /// </summary>
         /// <param name="contexto">Instancia del contexto para la consulta de datos</param>
-        /// <param name="listTabindex">Lista con los tabindex para realizar la consulta</param>
         /// <param name="listElementosAgregados">Lista con los elementos adicionados, para realizar el análisis</param>
         public static void ValidarSpanDatosAnterior(SisResultEntities contexto, List<FLASHORDERED> listElementosAgregados)
         {
@@ -290,15 +301,14 @@ namespace LectorCvsResultados.FlashOrdered
                              .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
                         break;
                     case 3:
-                        //maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, 3, (int)elementTemp.DIAANIO);
-                        //listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
-                        //                         where listTabindex.Contains(b.TABINDEX)
-                        //                         && b.SPANANIOACTUAL != null
-                        //                         && b.FECHANUM >= maxFechaNumIndex
-                        //                         && b.DIAANIO == elementTemp.DIAANIO
-                        //                         select b).OrderByDescending(b => b.FECHANUM).ThenBy(x => x.TABINDEX).AsEnumerable().ToList()
-                        //     .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
-                        listaDatosUltimosSpan = new List<FLASHORDERED>();
+                        maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, 3, (int)elementTemp.DIAANIO);
+                        listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
+                                                 where listTabindex.Contains(b.TABINDEX)
+                                                 && b.SPANANIOACTUAL != null
+                                                 && b.FECHANUM >= maxFechaNumIndex
+                                                 && b.DIAANIO == elementTemp.DIAANIO
+                                                 select b).OrderByDescending(b => b.FECHANUM).ThenBy(x => x.TABINDEX).AsEnumerable().ToList()
+                             .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
                         break;
                     default:
                         maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, 0, 0);
@@ -324,6 +334,12 @@ namespace LectorCvsResultados.FlashOrdered
             contexto.SaveChanges();
         }
 
+        /// <summary>
+        /// Método que realiza la validación del span de acuerdo al caso de la columna
+        /// </summary>
+        /// <param name="uAnt">Elemento de la última referencia</param>
+        /// <param name="uActual">Elemento actual</param>
+        /// <param name="casoColumna">Caso para asignar el valor a la columna</param>
         private static void ValidarSpanColumna(FLASHORDERED uAnt, FLASHORDERED uActual, int casoColumna)
         {
             if (uActual.DIFERENCIAG == 0)
@@ -436,6 +452,21 @@ namespace LectorCvsResultados.FlashOrdered
                     }
                 }
             }
+        }
+
+        public static void ValidarElementosDia(DateTime fecha, int caso)
+        {
+            List<FLASHORDERED> listaHtmlTemp = UtilGeneral.UtilHtml.LeerInfoHtmlTempActual(fecha, caso);
+            List<string> listaDistinctChar = listaHtmlTemp.Select(x => x.GROUPLETTER).Distinct().ToList();
+            Dictionary<string, int> keyValuePairMaxIndexChar = new Dictionary<string, int>();
+            foreach (var item in listaDistinctChar)
+            {
+                int maxValueIndexChar = (int)(from x in listaHtmlTemp
+                                         where x.GROUPLETTER.Equals(item)
+                                         select x.TABINDEXLETTER).Max();
+                keyValuePairMaxIndexChar.Add(item, maxValueIndexChar);
+            }
+            UtilGeneral.UtilFilesIO.EscribirArchivoCsv(listaHtmlTemp);
         }
     }
 }

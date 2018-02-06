@@ -463,14 +463,15 @@ namespace LectorCvsResultados
             //    i = i.AddDays(1);
             //}
             //ReiniciarDatosFlashOrdered();
-            InsertarFORecientes();
+            //InsertarFORecientes();
+            AnDataFlashOrdered.ValidarElementosDia(DateTime.Today,1);
 
         }
 
         private static void InsertarFORecientes()
         {
             List<FLASHORDERED> lista = new List<FLASHORDERED>();
-            var laFecha = DateTime.ParseExact("20180108", "yyyyMMdd", CultureInfo.InvariantCulture);
+            var laFecha = DateTime.ParseExact("20180202", "yyyyMMdd", CultureInfo.InvariantCulture);
             int idInicio = ConsultasClassFO.ConsultarMaxIdActual(contexto);
             for (var i = laFecha; i < DateTime.Today;)
             {

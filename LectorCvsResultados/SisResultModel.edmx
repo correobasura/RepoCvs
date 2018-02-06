@@ -48,6 +48,7 @@
           <Property Name="FECHA" Type="date" />
           <Property Name="FECHANUM" Type="number" Precision="38" Scale="0" />
           <Property Name="TABINDEXSEQ" Type="number" Precision="38" Scale="0" />
+          <Property Name="TABINDEXLETTERSEQ" Type="number" Precision="38" Scale="0" />
         </EntityType>
         <EntityType Name="USERRESULTTABLESFS">
           <Key>
@@ -156,6 +157,7 @@
           <Property Name="FECHA" Type="DateTime" />
           <Property Name="FECHANUM" Type="Int32" />
           <Property Name="TABINDEXSEQ" Type="Int32" />
+          <Property Name="TABINDEXLETTERSEQ" Type="Decimal" Precision="38" Scale="0" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -209,6 +211,7 @@
           <EntitySetMapping Name="FLASHORDERED">
             <EntityTypeMapping TypeName="SistResultModel.FLASHORDERED">
               <MappingFragment StoreEntitySet="FLASHORDERED">
+                <ScalarProperty Name="TABINDEXLETTERSEQ" ColumnName="TABINDEXLETTERSEQ" />
                 <ScalarProperty Name="TABINDEXSEQ" ColumnName="TABINDEXSEQ" />
                 <ScalarProperty Name="FECHANUM" ColumnName="FECHANUM" />
                 <ScalarProperty Name="FECHA" ColumnName="FECHA" />
