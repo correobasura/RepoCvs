@@ -464,7 +464,7 @@ namespace LectorCvsResultados
             //}
             //ReiniciarDatosFlashOrdered();
             //InsertarFORecientes();
-            AnDataFlashOrdered.ValidarElementosDia(DateTime.Today,1);
+            AnDataFlashOrdered.ValidarElementosDia(DateTime.Today.AddDays(-3),1);
 
         }
 

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace LectorCvsResultados.FlashOrdered
 {
@@ -466,6 +467,15 @@ namespace LectorCvsResultados.FlashOrdered
                                          select x.TABINDEXLETTER).Max();
                 keyValuePairMaxIndexChar.Add(item, maxValueIndexChar);
             }
+            string agrupador = "({0})";
+            string temp = "(groupletter  = '{0}' AND tabindexletter <= {1})";
+            List<string> listaJoins = new List<string>();
+            foreach (var item in keyValuePairMaxIndexChar)
+            {
+                listaJoins.Add(string.Format(temp, item.Key, item.Value));
+            }
+            string strJoin = string.Join(" OR ", listaJoins);
+            strJoin = string.Format(agrupador, strJoin);
             UtilGeneral.UtilFilesIO.EscribirArchivoCsv(listaHtmlTemp);
         }
     }
