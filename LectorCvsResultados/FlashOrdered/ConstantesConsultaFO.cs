@@ -22,9 +22,24 @@ namespace LectorCvsResultados.FlashOrdered
             + "AND fechanum < {1} "
             + "{3}) {3}";
 
+        public const string QUERY_ULTIMO_SPAN_TB_LETTER =
+            "SELECT {2} AS Spantiempo, fechanum AS FechaNum "
+            + "FROM flashordered "
+            + "WHERE tabIndexLetter = {0} {3} "
+            + "AND fechanum = (SELECT MAX(fechanum) "
+            + "FROM flashordered "
+            + "WHERE tabIndexLetter = {0} "
+            + "AND fechanum < {1} "
+            + "{3})";
+
         public const string QUERY_MAX_INDEX_RESULTADOS =
             "SELECT MAX(tabindex) "
             + "FROM flashordered ";
+
+        public const string QUERY_MAX_INDEX_RESULTADOS_GROUP_LETTER =
+            "SELECT MAX(tabindexletter) "
+            + "FROM flashordered "
+            + "WHERE groupletter = '{0}'";
 
         public const string QUERY_MAX_FECHA_TABINDEX =
             "SELECT MAX(fechaNum) AS FechaNum, tabindex AS tabindex "
@@ -32,6 +47,13 @@ namespace LectorCvsResultados.FlashOrdered
             + "WHERE tabindex <= {0} "
             + "{1} "
             + "GROUP BY tabindex ORDER BY 1";
+
+        public const string QUERY_MAX_FECHA_TABINDEX_GL =
+            "SELECT MAX(fechaNum) AS FechaNum, tabindexletter AS tabindex "
+            + "FROM flashordered "
+            + "WHERE {0} "
+            + "AND tabindexletter <= {1} "
+            + "GROUP BY tabindexletter ORDER BY 1";
 
         public const string QUERY_NEXT_TABINDEX_SEQ =
                     "SELECT COALESCE(MAX(tabindexseq),0) "
@@ -43,5 +65,17 @@ namespace LectorCvsResultados.FlashOrdered
                     + "FROM flashordered "
                     + "WHERE groupletter = '{0}' "
                     + "AND tabindexletter = {1}";
+
+        public const string QUERY_MAXFECHAS_TABANDGROUPLETTER =
+            "WITH registros AS ( "
+            + "SELECT max(fechanum) AS fechanum, tabindexletter AS Tabindexletter, groupletter AS Groupletter "
+            + "FROM flashordered "
+            + "WHERE {0} {1} "
+            + "GROUP BY tabindexletter, groupletter ) "
+            + "SELECT f.id AS id, r.* "
+            + "FROM flashordered f, registros r "
+            + "WHERE r.fechanum  = f.fechanum "
+            + "AND r.tabindexletter = f.tabindexletter "
+            + "AND r.groupletter = f.groupletter ";
     }
 }

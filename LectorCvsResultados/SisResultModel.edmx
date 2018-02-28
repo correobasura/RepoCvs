@@ -37,14 +37,22 @@
           <Property Name="DIASEM" Type="number" Precision="38" Scale="0" />
           <Property Name="DIAMES" Type="number" Precision="38" Scale="0" />
           <Property Name="DIAANIO" Type="number" Precision="38" Scale="0" />
-          <Property Name="SPANDIARIOACTUAL" Type="number" Precision="38" Scale="0" />
-          <Property Name="SPANDIARIOHISTORICO" Type="number" Precision="38" Scale="0" />
-          <Property Name="SPANSEMANAACTUAL" Type="number" Precision="38" Scale="0" />
-          <Property Name="SPANSEMANAHISTORICO" Type="number" Precision="38" Scale="0" />
-          <Property Name="SPANMESACTUAL" Type="number" Precision="38" Scale="0" />
-          <Property Name="SPANMESHISTORICO" Type="number" Precision="38" Scale="0" />
-          <Property Name="SPANANIOACTUAL" Type="number" Precision="38" Scale="0" />
-          <Property Name="SPANANIOHISTORICO" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIDIAACT" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIDIAHIST" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTISEMACT" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTISEMHIST" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIMESACT" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIMESHIST" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIANIACT" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIANIHIST" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIGLDIAACT" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIGLDIAHIST" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIGLSEMACT" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIGLSEMHIST" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIGLMESACT" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIGLMESHIST" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIGLANIACT" Type="number" Precision="38" Scale="0" />
+          <Property Name="SPANTIGLANIHIST" Type="number" Precision="38" Scale="0" />
           <Property Name="FECHA" Type="date" />
           <Property Name="FECHANUM" Type="number" Precision="38" Scale="0" />
           <Property Name="TABINDEXSEQ" Type="number" Precision="38" Scale="0" />
@@ -135,27 +143,35 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="TABINDEX" Type="Int32" />
-          <Property Name="RESULT" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="GHOME" Type="Int32" />
-          <Property Name="GAWAY" Type="Int32" />
-          <Property Name="DIFERENCIAG" Type="Int32" />
-          <Property Name="TOTALG" Type="Int32" />
-          <Property Name="GROUPLETTER" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="TABINDEXLETTER" Type="Int32" />
-          <Property Name="DIASEM" Type="Int32" />
-          <Property Name="DIAMES" Type="Int32" />
-          <Property Name="DIAANIO" Type="Int32" Nullable="true" />
-          <Property Name="SPANDIARIOACTUAL" Type="Int32" />
-          <Property Name="SPANDIARIOHISTORICO" Type="Int32" />
-          <Property Name="SPANSEMANAACTUAL" Type="Int32" />
-          <Property Name="SPANSEMANAHISTORICO" Type="Int32" />
-          <Property Name="SPANMESACTUAL" Type="Int32" />
-          <Property Name="SPANMESHISTORICO" Type="Int32" />
-          <Property Name="SPANANIOACTUAL" Type="Int32" />
-          <Property Name="SPANANIOHISTORICO" Type="Int32" />
+          <Property Name="TABINDEX" Type="Int32" Nullable="false" />
+          <Property Name="RESULT" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="GHOME" Type="Int32" Nullable="false" />
+          <Property Name="GAWAY" Type="Int32" Nullable="false" />
+          <Property Name="DIFERENCIAG" Type="Int32" Nullable="false" />
+          <Property Name="TOTALG" Type="Int32" Nullable="false" />
+          <Property Name="GROUPLETTER" Type="String" MaxLength="1" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="TABINDEXLETTER" Type="Int32" Nullable="false" />
+          <Property Name="DIASEM" Type="Int32" Nullable="false" />
+          <Property Name="DIAMES" Type="Int32" Nullable="false" />
+          <Property Name="DIAANIO" Type="Int32" Nullable="false" />
+          <Property Name="SPANTIDIAACT" Type="Int32" />
+          <Property Name="SPANTIDIAHIST" Type="Int32" Nullable="false" />
+          <Property Name="SPANTISEMACT" Type="Int32" />
+          <Property Name="SPANTISEMHIST" Type="Int32" Nullable="false" />
+          <Property Name="SPANTIMESACT" Type="Int32" />
+          <Property Name="SPANTIMESHIST" Type="Int32" Nullable="false" />
+          <Property Name="SPANTIANIACT" Type="Int32" />
+          <Property Name="SPANTIANIHIST" Type="Int32" Nullable="false" />
+          <Property Name="SPANTIGLDIAACT" Type="Int32" />
+          <Property Name="SPANTIGLDIAHIST" Type="Int32" Nullable="false" />
+          <Property Name="SPANTIGLSEMACT" Type="Int32" />
+          <Property Name="SPANTIGLSEMHIST" Type="Int32" Nullable="false" />
+          <Property Name="SPANTIGLMESACT" Type="Int32" />
+          <Property Name="SPANTIGLMESHIST" Type="Int32" Nullable="false" />
+          <Property Name="SPANTIGLANIACT" Type="Int32" />
+          <Property Name="SPANTIGLANIHIST" Type="Int32" Nullable="false" />
           <Property Name="FECHA" Type="DateTime" />
-          <Property Name="FECHANUM" Type="Int32" />
+          <Property Name="FECHANUM" Type="Int32" Nullable="false" />
           <Property Name="TABINDEXSEQ" Type="Int32" />
           <Property Name="TABINDEXLETTERSEQ" Type="Decimal" Precision="38" Scale="0" />
         </EntityType>
@@ -215,14 +231,22 @@
                 <ScalarProperty Name="TABINDEXSEQ" ColumnName="TABINDEXSEQ" />
                 <ScalarProperty Name="FECHANUM" ColumnName="FECHANUM" />
                 <ScalarProperty Name="FECHA" ColumnName="FECHA" />
-                <ScalarProperty Name="SPANANIOHISTORICO" ColumnName="SPANANIOHISTORICO" />
-                <ScalarProperty Name="SPANANIOACTUAL" ColumnName="SPANANIOACTUAL" />
-                <ScalarProperty Name="SPANMESHISTORICO" ColumnName="SPANMESHISTORICO" />
-                <ScalarProperty Name="SPANMESACTUAL" ColumnName="SPANMESACTUAL" />
-                <ScalarProperty Name="SPANSEMANAHISTORICO" ColumnName="SPANSEMANAHISTORICO" />
-                <ScalarProperty Name="SPANSEMANAACTUAL" ColumnName="SPANSEMANAACTUAL" />
-                <ScalarProperty Name="SPANDIARIOHISTORICO" ColumnName="SPANDIARIOHISTORICO" />
-                <ScalarProperty Name="SPANDIARIOACTUAL" ColumnName="SPANDIARIOACTUAL" />
+                <ScalarProperty Name="SPANTIGLANIHIST" ColumnName="SPANTIGLANIHIST" />
+                <ScalarProperty Name="SPANTIGLANIACT" ColumnName="SPANTIGLANIACT" />
+                <ScalarProperty Name="SPANTIGLMESHIST" ColumnName="SPANTIGLMESHIST" />
+                <ScalarProperty Name="SPANTIGLMESACT" ColumnName="SPANTIGLMESACT" />
+                <ScalarProperty Name="SPANTIGLSEMHIST" ColumnName="SPANTIGLSEMHIST" />
+                <ScalarProperty Name="SPANTIGLSEMACT" ColumnName="SPANTIGLSEMACT" />
+                <ScalarProperty Name="SPANTIGLDIAHIST" ColumnName="SPANTIGLDIAHIST" />
+                <ScalarProperty Name="SPANTIGLDIAACT" ColumnName="SPANTIGLDIAACT" />
+                <ScalarProperty Name="SPANTIANIHIST" ColumnName="SPANTIANIHIST" />
+                <ScalarProperty Name="SPANTIANIACT" ColumnName="SPANTIANIACT" />
+                <ScalarProperty Name="SPANTIMESHIST" ColumnName="SPANTIMESHIST" />
+                <ScalarProperty Name="SPANTIMESACT" ColumnName="SPANTIMESACT" />
+                <ScalarProperty Name="SPANTISEMHIST" ColumnName="SPANTISEMHIST" />
+                <ScalarProperty Name="SPANTISEMACT" ColumnName="SPANTISEMACT" />
+                <ScalarProperty Name="SPANTIDIAHIST" ColumnName="SPANTIDIAHIST" />
+                <ScalarProperty Name="SPANTIDIAACT" ColumnName="SPANTIDIAACT" />
                 <ScalarProperty Name="DIAANIO" ColumnName="DIAANIO" />
                 <ScalarProperty Name="DIAMES" ColumnName="DIAMES" />
                 <ScalarProperty Name="DIASEM" ColumnName="DIASEM" />

@@ -16,7 +16,169 @@ namespace LectorCvsResultados.FlashOrdered
         /// <returns>Lista con datos actualizados de los span analizados</returns>
         public static List<FLASHORDERED> AnalizarGeneral(List<FLASHORDERED> lista)
         {
-            List<int?> listaDistinctIndex = lista.Select(x => x.TABINDEX).Distinct().ToList();
+
+            List<string> listDistinctGrouLetter = lista.Select(x => x.GROUPLETTER).Distinct().ToList();
+            foreach (var itemLetter in listDistinctGrouLetter)
+            {
+                List<int> listaDistinctIndex2 = lista.Where(x => x.GROUPLETTER.Equals(itemLetter)).Select(x => x.TABINDEXLETTER).Distinct().ToList();
+                foreach (var item in listaDistinctIndex2)
+                {
+                    int indexActual = 0;
+                    var listaItems = (from x in lista
+                                      where x.TABINDEXLETTER.Equals(item)
+                      && x.GROUPLETTER.Equals(itemLetter)
+                                      select x).OrderBy(x => x.FECHA);
+                    foreach (var item2 in listaItems)
+                    {
+                        if (item2.DIFERENCIAG == 0)
+                        {
+                            if (indexActual < 0)
+                            {
+                                indexActual--;
+                            }
+                            else
+                            {
+                                indexActual = -1;
+                            }
+                        }
+                        else
+                        {
+                            if (indexActual > 0)
+                            {
+                                indexActual++;
+                            }
+                            else
+                            {
+                                indexActual = 1;
+                            }
+                        }
+                        item2.SPANTIGLDIAHIST = indexActual;
+                    }
+                    for (int i = 1; i <= 7; i++)
+                    {
+                        indexActual = 0;
+                        var listaItemsDia = (from x in listaItems where x.DIASEM.Equals(i) select x);
+                        foreach (var itemDia in listaItemsDia)
+                        {
+                            if (itemDia.DIFERENCIAG == 0)
+                            {
+                                if (indexActual < 0)
+                                {
+                                    indexActual--;
+                                }
+                                else
+                                {
+                                    indexActual = -1;
+                                }
+                            }
+                            else
+                            {
+                                if (indexActual > 0)
+                                {
+                                    indexActual++;
+                                }
+                                else
+                                {
+                                    indexActual = 1;
+                                }
+                            }
+                            itemDia.SPANTIGLSEMHIST = indexActual;
+                        }
+                    }
+                    for (int i = 1; i <= 31; i++)
+                    {
+                        indexActual = 0;
+                        var listaItemsDiaMes = (from x in listaItems where x.DIAMES.Equals(i) select x);
+                        foreach (var itemDia in listaItemsDiaMes)
+                        {
+                            if (itemDia.DIFERENCIAG == 0)
+                            {
+                                if (indexActual < 0)
+                                {
+                                    indexActual--;
+                                }
+                                else
+                                {
+                                    indexActual = -1;
+                                }
+                            }
+                            else
+                            {
+                                if (indexActual > 0)
+                                {
+                                    indexActual++;
+                                }
+                                else
+                                {
+                                    indexActual = 1;
+                                }
+                            }
+                            itemDia.SPANTIGLMESHIST = indexActual;
+                        }
+                    }
+
+                    listaItems = (from x in lista
+                                  where x.TABINDEXLETTER.Equals(item)
+                                  && x.GROUPLETTER.Equals(itemLetter)
+                                  select x).OrderByDescending(x => x.FECHA);
+                    bool asignar = true;
+                    foreach (var item2 in listaItems)
+                    {
+                        if (asignar)
+                        {
+                            item2.SPANTIGLDIAACT = item2.SPANTIGLDIAHIST;
+                        }
+                        else
+                        {
+                            item2.SPANTIGLDIAACT = null;
+                        }
+                        asignar = item2.SPANTIGLDIAHIST == 1 || item2.SPANTIGLDIAHIST == -1;
+                    }
+                    asignar = true;
+                    for (int i = 1; i <= 7; i++)
+                    {
+                        var listaItemsDia = (from x in listaItems
+                                             where x.DIASEM.Equals(i)
+                                             && x.GROUPLETTER.Equals(itemLetter)
+                                             select x);
+                        foreach (var itemDia in listaItemsDia)
+                        {
+                            if (asignar)
+                            {
+                                itemDia.SPANTIGLSEMACT = itemDia.SPANTIGLSEMHIST;
+                            }
+                            else
+                            {
+                                itemDia.SPANTIGLSEMACT = null;
+                            }
+                            asignar = itemDia.SPANTIGLSEMHIST == 1 || itemDia.SPANTIGLSEMHIST == -1;
+                        }
+                    }
+                    asignar = true;
+                    for (int i = 1; i <= 31; i++)
+                    {
+                        var listaItemsDia = (from x in listaItems
+                                             where x.DIAMES.Equals(i)
+                                             && x.GROUPLETTER.Equals(itemLetter)
+                                             select x);
+                        foreach (var itemDia in listaItemsDia)
+                        {
+                            if (asignar)
+                            {
+                                itemDia.SPANTIGLMESACT = itemDia.SPANTIGLMESHIST;
+                            }
+                            else
+                            {
+                                itemDia.SPANTIGLMESACT = null;
+                            }
+                            asignar = itemDia.SPANTIGLMESHIST == 1 || itemDia.SPANTIGLMESHIST == -1;
+                        }
+                    }
+                }
+            }
+
+
+            List<int> listaDistinctIndex = lista.Select(x => x.TABINDEX).Distinct().ToList();
             foreach (var item in listaDistinctIndex)
             {
                 int indexActual = 0;
@@ -45,9 +207,9 @@ namespace LectorCvsResultados.FlashOrdered
                             indexActual = 1;
                         }
                     }
-                    item2.SPANDIARIOHISTORICO = indexActual;
+                    item2.SPANTIDIAHIST = indexActual;
                 }
-                for (decimal i = 1; i <= 7; i++)
+                for (int i = 1; i <= 7; i++)
                 {
                     indexActual = 0;
                     var listaItemsDia = (from x in listaItems where x.DIASEM.Equals(i) select x);
@@ -75,10 +237,10 @@ namespace LectorCvsResultados.FlashOrdered
                                 indexActual = 1;
                             }
                         }
-                        itemDia.SPANSEMANAHISTORICO = indexActual;
+                        itemDia.SPANTISEMHIST = indexActual;
                     }
                 }
-                for (decimal i = 1; i <= 31; i++)
+                for (int i = 1; i <= 31; i++)
                 {
                     indexActual = 0;
                     var listaItemsDiaMes = (from x in listaItems where x.DIAMES.Equals(i) select x);
@@ -106,7 +268,7 @@ namespace LectorCvsResultados.FlashOrdered
                                 indexActual = 1;
                             }
                         }
-                        itemDia.SPANMESHISTORICO = indexActual;
+                        itemDia.SPANTIMESHIST = indexActual;
                     }
                 }
 
@@ -116,51 +278,52 @@ namespace LectorCvsResultados.FlashOrdered
                 {
                     if (asignar)
                     {
-                        item2.SPANDIARIOACTUAL = item2.SPANDIARIOHISTORICO;
+                        item2.SPANTIDIAACT = item2.SPANTIDIAHIST;
                     }
                     else
                     {
-                        item2.SPANDIARIOACTUAL = null;
+                        item2.SPANTIDIAACT = null;
                     }
-                    asignar = item2.SPANDIARIOHISTORICO == 1 || item2.SPANDIARIOHISTORICO == -1;
+                    asignar = item2.SPANTIDIAHIST == 1 || item2.SPANTIDIAHIST == -1;
                 }
                 asignar = true;
-                for (decimal i = 1; i <= 7; i++)
+                for (int i = 1; i <= 7; i++)
                 {
                     var listaItemsDia = (from x in listaItems where x.DIASEM.Equals(i) select x);
                     foreach (var itemDia in listaItemsDia)
                     {
                         if (asignar)
                         {
-                            itemDia.SPANSEMANAACTUAL = itemDia.SPANSEMANAHISTORICO;
+                            itemDia.SPANTISEMACT = itemDia.SPANTISEMHIST;
                         }
                         else
                         {
-                            itemDia.SPANSEMANAACTUAL = null;
+                            itemDia.SPANTISEMACT = null;
                         }
-                        asignar = itemDia.SPANSEMANAHISTORICO == 1 || itemDia.SPANSEMANAHISTORICO == -1;
+                        asignar = itemDia.SPANTISEMHIST == 1 || itemDia.SPANTISEMHIST == -1;
                     }
                 }
                 asignar = true;
-                for (decimal i = 1; i <= 31; i++)
+                for (int i = 1; i <= 31; i++)
                 {
                     var listaItemsDia = (from x in listaItems where x.DIAMES.Equals(i) select x);
                     foreach (var itemDia in listaItemsDia)
                     {
                         if (asignar)
                         {
-                            itemDia.SPANMESACTUAL = itemDia.SPANMESHISTORICO;
+                            itemDia.SPANTIMESACT = itemDia.SPANTIMESHIST;
                         }
                         else
                         {
-                            itemDia.SPANMESACTUAL = null;
+                            itemDia.SPANTIMESACT = null;
                         }
-                        asignar = itemDia.SPANMESHISTORICO == 1 || itemDia.SPANMESHISTORICO == -1;
+                        asignar = itemDia.SPANTIMESHIST == 1 || itemDia.SPANTIMESHIST == -1;
                     }
                 }
             }
             lista = lista.OrderBy(x => x.ID).ToList();
             //GuardarElementosGeneral(contexto, lista);
+            List<FLASHORDERED> listaTemp = (from x in lista where x.GROUPLETTER.Equals("B") && x.TABINDEXLETTER == 1 select x).ToList();
             return lista;
         }
 
@@ -174,7 +337,7 @@ namespace LectorCvsResultados.FlashOrdered
             List<FLASHORDERED> lista = new List<FLASHORDERED>();
             for (int i = 1; i < maxIdFile; i++)
             {
-                string filePath = @"D:\temp" + i + ".csv";
+                string filePath = @"D:\temp2\file" + i + ".csv";
                 StreamReader fileReader = new StreamReader(filePath);
                 String line;
                 while ((line = fileReader.ReadLine()) != null)
@@ -192,16 +355,16 @@ namespace LectorCvsResultados.FlashOrdered
                 contexto.SaveChanges();
                 lista.Clear();
             }
-           //var groups = lista.GroupBy(info => info.ID)
-           //     .Select(group => new {
-           //         Metric = group.Key,
-           //         Count = group.Count()
-           //     })
-           //     .Where(x => x.Count > 1);
-           // if (groups.Count() != 0)
-           // {
-           //     var stop = "";
-           // }
+            //var groups = lista.GroupBy(info => info.ID)
+            //     .Select(group => new {
+            //         Metric = group.Key,
+            //         Count = group.Count()
+            //     })
+            //     .Where(x => x.Count > 1);
+            // if (groups.Count() != 0)
+            // {
+            //     var stop = "";
+            // }
 
 
         }
@@ -214,23 +377,29 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="contexto">Instancia del contexto</param>
         public static void InsertarElementosActuales(List<FLASHORDERED> lista, SisResultEntities contexto)
         {
-            List<int?> listaFechaNum = (from x in lista orderby x.FECHANUM select x.FECHANUM).Distinct().ToList();
+            List<int> listaFechaNum = (from x in lista orderby x.FECHANUM select x.FECHANUM).Distinct().ToList();
             foreach (var fechaNum in listaFechaNum)
             {
-                List<FLASHORDERED> listaPersist = lista.Where(x => x.FECHANUM == fechaNum).OrderBy(x=>x.ID).ToList();
+                List<FLASHORDERED> listaPersist = lista.Where(x => x.FECHANUM == fechaNum).OrderBy(x => x.ID).ToList();
                 foreach (var obj in listaPersist)
                 {
                     obj.TABINDEXSEQ = ConsultasClassFO.ConsultarNextTabindexSeq(contexto, obj.TABINDEX);
                     obj.TABINDEXLETTERSEQ = ConsultasClassFO.ConsultarNextTabindexLetterSeq(contexto, obj.GROUPLETTER, obj.TABINDEXLETTER);
-                    obj.SPANDIARIOHISTORICO = ValidarSpanTiempo((int)obj.TABINDEX, (int)obj.DIFERENCIAG, contexto, (int)obj.FECHANUM, 0, (int)obj.DIASEM, (int)obj.DIAMES, (int)obj.DIAANIO);
-                    obj.SPANSEMANAHISTORICO = ValidarSpanTiempo((int)obj.TABINDEX, (int)obj.DIFERENCIAG, contexto, (int)obj.FECHANUM, 1, (int)obj.DIASEM, (int)obj.DIAMES, (int)obj.DIAANIO);
-                    obj.SPANMESHISTORICO = ValidarSpanTiempo((int)obj.TABINDEX, (int)obj.DIFERENCIAG, contexto, (int)obj.FECHANUM, 2, (int)obj.DIASEM, (int)obj.DIAMES, (int)obj.DIAANIO);
-                    obj.SPANANIOHISTORICO = ValidarSpanTiempo((int)obj.TABINDEX, (int)obj.DIFERENCIAG, contexto, (int)obj.FECHANUM, 3, (int)obj.DIASEM, (int)obj.DIAMES, (int)obj.DIAANIO);
+                    obj.SPANTIDIAHIST = ValidarSpanTiempo(obj.TABINDEX, obj.DIFERENCIAG, contexto, obj.FECHANUM, 0, obj.DIASEM, obj.DIAMES, obj.DIAANIO);
+                    obj.SPANTISEMHIST = ValidarSpanTiempo(obj.TABINDEX, obj.DIFERENCIAG, contexto, obj.FECHANUM, 1, obj.DIASEM, obj.DIAMES, obj.DIAANIO);
+                    obj.SPANTIMESHIST = ValidarSpanTiempo(obj.TABINDEX, obj.DIFERENCIAG, contexto, obj.FECHANUM, 2, obj.DIASEM, obj.DIAMES, obj.DIAANIO);
+                    obj.SPANTIANIHIST = ValidarSpanTiempo(obj.TABINDEX, obj.DIFERENCIAG, contexto, obj.FECHANUM, 3, obj.DIASEM, obj.DIAMES, obj.DIAANIO);
+                    obj.SPANTIGLDIAHIST = ValidarSpanTiempo(obj.TABINDEXLETTER, obj.DIFERENCIAG, contexto, obj.FECHANUM, 0, obj.DIASEM, obj.DIAMES, obj.DIAANIO, obj.GROUPLETTER);
+                    obj.SPANTIGLSEMHIST = ValidarSpanTiempo(obj.TABINDEXLETTER, obj.DIFERENCIAG, contexto, obj.FECHANUM, 1, obj.DIASEM, obj.DIAMES, obj.DIAANIO, obj.GROUPLETTER);
+                    obj.SPANTIGLMESHIST = ValidarSpanTiempo(obj.TABINDEXLETTER, obj.DIFERENCIAG, contexto, obj.FECHANUM, 2, obj.DIASEM, obj.DIAMES, obj.DIAANIO, obj.GROUPLETTER);
+                    obj.SPANTIGLANIHIST = ValidarSpanTiempo(obj.TABINDEXLETTER, obj.DIFERENCIAG, contexto, obj.FECHANUM, 3, obj.DIASEM, obj.DIAMES, obj.DIAANIO, obj.GROUPLETTER);
 
                 }
                 contexto.FLASHORDERED.AddRange(listaPersist);
-                contexto.SaveChanges();
+                List<int> listTabindex = (from x in listaPersist select x.TABINDEX).ToList();
+                ValidarSpanDatosAnterior(contexto, listaPersist, listTabindex);
                 ValidarSpanDatosAnterior(contexto, listaPersist);
+                contexto.SaveChanges();
             }
         }
 
@@ -248,10 +417,13 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="diaAnio">Dia anio</param>
         /// <returns>Valor para asignar al span</returns>
         private static int ValidarSpanTiempo(int tabindex, int diferenciaG, SisResultEntities contexto, int fechaNum, int caso,
-            int diaSem, int diaMes, int diaAnio)
+            int diaSem, int diaMes, int diaAnio, string groupLetter = "")
         {
             int valorSpan = 0;
-            AgrupadorFechaNumValor ultimoSpan = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, tabindex, fechaNum, diaSem, diaMes, diaAnio, caso);
+            AgrupadorFechaNumValor ultimoSpan = groupLetter.Equals(string.Empty) ?
+                ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, tabindex, fechaNum, diaSem, diaMes, diaAnio, caso)
+                : ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, tabindex, fechaNum, diaSem, diaMes, diaAnio, caso, groupLetter)
+                ;
             if (diferenciaG == 0)
             {
                 valorSpan = ultimoSpan.Spantiempo >= 0 ? -1 : --ultimoSpan.Spantiempo;
@@ -269,11 +441,11 @@ namespace LectorCvsResultados.FlashOrdered
         /// </summary>
         /// <param name="contexto">Instancia del contexto para la consulta de datos</param>
         /// <param name="listElementosAgregados">Lista con los elementos adicionados, para realizar el análisis</param>
-        public static void ValidarSpanDatosAnterior(SisResultEntities contexto, List<FLASHORDERED> listElementosAgregados)
+        /// <param name="listTabindex">Lista con los tabindex ingresados</param>
+        public static void ValidarSpanDatosAnterior(SisResultEntities contexto, List<FLASHORDERED> listElementosAgregados, List<int> listTabindex)
         {
             int maxTabindex = ConsultasClassFO.ConsultarMaxIndexResultados(contexto);
-            List<int?> listTabindex = (from x in listElementosAgregados select x.TABINDEX).ToList();
-            maxTabindex = (int)listTabindex.Max()> maxTabindex ? maxTabindex : (int)listTabindex.Max();
+            maxTabindex = (int)listTabindex.Max() > maxTabindex ? maxTabindex : (int)listTabindex.Max();
             int maxFechaNumIndex;
             var elementTemp = listElementosAgregados.ElementAt(0);
             List<FLASHORDERED> listaDatosUltimosSpan;
@@ -285,7 +457,7 @@ namespace LectorCvsResultados.FlashOrdered
                         maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, 1, (int)elementTemp.DIASEM);
                         listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
                                                  where listTabindex.Contains(b.TABINDEX)
-                                                 && b.SPANSEMANAACTUAL != null
+                                                 && b.SPANTISEMACT != null
                                                  && b.FECHANUM >= maxFechaNumIndex
                                                  && b.DIASEM == elementTemp.DIASEM
                                                  select b).OrderByDescending(b => b.FECHANUM).ThenBy(x => x.TABINDEX).AsEnumerable().ToList()
@@ -295,7 +467,7 @@ namespace LectorCvsResultados.FlashOrdered
                         maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, 2, (int)elementTemp.DIAMES);
                         listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
                                                  where listTabindex.Contains(b.TABINDEX)
-                                                 && b.SPANMESACTUAL != null
+                                                 && b.SPANTIMESACT != null
                                                  && b.FECHANUM >= maxFechaNumIndex
                                                  && b.DIAMES == elementTemp.DIAMES
                                                  select b).OrderByDescending(b => b.FECHANUM).ThenBy(x => x.TABINDEX).AsEnumerable().ToList()
@@ -305,7 +477,7 @@ namespace LectorCvsResultados.FlashOrdered
                         maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, 3, (int)elementTemp.DIAANIO);
                         listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
                                                  where listTabindex.Contains(b.TABINDEX)
-                                                 && b.SPANANIOACTUAL != null
+                                                 && b.SPANTIANIACT != null
                                                  && b.FECHANUM >= maxFechaNumIndex
                                                  && b.DIAANIO == elementTemp.DIAANIO
                                                  select b).OrderByDescending(b => b.FECHANUM).ThenBy(x => x.TABINDEX).AsEnumerable().ToList()
@@ -315,7 +487,7 @@ namespace LectorCvsResultados.FlashOrdered
                         maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, 0, 0);
                         listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
                                                  where listTabindex.Contains(b.TABINDEX)
-                                                 && b.SPANDIARIOACTUAL != null
+                                                 && b.SPANTIDIAACT != null
                                                  && b.FECHANUM >= maxFechaNumIndex
                                                  select b).OrderByDescending(b => b.FECHANUM).ThenBy(x => x.TABINDEX).AsEnumerable().ToList()
                              .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
@@ -332,7 +504,71 @@ namespace LectorCvsResultados.FlashOrdered
                     }
                 }
             }
-            contexto.SaveChanges();
+        }
+
+        /// <summary>
+        /// Método que realiza la validación de los span del día anterior, y actualizar los datos si es requerido
+        /// y luego asignar los del día acutal
+        /// </summary>
+        /// <param name="contexto">Instancia del contexto para la consulta de datos</param>
+        /// <param name="listElementosAgregados">Lista con los elementos adicionados, para realizar el análisis</param>
+        /// <param name="listTabindex">Lista con los tabindex ingresados</param>
+        public static void ValidarSpanDatosAnterior(SisResultEntities contexto, List<FLASHORDERED> listElementosAgregados)
+        {
+            string strJoin = ObtenerJoinElementos(listElementosAgregados);
+            var elementTemp = listElementosAgregados.ElementAt(0);
+            List<FLASHORDERED> listaDatosUltimosSpan = new List<FLASHORDERED>();
+            List<AgrupadorMaxFechasTGDTO> listaFechas = new List<AgrupadorMaxFechasTGDTO>();
+            List<decimal> listaIds = new List<decimal>();
+            for (int r = 4; r <= 7; r++)
+            {
+                switch (r)
+                {
+                    case 4:
+                        listaFechas = ConsultasClassFO.ConsultarMaxFechasTabGroup(contexto, 1, elementTemp.DIASEM, strJoin);
+                        listaIds = (from x in listaFechas
+                                    select x.Id).ToList();
+                        listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
+                                                 where listaIds.Contains(b.ID)
+                                                 select b).ToList();
+                        break;
+                    case 5:
+                        listaFechas = ConsultasClassFO.ConsultarMaxFechasTabGroup(contexto, 2, elementTemp.DIAMES, strJoin);
+                        listaIds = (from x in listaFechas
+                                    select x.Id).ToList();
+                        listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
+                                                 where listaIds.Contains(b.ID)
+                                                 select b).ToList();
+                        break;
+                    case 6:
+                        listaFechas = ConsultasClassFO.ConsultarMaxFechasTabGroup(contexto, 3, elementTemp.DIAANIO, strJoin);
+                        listaIds = (from x in listaFechas
+                                    select x.Id).ToList();
+                        listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
+                                                 where listaIds.Contains(b.ID)
+                                                 select b).ToList();
+                        break;
+                    default:
+                        listaFechas = ConsultasClassFO.ConsultarMaxFechasTabGroup(contexto, 0, 0, strJoin);
+                        listaIds = (from x in listaFechas
+                                    select x.Id).ToList();
+                        listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
+                                                 where listaIds.Contains(b.ID)
+                                                 select b).ToList();
+                        break;
+                }
+                for (int i = 0; i < listElementosAgregados.Count; i++)
+                {
+                    var uActual = listElementosAgregados.ElementAt(i);
+                    var uAnt = listaDatosUltimosSpan
+                        .Where(x => x.GROUPLETTER.Equals(uActual.GROUPLETTER)
+                        && x.TABINDEXLETTER.Equals(uActual.TABINDEXLETTER)).FirstOrDefault();
+                    if (uAnt != null)
+                    {
+                        ValidarSpanColumna(uAnt, uActual, r);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -347,53 +583,105 @@ namespace LectorCvsResultados.FlashOrdered
             {
                 if (casoColumna == 0)
                 {
-                    if (uAnt.SPANDIARIOACTUAL < 0)
+                    if (uAnt.SPANTIDIAACT < 0)
                     {
-                        uActual.SPANDIARIOACTUAL = --uAnt.SPANDIARIOACTUAL;
-                        uAnt.SPANDIARIOACTUAL = null;
+                        uActual.SPANTIDIAACT = --uAnt.SPANTIDIAACT;
+                        uAnt.SPANTIDIAACT = null;
                     }
                     else
                     {
-                        uActual.SPANDIARIOACTUAL = -1;
+                        uActual.SPANTIDIAACT = -1;
 
                     }
                 }
                 else if (casoColumna == 1)
                 {
-                    if (uAnt.SPANSEMANAACTUAL < 0)
+                    if (uAnt.SPANTISEMACT < 0)
                     {
-                        uActual.SPANSEMANAACTUAL = --uAnt.SPANSEMANAACTUAL;
-                        uAnt.SPANSEMANAACTUAL = null;
+                        uActual.SPANTISEMACT = --uAnt.SPANTISEMACT;
+                        uAnt.SPANTISEMACT = null;
                     }
                     else
                     {
-                        uActual.SPANSEMANAACTUAL = -1;
+                        uActual.SPANTISEMACT = -1;
 
                     }
                 }
                 else if (casoColumna == 2)
                 {
-                    if (uAnt.SPANMESACTUAL < 0)
+                    if (uAnt.SPANTIMESACT < 0)
                     {
-                        uActual.SPANMESACTUAL = --uAnt.SPANMESACTUAL;
-                        uAnt.SPANMESACTUAL = null;
+                        uActual.SPANTIMESACT = --uAnt.SPANTIMESACT;
+                        uAnt.SPANTIMESACT = null;
                     }
                     else
                     {
-                        uActual.SPANMESACTUAL = -1;
+                        uActual.SPANTIMESACT = -1;
 
                     }
                 }
                 else if (casoColumna == 3)
                 {
-                    if (uAnt.SPANANIOACTUAL < 0)
+                    if (uAnt.SPANTIANIACT < 0)
                     {
-                        uActual.SPANANIOACTUAL = --uAnt.SPANANIOACTUAL;
-                        uAnt.SPANANIOACTUAL = null;
+                        uActual.SPANTIANIACT = --uAnt.SPANTIANIACT;
+                        uAnt.SPANTIANIACT = null;
                     }
                     else
                     {
-                        uActual.SPANANIOACTUAL = -1;
+                        uActual.SPANTIANIACT = -1;
+
+                    }
+                }
+                else if (casoColumna == 4)
+                {
+                    if (uAnt.SPANTIGLSEMACT < 0)
+                    {
+                        uActual.SPANTIGLSEMACT = --uAnt.SPANTIGLSEMACT;
+                        uAnt.SPANTIGLSEMACT = null;
+                    }
+                    else
+                    {
+                        uActual.SPANTIGLSEMACT = -1;
+
+                    }
+                }
+                else if (casoColumna == 5)
+                {
+                    if (uAnt.SPANTIGLMESACT < 0)
+                    {
+                        uActual.SPANTIGLMESACT = --uAnt.SPANTIGLMESACT;
+                        uAnt.SPANTIGLMESACT = null;
+                    }
+                    else
+                    {
+                        uActual.SPANTIGLMESACT = -1;
+
+                    }
+                }
+                else if (casoColumna == 6)
+                {
+                    if (uAnt.SPANTIGLANIACT < 0)
+                    {
+                        uActual.SPANTIGLANIACT = --uAnt.SPANTIGLANIACT;
+                        uAnt.SPANTIGLANIACT = null;
+                    }
+                    else
+                    {
+                        uActual.SPANTIGLANIACT = -1;
+
+                    }
+                }
+                else if (casoColumna == 7)
+                {
+                    if (uAnt.SPANTIGLDIAACT < 0)
+                    {
+                        uActual.SPANTIGLDIAACT = --uAnt.SPANTIGLDIAACT;
+                        uAnt.SPANTIGLDIAACT = null;
+                    }
+                    else
+                    {
+                        uActual.SPANTIGLDIAACT = -1;
 
                     }
                 }
@@ -402,53 +690,105 @@ namespace LectorCvsResultados.FlashOrdered
             {
                 if (casoColumna == 0)
                 {
-                    if (uAnt.SPANDIARIOACTUAL > 0)
+                    if (uAnt.SPANTIDIAACT > 0)
                     {
-                        uActual.SPANDIARIOACTUAL = ++uAnt.SPANDIARIOACTUAL;
-                        uAnt.SPANDIARIOACTUAL = null;
+                        uActual.SPANTIDIAACT = ++uAnt.SPANTIDIAACT;
+                        uAnt.SPANTIDIAACT = null;
                     }
                     else
                     {
-                        uActual.SPANDIARIOACTUAL = 1;
+                        uActual.SPANTIDIAACT = 1;
 
                     }
                 }
                 else if (casoColumna == 1)
                 {
-                    if (uAnt.SPANSEMANAACTUAL > 0)
+                    if (uAnt.SPANTISEMACT > 0)
                     {
-                        uActual.SPANSEMANAACTUAL = ++uAnt.SPANSEMANAACTUAL;
-                        uAnt.SPANSEMANAACTUAL = null;
+                        uActual.SPANTISEMACT = ++uAnt.SPANTISEMACT;
+                        uAnt.SPANTISEMACT = null;
                     }
                     else
                     {
-                        uActual.SPANSEMANAACTUAL = 1;
+                        uActual.SPANTISEMACT = 1;
 
                     }
                 }
                 else if (casoColumna == 2)
                 {
-                    if (uAnt.SPANMESACTUAL > 0)
+                    if (uAnt.SPANTIMESACT > 0)
                     {
-                        uActual.SPANMESACTUAL = ++uAnt.SPANMESACTUAL;
-                        uAnt.SPANMESACTUAL = null;
+                        uActual.SPANTIMESACT = ++uAnt.SPANTIMESACT;
+                        uAnt.SPANTIMESACT = null;
                     }
                     else
                     {
-                        uActual.SPANMESACTUAL = 1;
+                        uActual.SPANTIMESACT = 1;
 
                     }
                 }
                 else if (casoColumna == 3)
                 {
-                    if (uAnt.SPANANIOACTUAL > 0)
+                    if (uAnt.SPANTIANIACT > 0)
                     {
-                        uActual.SPANANIOACTUAL = ++uAnt.SPANANIOACTUAL;
-                        uAnt.SPANANIOACTUAL = null;
+                        uActual.SPANTIANIACT = ++uAnt.SPANTIANIACT;
+                        uAnt.SPANTIANIACT = null;
                     }
                     else
                     {
-                        uActual.SPANANIOACTUAL = 1;
+                        uActual.SPANTIANIACT = 1;
+
+                    }
+                }
+                else if (casoColumna == 4)
+                {
+                    if (uAnt.SPANTIGLSEMACT > 0)
+                    {
+                        uActual.SPANTIGLSEMACT = ++uAnt.SPANTIGLSEMACT;
+                        uAnt.SPANTIGLSEMACT = null;
+                    }
+                    else
+                    {
+                        uActual.SPANTIGLSEMACT = 1;
+
+                    }
+                }
+                else if (casoColumna == 5)
+                {
+                    if (uAnt.SPANTIGLMESACT > 0)
+                    {
+                        uActual.SPANTIGLMESACT = ++uAnt.SPANTIGLMESACT;
+                        uAnt.SPANTIGLMESACT = null;
+                    }
+                    else
+                    {
+                        uActual.SPANTIGLMESACT = 1;
+
+                    }
+                }
+                else if (casoColumna == 6)
+                {
+                    if (uAnt.SPANTIGLANIACT > 0)
+                    {
+                        uActual.SPANTIGLANIACT = ++uAnt.SPANTIGLANIACT;
+                        uAnt.SPANTIGLANIACT = null;
+                    }
+                    else
+                    {
+                        uActual.SPANTIGLANIACT = 1;
+
+                    }
+                }
+                else if (casoColumna == 7)
+                {
+                    if (uAnt.SPANTIGLDIAACT > 0)
+                    {
+                        uActual.SPANTIGLDIAACT = ++uAnt.SPANTIGLDIAACT;
+                        uAnt.SPANTIGLDIAACT = null;
+                    }
+                    else
+                    {
+                        uActual.SPANTIGLDIAACT = 1;
 
                     }
                 }
@@ -458,11 +798,17 @@ namespace LectorCvsResultados.FlashOrdered
         public static void ValidarElementosDia(DateTime fecha, int caso)
         {
             List<FLASHORDERED> listaHtmlTemp = UtilGeneral.UtilHtml.LeerInfoHtmlTempActual(fecha, caso);
-            List<string> listaDistinctChar = listaHtmlTemp.Select(x => x.GROUPLETTER).Distinct().ToList();
+            string strJoin = ObtenerJoinElementos(listaHtmlTemp);
+            UtilGeneral.UtilFilesIO.EscribirArchivoCsv(listaHtmlTemp);
+        }
+
+        public static string ObtenerJoinElementos(List<FLASHORDERED> listaElementos)
+        {
+            List<string> listaDistinctChar = listaElementos.Select(x => x.GROUPLETTER).Distinct().ToList();
             Dictionary<string, int> keyValuePairMaxIndexChar = new Dictionary<string, int>();
             foreach (var item in listaDistinctChar)
             {
-                int maxValueIndexChar = (int)(from x in listaHtmlTemp
+                int maxValueIndexChar = (from x in listaElementos
                                          where x.GROUPLETTER.Equals(item)
                                          select x.TABINDEXLETTER).Max();
                 keyValuePairMaxIndexChar.Add(item, maxValueIndexChar);
@@ -476,7 +822,7 @@ namespace LectorCvsResultados.FlashOrdered
             }
             string strJoin = string.Join(" OR ", listaJoins);
             strJoin = string.Format(agrupador, strJoin);
-            UtilGeneral.UtilFilesIO.EscribirArchivoCsv(listaHtmlTemp);
+            return strJoin;
         }
     }
 }

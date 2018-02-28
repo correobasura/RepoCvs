@@ -37,7 +37,7 @@ namespace LectorCvsResultados.UtilGeneral
                 for (int i = indexInicio; i < htmltdNodes.Count; i++)
                 {
                     var item2 = htmltdNodes.ElementAt(i);
-                    var data = item2.InnerText.Replace("&nbsp;", "").Replace("&amp;", "&");
+                    var data = item2.InnerText.Replace("&nbsp;", "").Replace("&amp;", "&").Replace("\n","").Replace("\r", "").Trim();
                     if (i.Equals(1) && data.ToLower().Contains(strAfter))
                     {
                         data = strFinal;
@@ -64,7 +64,7 @@ namespace LectorCvsResultados.UtilGeneral
                 infoFs.Home = datos[2];
                 infoFs.RESULT = datos[3];
                 infoFs.Away = datos[4];
-                infoFs.Half = datos[5].Replace("&nbsp;", "").Replace("(", "").Replace(")", "").Replace(" ", "");
+                infoFs.Half = datos[5].Replace("&nbsp;", "").Replace("(", "").Replace(")", "").Trim();
                 lista.Add(infoFs);
             }
             List<FLASHORDERED> listaTemp = new List<FLASHORDERED>();
@@ -197,8 +197,10 @@ namespace LectorCvsResultados.UtilGeneral
                 item.DIAANIO = diaAnio;
                 item.FECHA = fecha;
                 item.ID = idInicio++;
-                item.SPANANIOHISTORICO = item.DIFERENCIAG == 0 ? -1 : 1;
-                item.SPANANIOACTUAL = item.SPANANIOHISTORICO;
+                item.SPANTIANIHIST = item.DIFERENCIAG == 0 ? -1 : 1;
+                item.SPANTIGLANIHIST = item.DIFERENCIAG == 0 ? -1 : 1;
+                item.SPANTIGLANIACT = item.SPANTIGLANIHIST;
+                item.SPANTIANIACT = item.SPANTIANIHIST;
                 item.FECHANUM = fechaNum;
             }
             return listaHtmlFinal;
@@ -284,8 +286,8 @@ namespace LectorCvsResultados.UtilGeneral
                 item.DIAANIO = diaAnio;
                 item.FECHA = fecha;
                 item.ID = idInicio++;
-                item.SPANANIOHISTORICO = item.DIFERENCIAG == 0 ? -1 : 1;
-                item.SPANANIOACTUAL = item.SPANANIOHISTORICO;
+                item.SPANTIANIHIST = item.DIFERENCIAG == 0 ? -1 : 1;
+                item.SPANTIANIACT = item.SPANTIANIHIST;
                 item.FECHANUM = fechaNum;
             }
             return listaHtmlFinal;

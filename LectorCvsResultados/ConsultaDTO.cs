@@ -148,12 +148,12 @@ namespace LectorCvsResultados
 
         public int Total
         {
-            get;set;
+            get; set;
         }
 
         public int Apariciones
         {
-            get;set;
+            get; set;
         }
     }
 
@@ -215,7 +215,7 @@ namespace LectorCvsResultados
 
         public int TotalDatos
         {
-            get;set;
+            get; set;
         }
         public string UltimoParecido
         {
@@ -224,7 +224,7 @@ namespace LectorCvsResultados
         }
         public override string ToString()
         {
-            return +TotalDatos + ";" + ResultadosPositivos + ";"+ PromedioPositivo + ";"+ ResultadosNegativos+";"+ PromedioNegativo+";"+ MinimoApariciones+";"+ Fecha+";"+ UltimoParecido+";"+AnalizedData;
+            return +TotalDatos + ";" + ResultadosPositivos + ";" + PromedioPositivo + ";" + ResultadosNegativos + ";" + PromedioNegativo + ";" + MinimoApariciones + ";" + Fecha + ";" + UltimoParecido + ";" + AnalizedData;
         }
     }
 
@@ -262,12 +262,12 @@ namespace LectorCvsResultados
 
         public int Result
         {
-            get;set;
+            get; set;
         }
 
         public override string ToString()
         {
-            return Result+";"+Lineindex + ";" + Tabindex + ";"+UltimoSpan+";"+ RankUltimoSpanDia + ";" + RankUltimoSpanGral + ";" + TMatch + ";";
+            return Result + ";" + Lineindex + ";" + Tabindex + ";" + UltimoSpan + ";" + RankUltimoSpanDia + ";" + RankUltimoSpanGral + ";" + TMatch + ";";
         }
     }
 
@@ -275,114 +275,135 @@ namespace LectorCvsResultados
     {
         public int IndexOrdered
         {
-            get;set;
+            get; set;
         }
         public string Hora
         {
-            get;set;
+            get; set;
         }
         public String Estado
         {
-            get;set;
+            get; set;
         }
         public String Home
         {
-            get;set;
+            get; set;
         }
         public String Result
         {
-            get;set;
+            get; set;
         }
         public String Away
         {
-            get;set;
+            get; set;
         }
         public String Half
         {
-            get;set;
+            get; set;
         }
         public int GHome
         {
-            get;set;
+            get; set;
         }
         public int GAway
         {
-            get;set;
+            get; set;
         }
         public int DiferenciaG
         {
-            get;set;
+            get; set;
         }
         public int TotalG
         {
-            get;set;
+            get; set;
         }
         public char GroupLetter
         {
-            get;set;
+            get; set;
         }
         public int GroupIndexLetter
         {
-            get;set;
+            get; set;
         }
         public int DiaSem
         {
-            get;set;
+            get; set;
         }
         public int DiaMes
         {
-            get;set;
+            get; set;
         }
         public int DiaAnio
         {
-            get;set;
+            get; set;
         }
         public int? SpanDiarioActual
         {
-            get;set;
+            get; set;
         }
         public int SpanDiarioHistorico
         {
-            get;set;
+            get; set;
         }
         public int? SpanSemanaActual
         {
-            get;set;
+            get; set;
         }
         public int SpanSemanaHistorico
         {
-            get;set;
+            get; set;
         }
         public int? SpanMesActual
         {
-            get;set;
+            get; set;
         }
         public int SpanMesHistorico
         {
-            get;set;
+            get; set;
         }
         public int SpanAnioActual
         {
-            get;set;
+            get; set;
         }
         public int SpanAnioHistorico
         {
-            get;set;
+            get; set;
         }
         public DateTime Fecha
         {
-            get;set;
+            get; set;
         }
         public override string ToString()
         {
             return IndexOrdered + ";" + Hora + ";" + Estado + ";" + Home + ";" + Result
                 + ";" + Away + ";" + Half + ";" + GHome + ";" + GAway + ";" + DiferenciaG + ";" + TotalG
-                + ";" + GroupLetter + ";" + GroupIndexLetter+";"
-                +SpanDiarioHistorico + ";"+SpanDiarioActual+";"
-                + DiaSem + ";" +SpanSemanaHistorico + ";"+SpanSemanaActual+";"
-                + DiaMes + ";" + SpanMesHistorico +";"+SpanMesActual+";"
-                + DiaAnio + ";" + SpanAnioHistorico +";"
-                +Fecha.ToString("yyyyMMdd");
+                + ";" + GroupLetter + ";" + GroupIndexLetter + ";"
+                + SpanDiarioHistorico + ";" + SpanDiarioActual + ";"
+                + DiaSem + ";" + SpanSemanaHistorico + ";" + SpanSemanaActual + ";"
+                + DiaMes + ";" + SpanMesHistorico + ";" + SpanMesActual + ";"
+                + DiaAnio + ";" + SpanAnioHistorico + ";"
+                + Fecha.ToString("yyyyMMdd");
         }
     }
+
+    public class AgrupadorMaxFechasTGDTO
+    {
+        public decimal Id
+        {
+            get; set;
+        }
+        public int Fechanum
+        {
+            get; set;
+        }
+        public int Tabindexletter
+        {
+            get; set;
+        }
+        public string GroupLetter
+        {
+            get; set;
+        }
+    }
+
 }
