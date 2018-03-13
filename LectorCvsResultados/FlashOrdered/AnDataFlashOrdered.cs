@@ -322,7 +322,6 @@ namespace LectorCvsResultados.FlashOrdered
                 }
             }
             lista = lista.OrderBy(x => x.ID).ToList();
-            //GuardarElementosGeneral(contexto, lista);
             List<FLASHORDERED> listaTemp = (from x in lista where x.GROUPLETTER.Equals("B") && x.TABINDEXLETTER == 1 select x).ToList();
             return lista;
         }
@@ -343,28 +342,12 @@ namespace LectorCvsResultados.FlashOrdered
                 while ((line = fileReader.ReadLine()) != null)
                 {
                     FLASHORDERED fs = JsonConvert.DeserializeObject<FLASHORDERED>(line);
-                    //if (fs.GROUPLETTER.Length > 1)
-                    //{
-                    //    var data3 = "";
-                    //}
                     lista.Add(fs);
                 }
-                //var data = (from x in LT where x.GROUPLETTER.Length != 1 select x);
-                //var data2 = "";
                 contexto.FLASHORDERED.AddRange(lista);
                 contexto.SaveChanges();
                 lista.Clear();
             }
-            //var groups = lista.GroupBy(info => info.ID)
-            //     .Select(group => new {
-            //         Metric = group.Key,
-            //         Count = group.Count()
-            //     })
-            //     .Where(x => x.Count > 1);
-            // if (groups.Count() != 0)
-            // {
-            //     var stop = "";
-            // }
 
 
         }
@@ -444,7 +427,7 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="listTabindex">Lista con los tabindex ingresados</param>
         public static void ValidarSpanDatosAnterior(SisResultEntities contexto, List<FLASHORDERED> listElementosAgregados, List<int> listTabindex)
         {
-            int maxTabindex = ConsultasClassFO.ConsultarMaxIndexResultados(contexto);
+            int maxTabindex = ConsultasClassFO.ConsultarMaxTabIndexResultados(contexto);
             maxTabindex = (int)listTabindex.Max() > maxTabindex ? maxTabindex : (int)listTabindex.Max();
             int maxFechaNumIndex;
             var elementTemp = listElementosAgregados.ElementAt(0);
@@ -583,6 +566,10 @@ namespace LectorCvsResultados.FlashOrdered
             {
                 if (casoColumna == 0)
                 {
+                    if (uAnt.SPANTIDIAACT == null)
+                    {
+                        uAnt.SPANTIDIAACT = uAnt.SPANTIDIAHIST;
+                    }
                     if (uAnt.SPANTIDIAACT < 0)
                     {
                         uActual.SPANTIDIAACT = --uAnt.SPANTIDIAACT;
@@ -596,6 +583,10 @@ namespace LectorCvsResultados.FlashOrdered
                 }
                 else if (casoColumna == 1)
                 {
+                    if (uAnt.SPANTISEMACT == null)
+                    {
+                        uAnt.SPANTISEMACT = uAnt.SPANTISEMHIST;
+                    }
                     if (uAnt.SPANTISEMACT < 0)
                     {
                         uActual.SPANTISEMACT = --uAnt.SPANTISEMACT;
@@ -609,6 +600,10 @@ namespace LectorCvsResultados.FlashOrdered
                 }
                 else if (casoColumna == 2)
                 {
+                    if (uAnt.SPANTIMESACT == null)
+                    {
+                        uAnt.SPANTIMESACT = uAnt.SPANTIMESHIST;
+                    }
                     if (uAnt.SPANTIMESACT < 0)
                     {
                         uActual.SPANTIMESACT = --uAnt.SPANTIMESACT;
@@ -622,6 +617,10 @@ namespace LectorCvsResultados.FlashOrdered
                 }
                 else if (casoColumna == 3)
                 {
+                    if (uAnt.SPANTIANIACT == null)
+                    {
+                        uAnt.SPANTIANIACT = uAnt.SPANTIANIHIST;
+                    }
                     if (uAnt.SPANTIANIACT < 0)
                     {
                         uActual.SPANTIANIACT = --uAnt.SPANTIANIACT;
@@ -635,6 +634,10 @@ namespace LectorCvsResultados.FlashOrdered
                 }
                 else if (casoColumna == 4)
                 {
+                    if (uAnt.SPANTIGLSEMACT == null)
+                    {
+                        uAnt.SPANTIGLSEMACT = uAnt.SPANTIGLSEMHIST;
+                    }
                     if (uAnt.SPANTIGLSEMACT < 0)
                     {
                         uActual.SPANTIGLSEMACT = --uAnt.SPANTIGLSEMACT;
@@ -648,6 +651,10 @@ namespace LectorCvsResultados.FlashOrdered
                 }
                 else if (casoColumna == 5)
                 {
+                    if (uAnt.SPANTIGLMESACT == null)
+                    {
+                        uAnt.SPANTIGLMESACT = uAnt.SPANTIGLMESHIST;
+                    }
                     if (uAnt.SPANTIGLMESACT < 0)
                     {
                         uActual.SPANTIGLMESACT = --uAnt.SPANTIGLMESACT;
@@ -661,6 +668,10 @@ namespace LectorCvsResultados.FlashOrdered
                 }
                 else if (casoColumna == 6)
                 {
+                    if (uAnt.SPANTIGLANIACT == null)
+                    {
+                        uAnt.SPANTIGLANIACT = uAnt.SPANTIGLANIHIST;
+                    }
                     if (uAnt.SPANTIGLANIACT < 0)
                     {
                         uActual.SPANTIGLANIACT = --uAnt.SPANTIGLANIACT;
@@ -674,6 +685,10 @@ namespace LectorCvsResultados.FlashOrdered
                 }
                 else if (casoColumna == 7)
                 {
+                    if (uAnt.SPANTIGLDIAACT == null)
+                    {
+                        uAnt.SPANTIGLDIAACT = uAnt.SPANTIGLDIAHIST;
+                    }
                     if (uAnt.SPANTIGLDIAACT < 0)
                     {
                         uActual.SPANTIGLDIAACT = --uAnt.SPANTIGLDIAACT;
@@ -690,6 +705,10 @@ namespace LectorCvsResultados.FlashOrdered
             {
                 if (casoColumna == 0)
                 {
+                    if (uAnt.SPANTIDIAACT == null)
+                    {
+                        uAnt.SPANTIDIAACT = uAnt.SPANTIDIAHIST;
+                    }
                     if (uAnt.SPANTIDIAACT > 0)
                     {
                         uActual.SPANTIDIAACT = ++uAnt.SPANTIDIAACT;
@@ -703,6 +722,10 @@ namespace LectorCvsResultados.FlashOrdered
                 }
                 else if (casoColumna == 1)
                 {
+                    if (uAnt.SPANTISEMACT == null)
+                    {
+                        uAnt.SPANTISEMACT = uAnt.SPANTISEMHIST;
+                    }
                     if (uAnt.SPANTISEMACT > 0)
                     {
                         uActual.SPANTISEMACT = ++uAnt.SPANTISEMACT;
@@ -716,6 +739,10 @@ namespace LectorCvsResultados.FlashOrdered
                 }
                 else if (casoColumna == 2)
                 {
+                    if (uAnt.SPANTIMESACT == null)
+                    {
+                        uAnt.SPANTIMESACT = uAnt.SPANTIMESHIST;
+                    }
                     if (uAnt.SPANTIMESACT > 0)
                     {
                         uActual.SPANTIMESACT = ++uAnt.SPANTIMESACT;
@@ -729,6 +756,10 @@ namespace LectorCvsResultados.FlashOrdered
                 }
                 else if (casoColumna == 3)
                 {
+                    if (uAnt.SPANTIANIACT == null)
+                    {
+                        uAnt.SPANTIANIACT = uAnt.SPANTIANIHIST;
+                    }
                     if (uAnt.SPANTIANIACT > 0)
                     {
                         uActual.SPANTIANIACT = ++uAnt.SPANTIANIACT;
@@ -742,6 +773,10 @@ namespace LectorCvsResultados.FlashOrdered
                 }
                 else if (casoColumna == 4)
                 {
+                    if (uAnt.SPANTIGLSEMACT == null)
+                    {
+                        uAnt.SPANTIGLSEMACT = uAnt.SPANTIGLSEMHIST;
+                    }
                     if (uAnt.SPANTIGLSEMACT > 0)
                     {
                         uActual.SPANTIGLSEMACT = ++uAnt.SPANTIGLSEMACT;
@@ -755,6 +790,10 @@ namespace LectorCvsResultados.FlashOrdered
                 }
                 else if (casoColumna == 5)
                 {
+                    if (uAnt.SPANTIGLMESACT == null)
+                    {
+                        uAnt.SPANTIGLMESACT = uAnt.SPANTIGLMESHIST;
+                    }
                     if (uAnt.SPANTIGLMESACT > 0)
                     {
                         uActual.SPANTIGLMESACT = ++uAnt.SPANTIGLMESACT;
@@ -768,6 +807,10 @@ namespace LectorCvsResultados.FlashOrdered
                 }
                 else if (casoColumna == 6)
                 {
+                    if (uAnt.SPANTIGLANIACT == null)
+                    {
+                        uAnt.SPANTIGLANIACT = uAnt.SPANTIGLANIHIST;
+                    }
                     if (uAnt.SPANTIGLANIACT > 0)
                     {
                         uActual.SPANTIGLANIACT = ++uAnt.SPANTIGLANIACT;
@@ -781,6 +824,10 @@ namespace LectorCvsResultados.FlashOrdered
                 }
                 else if (casoColumna == 7)
                 {
+                    if (uAnt.SPANTIGLDIAACT == null)
+                    {
+                        uAnt.SPANTIGLDIAACT = uAnt.SPANTIGLDIAHIST;
+                    }
                     if (uAnt.SPANTIGLDIAACT > 0)
                     {
                         uActual.SPANTIGLDIAACT = ++uAnt.SPANTIGLDIAACT;
@@ -795,10 +842,37 @@ namespace LectorCvsResultados.FlashOrdered
             }
         }
 
-        public static void ValidarElementosDia(DateTime fecha, int caso)
+        public static void ValidarElementosDia(DateTime fecha, int caso, SisResultEntities contexto)
         {
             List<FLASHORDERED> listaHtmlTemp = UtilGeneral.UtilHtml.LeerInfoHtmlTempActual(fecha, caso);
+            List<AgrupadorInfoGeneralDTO> listaInfo = new List<AgrupadorInfoGeneralDTO>();
             string strJoin = ObtenerJoinElementos(listaHtmlTemp);
+            int maxTabindex = (from x in listaHtmlTemp select x.TABINDEX).Max();
+            string fechaFormat = fecha.ToString("yyyyMMdd");
+            int dayofweek = (int)fecha.DayOfWeek == 0 ? 7 : (int)fecha.DayOfWeek;
+
+            List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexGen = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto);
+            List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexDiaSem = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto , 2, dayofweek);
+            List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexDiaMes = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto, 3, fecha.Day);
+            //List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexDiaAnio = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto);
+            List<AgrupadorTotalTabIndexDTO> listaPromMaxGroupTabGen = ConsultasClassFO.ConsultarPromResultadosGroupTab(strJoin, fechaFormat, contexto);
+            List<AgrupadorTotalTabIndexDTO> listaPromMaxGroupTabDiaSem = ConsultasClassFO.ConsultarPromResultadosGroupTab(strJoin, fechaFormat, contexto, 2, dayofweek);
+            List<AgrupadorTotalTabIndexDTO> listaPromMaxGroupTabDiaMes = ConsultasClassFO.ConsultarPromResultadosGroupTab(strJoin, fechaFormat, contexto, 3, fecha.Day);
+            foreach (var item in listaHtmlTemp)
+            {
+                AgrupadorInfoGeneralDTO aigDTO = new AgrupadorInfoGeneralDTO();
+                aigDTO.Tabindex = item.TABINDEX;
+                aigDTO.Tabindexletter = item.TABINDEXLETTER;
+                aigDTO.GroupLetter = item.GROUPLETTER;
+                aigDTO.AgrupadorPromMaxTabindexGen = listaPromMaxTabindexGen.Where(x => x.Tabindex.Equals(item.TABINDEX)).FirstOrDefault();
+                aigDTO.AgrupadorPromMaxTabindexDiaSem = listaPromMaxTabindexDiaSem.Where(x => x.Tabindex.Equals(item.TABINDEX)).FirstOrDefault();
+                aigDTO.AgrupadorPromMaxTabindexDiaMes = listaPromMaxTabindexDiaMes.Where(x => x.Tabindex.Equals(item.TABINDEX)).FirstOrDefault();
+                //aigDTO.AgrupadorPromMaxTabindexGen = listaPromMaxTabindexGen.Where(x => x.Tabindex.Equals(item.TABINDEX)).FirstOrDefault();
+                aigDTO.AgrupadorPromGroupTabGen = listaPromMaxGroupTabGen.Where(x => x.Tabindex.Equals(item.TABINDEXLETTER) && x.GroupLetter.Equals(item.GROUPLETTER)).FirstOrDefault();
+                aigDTO.AgrupadorPromGroupTabDiaSem = listaPromMaxGroupTabDiaSem.Where(x => x.Tabindex.Equals(item.TABINDEXLETTER) && x.GroupLetter.Equals(item.GROUPLETTER)).FirstOrDefault();
+                aigDTO.AgrupadorPromGroupTabDiaMes = listaPromMaxGroupTabDiaMes.Where(x => x.Tabindex.Equals(item.TABINDEXLETTER) && x.GroupLetter.Equals(item.GROUPLETTER)).FirstOrDefault();
+                listaInfo.Add(aigDTO);
+            }
             UtilGeneral.UtilFilesIO.EscribirArchivoCsv(listaHtmlTemp);
         }
 
@@ -814,7 +888,7 @@ namespace LectorCvsResultados.FlashOrdered
                 keyValuePairMaxIndexChar.Add(item, maxValueIndexChar);
             }
             string agrupador = "({0})";
-            string temp = "(groupletter  = '{0}' AND tabindexletter <= {1})";
+            string temp = "("+ConstantesModel.GROUPLETTER+"  = '{0}' AND "+ConstantesModel.TABINDEXLETTER+" <= {1})";
             List<string> listaJoins = new List<string>();
             foreach (var item in keyValuePairMaxIndexChar)
             {

@@ -146,7 +146,7 @@ namespace LectorCvsResultados
             get; set;
         }
 
-        public int Total
+        public double Total
         {
             get; set;
         }
@@ -154,6 +154,11 @@ namespace LectorCvsResultados
         public int Apariciones
         {
             get; set;
+        }
+
+        public string GroupLetter
+        {
+            get;set;
         }
     }
 
@@ -404,6 +409,55 @@ namespace LectorCvsResultados
         {
             get; set;
         }
+    }
+
+    public class AgrupadorInfoGeneralDTO
+    {
+        public int Tabindexletter
+        {
+            get; set;
+        }
+        public string GroupLetter
+        {
+            get; set;
+        }
+        public int Tabindex
+        {
+            get; set;
+        }
+        public AgrupadorTotalTabIndexDTO AgrupadorPromMaxTabindexGen
+        {
+            get;set;
+        }
+        public AgrupadorTotalTabIndexDTO AgrupadorPromMaxTabindexDiaSem
+        {
+            get; set;
+        }
+        public AgrupadorTotalTabIndexDTO AgrupadorPromMaxTabindexDiaMes
+        {
+            get; set;
+        }
+        public AgrupadorTotalTabIndexDTO AgrupadorPromMaxTabindexDiaAnio
+        {
+            get; set;
+        }
+        public AgrupadorTotalTabIndexDTO AgrupadorPromGroupTabGen
+        {
+            get; set;
+        }
+        public AgrupadorTotalTabIndexDTO AgrupadorPromGroupTabDiaSem
+        {
+            get; set;
+        }
+        public AgrupadorTotalTabIndexDTO AgrupadorPromGroupTabDiaMes
+        {
+            get; set;
+        }
+        public AgrupadorTotalTabIndexDTO AgrupadorPromGroupTabDiaAnio
+        {
+            get; set;
+        }
+
     }
 
 }
