@@ -9,35 +9,40 @@ namespace LectorCvsResultados.FlashOrdered
     public class ConstantesConsultaFO
     {
         public const string QUERY_MAX_ID_ACTUAL =
-            "SELECT MAX("+ ConstantesModel.ID +") "
+            "SELECT COALESCE(MAX(" + ConstantesModel.ID + "), 0)"
             + "FROM " + ConstantesModel.FLASHORDERED+" ";
 
-        public const string QUERY_ULTIMO_SPAN =
-            "SELECT {2} AS Spantiempo, " + ConstantesModel.FECHANUM + " AS FechaNum "
+        public const string QUERY_ULTIMOS_SPAN =
+            "WITH registros AS "
+            + "(SELECT MAX(" + ConstantesModel.FECHANUM + ") AS fechanum, " + ConstantesModel.TABINDEX + " "
             + "FROM " + ConstantesModel.FLASHORDERED + " "
-            + "WHERE " + ConstantesModel.TABINDEX + " = {0} "
-            + "AND " + ConstantesModel.FECHANUM + " = (SELECT MAX(" + ConstantesModel.FECHANUM + ") "
-            + "FROM " + ConstantesModel.FLASHORDERED + " "
-            + "WHERE " + ConstantesModel.TABINDEX + " = {0} "
-            + "AND " + ConstantesModel.FECHANUM + " < {1} "
-            + "{3}) {3}";
+            + "WHERE " + ConstantesModel.TABINDEX + " <= {0} "
+            + "AND " + ConstantesModel.FECHANUM + "    < {1} {3}"
+            + "GROUP BY " + ConstantesModel.TABINDEX + ") "
+            + "SELECT f.{2} AS spantiempo, f." + ConstantesModel.TABINDEX + " AS " + ConstantesModel.TABINDEX + ", f." + ConstantesModel.FECHANUM + " AS fechanum "
+            + "FROM " + ConstantesModel.FLASHORDERED + " f "
+            + "INNER JOIN registros r ON r." + ConstantesModel.TABINDEX + "  = f." + ConstantesModel.TABINDEX
+            + " AND r.fechanum = f." + ConstantesModel.FECHANUM + "";
 
-        public const string QUERY_ULTIMO_SPAN_TB_LETTER =
-            "SELECT {2} AS Spantiempo, " + ConstantesModel.FECHANUM + " AS FechaNum "
+        public const string QUERY_ULTIMOS_SPAN_TB_LETTER =
+            "WITH registros AS "
+            + "(SELECT MAX(" + ConstantesModel.FECHANUM + ") AS " + ConstantesModel.FECHANUM + ", " + ConstantesModel.GROUPLETTER + ", " + ConstantesModel.TABINDEXLETTER + " "
             + "FROM " + ConstantesModel.FLASHORDERED + " "
-            + "WHERE tabIndexLetter = {0} {3} "
-            + "AND fechanum = (SELECT MAX(" + ConstantesModel.FECHANUM + ") "
-            + "FROM " + ConstantesModel.FLASHORDERED + " "
-            + "WHERE tabIndexLetter = {0} "
-            + "AND " + ConstantesModel.FECHANUM + " < {1} "
-            + "{3})";
+            + "WHERE " + ConstantesModel.FECHANUM + " < {0} "
+            + "AND {1} {3} "
+            + "GROUP BY " + ConstantesModel.GROUPLETTER + "," + ConstantesModel.TABINDEXLETTER + ") "
+            + "SELECT f.{2}, f." + ConstantesModel.FECHANUM + " AS fechanum, f." + ConstantesModel.GROUPLETTER + " AS GroupLetter, f." + ConstantesModel.TABINDEXLETTER + " AS TabindexLetter "
+            + "FROM " + ConstantesModel.FLASHORDERED + " f "
+            + "INNER JOIN registros r ON r." + ConstantesModel.GROUPLETTER + " = f." + ConstantesModel.GROUPLETTER + " "
+            + "AND r." + ConstantesModel.TABINDEXLETTER + " = f." + ConstantesModel.TABINDEXLETTER + " "
+            + "AND r." + ConstantesModel.FECHANUM + " = f." + ConstantesModel.FECHANUM + "";
 
         public const string QUERY_MAX_INDEX_RESULTADOS =
-            "SELECT MAX(" + ConstantesModel.TABINDEX + ") "
+            "SELECT COALESCE(MAX(" + ConstantesModel.TABINDEX + "), 0)"
             + "FROM " + ConstantesModel.FLASHORDERED + " ";
 
         public const string QUERY_MAX_INDEX_RESULTADOS_GROUP_LETTER =
-            "SELECT MAX(" + ConstantesModel.TABINDEXLETTER + ") "
+            "SELECT COALESCE(MAX(" + ConstantesModel.TABINDEXLETTER + "), 0)"
             + "FROM " + ConstantesModel.FLASHORDERED + " "
             + "WHERE " + ConstantesModel.GROUPLETTER + " = '{0}'";
 
@@ -112,5 +117,12 @@ namespace LectorCvsResultados.FlashOrdered
             + "GROUP BY " + ConstantesModel.GROUPLETTER + ", " + ConstantesModel.TABINDEXLETTER + ")b "
             + "WHERE a.groupletter = b.groupletter "
             + "AND a.tabindexletter = b.tabindexletter";
+
+        public const string QUERY_MAX_TABINDEXSEQ_GEN =
+            "SELECT MAX(" + ConstantesModel.TABINDEXSEQ + ") AS total, tabindex AS tabindex"
+            + "FROM " + ConstantesModel.FLASHORDERED + " "
+            + "WHERE " + ConstantesModel.TABINDEX + " <= {0} "
+            + "AND "+ConstantesModel.FECHANUM+" <= {1} "
+            + "GROUP BY tabindex";
     }
 }

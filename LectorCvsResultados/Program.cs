@@ -463,21 +463,22 @@ namespace LectorCvsResultados
             //    i = i.AddDays(1);
             //}
             //ReiniciarDatosFlashOrdered();
-            //InsertarFORecientes();
-            //AnDataFlashOrdered.ValidarElementosDia(DateTime.Today.AddDays(-3),1);
+            InsertarFORecientes();
+            //AnDataFlashOrdered.ValidarElementosDia(DateTime.Today.AddDays(-1), 1, contexto);
 
         }
 
         private static void InsertarFORecientes()
         {
             List<FLASHORDERED> lista = new List<FLASHORDERED>();
-            var laFecha = DateTime.ParseExact("20180227", "yyyyMMdd", CultureInfo.InvariantCulture);
+            var laFecha = DateTime.ParseExact("20180413", "yyyyMMdd", CultureInfo.InvariantCulture);
             int idInicio = ConsultasClassFO.ConsultarMaxIdActual(contexto);
             //int idPrueba = ConsultasClassFO.ConsultarMaxIdActual(contexto);            
             //int idInicio = 1;
             for (var i = laFecha; i < DateTime.Today;)
             {
-                lista.AddRange(UtilGeneral.UtilHtml.LeerInfoHtml(i, 0, idInicio));
+                //lista.AddRange(UtilGeneral.UtilHtml.LeerInfoHtml(i, idInicio, 0));
+                lista.AddRange(UtilGeneral.UtilHtml.LeerInfoHtml(i, idInicio));
                 idInicio = (int)(from x
                             in lista
                             select x.ID).Max() + 1;
@@ -490,65 +491,65 @@ namespace LectorCvsResultados
 
         private static void ReiniciarDatosFlashOrdered()
         {
-            //List<FLASHORDERED> lista = new List<FLASHORDERED>();
-            //var laFecha = DateTime.ParseExact("20170202", "yyyyMMdd", CultureInfo.InvariantCulture);
-            //var laFechaMax = DateTime.ParseExact("20180202", "yyyyMMdd", CultureInfo.InvariantCulture);
-            //for (var i = laFecha; i < laFechaMax;)
-            //{
-            //    string pathWriteFile = "";
-            //    string pathWrite = "";
-            //    var date = i.ToString("yyyyMMdd");
-            //    lista.AddRange(UtilGeneral.UtilHtml.LeerInfoHtml(i, 1, out pathWriteFile, out pathWrite, lista.Count + 1));
-            //    i = i.AddDays(1);
-            //}
-            //////List<FLASHORDERED> lt = new List<FLASHORDERED>();
-            //////List<decimal> repetidos = new List<decimal>();
-            //////var groups = lista.GroupBy(info => info.ID)
-            //////       .Select(group => new {
-            //////           Metric = group.Key,
-            //////           Count = group.Count()
-            //////       })
-            //////       .Where(x => x.Count > 1);
-            //////List<FLASHORDERED> ltFls = new List<FLASHORDERED>();
-            //////List<decimal> ltDeci = (from y in groups select y.Metric).ToList();
-            //////ltFls = (from x in lista where ltDeci.IndexOf(x.ID) != -1 select x).ToList();
-            //////if (groups.Count() != 0)
-            //////{
-            //////    var stop2 = "";
-            //////}
-            //lista = AnDataFlashOrdered.AnalizarGeneral(lista);
-            //List<FLASHORDERED> listawrite = new List<FLASHORDERED>();
-            //////List<FLASHORDERED> listaAll = new List<FLASHORDERED>();
-            //////listaAll.AddRange(lista);
-            //int subLenght = lista.Count() / 10;
-            //int indexInit = 0;
-            //int part = 1;
-            //do
-            //{
-            //    if (indexInit + subLenght > lista.Count())
-            //    {
-            //        listawrite = lista.GetRange(indexInit, lista.Count());
-            //        lista.RemoveRange(indexInit, lista.Count());
-            //    }
-            //    else
-            //    {
-            //        listawrite = lista.GetRange(indexInit, indexInit + subLenght);
-            //        lista.RemoveRange(indexInit, indexInit + subLenght);
-            //    }
-            //    EscribirArchivoCsv(listawrite, @"D:\temp2\file" + (part++) + ".csv", @"D:\temp2");
-            //    //indexInit = indexInit + subLenght + 1;
-            //} while (lista.Count() > 0);
-            //////laFecha = DateTime.ParseExact("20171025", "yyyyMMdd", CultureInfo.InvariantCulture);
-            //////for (var i = laFecha; i < DateTime.Today;)
-            //////{
-            //////    string pathWriteFile = "";
-            //////    string pathWrite = "";
-            //////    List<HtmlDTO> lista = UtilGeneral.UtilHtml.LeerInfoHtml(i, 2, out pathWriteFile, out pathWrite);
-            //////EscribirArchivoCsv(lista, @"D:\temp.csv", @"D:\");
-            //////    i = i.AddDays(1);
-            //////}
-            ////var stop = "";
-            AnDataFlashOrdered.GuardarElementosGeneral(contexto, 12);
+            List<FLASHORDERED> lista = new List<FLASHORDERED>();
+            var laFecha = DateTime.ParseExact("20170202", "yyyyMMdd", CultureInfo.InvariantCulture);
+            var laFechaMax = DateTime.ParseExact("20180202", "yyyyMMdd", CultureInfo.InvariantCulture);
+            for (var i = laFecha; i < DateTime.Today.AddDays(-2);)
+            {
+                string pathWriteFile = "";
+                string pathWrite = "";
+                var date = i.ToString("yyyyMMdd");
+                lista.AddRange(UtilGeneral.UtilHtml.LeerInfoHtml(i, 1, out pathWriteFile, out pathWrite, lista.Count + 1));
+                i = i.AddDays(1);
+            }
+            ////List<FLASHORDERED> lt = new List<FLASHORDERED>();
+            ////List<decimal> repetidos = new List<decimal>();
+            ////var groups = lista.GroupBy(info => info.ID)
+            ////       .Select(group => new {
+            ////           Metric = group.Key,
+            ////           Count = group.Count()
+            ////       })
+            ////       .Where(x => x.Count > 1);
+            ////List<FLASHORDERED> ltFls = new List<FLASHORDERED>();
+            ////List<decimal> ltDeci = (from y in groups select y.Metric).ToList();
+            ////ltFls = (from x in lista where ltDeci.IndexOf(x.ID) != -1 select x).ToList();
+            ////if (groups.Count() != 0)
+            ////{
+            ////    var stop2 = "";
+            ////}
+            lista = AnDataFlashOrdered.AnalizarGeneral(lista);
+            List<FLASHORDERED> listawrite = new List<FLASHORDERED>();
+            ////List<FLASHORDERED> listaAll = new List<FLASHORDERED>();
+            ////listaAll.AddRange(lista);
+            int subLenght = lista.Count() / 10;
+            int indexInit = 0;
+            int part = 1;
+            do
+            {
+                if (indexInit + subLenght > lista.Count())
+                {
+                    listawrite = lista.GetRange(indexInit, lista.Count());
+                    lista.RemoveRange(indexInit, lista.Count());
+                }
+                else
+                {
+                    listawrite = lista.GetRange(indexInit, indexInit + subLenght);
+                    lista.RemoveRange(indexInit, indexInit + subLenght);
+                }
+                EscribirArchivoCsv(listawrite, @"D:\temp2\file" + (part++) + ".csv", @"D:\temp2");
+                //indexInit = indexInit + subLenght + 1;
+            } while (lista.Count() > 0);
+            ////laFecha = DateTime.ParseExact("20171025", "yyyyMMdd", CultureInfo.InvariantCulture);
+            ////for (var i = laFecha; i < DateTime.Today;)
+            ////{
+            ////    string pathWriteFile = "";
+            ////    string pathWrite = "";
+            ////    List<HtmlDTO> lista = UtilGeneral.UtilHtml.LeerInfoHtml(i, 2, out pathWriteFile, out pathWrite);
+            ////EscribirArchivoCsv(lista, @"D:\temp.csv", @"D:\");
+            ////    i = i.AddDays(1);
+            ////}
+            //var stop = "";
+            //AnDataFlashOrdered.GuardarElementosGeneral(contexto, part);
         }
 
         //public static void LeerHtmlRC(String fechaMes, String fechaDia)

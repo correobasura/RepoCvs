@@ -82,9 +82,19 @@ namespace LectorCvsResultados
             get; set;
         }
 
+        public int TabindexLetter
+        {
+            get; set;
+        }
+
         public int Spantiempo
         {
             get; set;
+        }
+
+        public string GroupLetter
+        {
+            get;set;
         }
     }
 
@@ -458,6 +468,22 @@ namespace LectorCvsResultados
             get; set;
         }
 
+    }
+
+    public class AgrupadorMaxTabIndex
+    {
+        public decimal Total
+        {
+            get; set;
+        }
+        public int Tabindex
+        {
+            get; set;
+        }
+        public int GroupLetter
+        {
+            get; set;
+        }
     }
 
 }

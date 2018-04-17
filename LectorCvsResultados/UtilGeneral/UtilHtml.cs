@@ -207,7 +207,7 @@ namespace LectorCvsResultados.UtilGeneral
         }
 
         public static List<FLASHORDERED> LeerInfoHtml(
-            DateTime fecha, int caso, decimal idInicio)
+            DateTime fecha, decimal idInicio, int caso = 1 )
         {
             List<FLASHORDERED> listaHtmlFinal = new List<FLASHORDERED>();
             string fechaMes = fecha.ToString("yyyyMM");
