@@ -472,7 +472,7 @@ namespace LectorCvsResultados
 
     public class AgrupadorMaxTabIndex
     {
-        public decimal Total
+        public int Total
         {
             get; set;
         }
@@ -480,7 +480,7 @@ namespace LectorCvsResultados
         {
             get; set;
         }
-        public int GroupLetter
+        public string GroupLetter
         {
             get; set;
         }

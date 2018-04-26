@@ -463,8 +463,8 @@ namespace LectorCvsResultados
             //    i = i.AddDays(1);
             //}
             //ReiniciarDatosFlashOrdered();
-            InsertarFORecientes();
-            //AnDataFlashOrdered.ValidarElementosDia(DateTime.Today.AddDays(-1), 1, contexto);
+            //InsertarFORecientes();
+            AnDataFlashOrdered.ValidarElementosDia(DateTime.Today.AddDays(-1), 1, contexto);
 
         }
 

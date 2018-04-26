@@ -124,5 +124,11 @@ namespace LectorCvsResultados.FlashOrdered
             + "WHERE " + ConstantesModel.TABINDEX + " <= {0} "
             + "AND "+ConstantesModel.FECHANUM+" <= {1} "
             + "GROUP BY tabindex";
+
+        public const string QUERY_MAX_TABINDEXSEQ_GL =
+            "SELECT MAX(" + ConstantesModel.TABINDEXLETTERSEQ + ") AS total, groupletter AS GroupLetter, tabindexletter AS Tabindex "
+            + "FROM " + ConstantesModel.FLASHORDERED + " "
+            + "WHERE " + ConstantesModel.FECHANUM + " <= {0} AND {1} "
+            + "GROUP BY groupletter, tabindexletter";
     }
 }

@@ -290,15 +290,15 @@ namespace LectorCvsResultados.FlashOrdered
         }
 
         /// <summary>
-        /// Retorna los máximos valores de secuencia para los tabindex
+        /// Consulta los máximos valores para los tabindexletter y groupletter
         /// </summary>
-        /// <param name="maxListIndex">Máximo valor a revisar</param>
-        /// <param name="fechaFormat">Fecha máxima a validar</param>
-        /// <param name="contexto">instancia para la consulta</param>
-        /// <returns>Lista de datos relacionados</returns>
-        public static List<AgrupadorMaxTabIndex> ConsultarMaxSeqTabindex(int maxListIndex, string fechaFormat, SisResultEntities contexto, string queryBody)
+        /// <param name="fechaFormat">Fecha máxima para validar la información</param>
+        /// <param name="contexto">Instancia para realizar las consultas</param>
+        /// <param name="queryBody">Cadena con filtros de la cosnulta</param>
+        /// <returns>Lista de datos obtenidos</returns>
+        public static List<AgrupadorMaxTabIndex> ConsultarMaxSeqTabindexGl(string fechaFormat, SisResultEntities contexto, string queryBody)
         {
-            string query = string.Format(ConstantesConsultaFO.QUERY_MAX_TABINDEXSEQ_GEN, maxListIndex, fechaFormat);
+            string query = string.Format(ConstantesConsultaFO.QUERY_MAX_TABINDEXSEQ_GL, fechaFormat, queryBody);
             DbRawSqlQuery<AgrupadorMaxTabIndex> data = contexto.Database.SqlQuery<AgrupadorMaxTabIndex>(query);
             return data.AsEnumerable().ToList();
         }

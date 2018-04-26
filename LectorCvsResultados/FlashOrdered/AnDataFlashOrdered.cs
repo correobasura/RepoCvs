@@ -913,7 +913,7 @@ namespace LectorCvsResultados.FlashOrdered
 
             //Obtener los máximos tabindex seq
             List<AgrupadorMaxTabIndex> listaMaxTabindexSeq = ConsultasClassFO.ConsultarMaxSeqTabindex(maxTabindex, fechaFormat, contexto);
-            //List<AgrupadorMaxTabIndex> listaMaxTabindexGL = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto);
+            List<AgrupadorMaxTabIndex> listaMaxTabindexGL = ConsultasClassFO.ConsultarMaxSeqTabindexGl(fechaFormat, contexto, strJoin);
 
 
             foreach (var item in listaHtmlTemp)
