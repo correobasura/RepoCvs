@@ -81,6 +81,7 @@
       <DependentUpon>SisResultModel.tt</DependentUpon>
     </Compile>
     <Compile Include="FlashOrdered\AnDataFlashOrdered.cs" />
+    <Compile Include="UtilGeneral\ConstantesGenerales.cs" />
     <Compile Include="FlashOrdered\ConstantesModel.cs" />
     <Compile Include="FlashOrdered\ConstantesConsultaFO.cs" />
     <Compile Include="FlashOrdered\ConsultasClassFO.cs" />

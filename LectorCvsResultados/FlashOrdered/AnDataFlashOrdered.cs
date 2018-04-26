@@ -368,13 +368,13 @@ namespace LectorCvsResultados.FlashOrdered
                 var elementTemp = listaPersist.FirstOrDefault();
                 int maxTabindex = (from x in listaPersist select x.TABINDEX).Max();
                 List<AgrupadorFechaNumValor> listaDiaHist = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, maxTabindex, fechaNum);
-                List<AgrupadorFechaNumValor> listaDiaSemHist = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, maxTabindex, fechaNum, elementTemp.DIASEM, 1);
-                List<AgrupadorFechaNumValor> listaDiaMesHist = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, maxTabindex, fechaNum, elementTemp.DIAMES, 2);
-                List<AgrupadorFechaNumValor> listaDiaAnioHist = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, maxTabindex, fechaNum, elementTemp.DIAANIO, 3);
+                List<AgrupadorFechaNumValor> listaDiaSemHist = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, maxTabindex, fechaNum, elementTemp.DIASEM, ConstantesGenerales.CASO_DIASEM);
+                List<AgrupadorFechaNumValor> listaDiaMesHist = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, maxTabindex, fechaNum, elementTemp.DIAMES, ConstantesGenerales.CASO_DIAMES);
+                List<AgrupadorFechaNumValor> listaDiaAnioHist = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, maxTabindex, fechaNum, elementTemp.DIAANIO, ConstantesGenerales.CASO_DIAANIO);
                 List<AgrupadorFechaNumValor> listaDiaGlHist = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, fechaNum, strJoin);
-                List<AgrupadorFechaNumValor> listaDiaGlSemHist = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, fechaNum, strJoin, elementTemp.DIASEM, 1);
-                List<AgrupadorFechaNumValor> listaDiaGlMesHist = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, fechaNum, strJoin, elementTemp.DIAMES, 2);
-                List<AgrupadorFechaNumValor> listaDiaGlAnioHist = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, fechaNum, strJoin, elementTemp.DIAANIO, 3);
+                List<AgrupadorFechaNumValor> listaDiaGlSemHist = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, fechaNum, strJoin, elementTemp.DIASEM, ConstantesGenerales.CASO_DIASEM);
+                List<AgrupadorFechaNumValor> listaDiaGlMesHist = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, fechaNum, strJoin, elementTemp.DIAMES, ConstantesGenerales.CASO_DIAMES);
+                List<AgrupadorFechaNumValor> listaDiaGlAnioHist = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, fechaNum, strJoin, elementTemp.DIAANIO, ConstantesGenerales.CASO_DIAANIO);
 
                 foreach (var obj in listaPersist)
                 {
@@ -451,7 +451,7 @@ namespace LectorCvsResultados.FlashOrdered
                 switch (r)
                 {
                     case 1:
-                        maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, 1, (int)elementTemp.DIASEM);
+                        maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, ConstantesGenerales.CASO_DIASEM, elementTemp.DIASEM);
                         listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
                                                  where listTabindex.Contains(b.TABINDEX)
                                                  && b.SPANTISEMACT != null
@@ -461,7 +461,7 @@ namespace LectorCvsResultados.FlashOrdered
                              .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
                         break;
                     case 2:
-                        maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, 2, (int)elementTemp.DIAMES);
+                        maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, ConstantesGenerales.CASO_DIAMES, elementTemp.DIAMES);
                         listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
                                                  where listTabindex.Contains(b.TABINDEX)
                                                  && b.SPANTIMESACT != null
@@ -471,7 +471,7 @@ namespace LectorCvsResultados.FlashOrdered
                              .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
                         break;
                     case 3:
-                        maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, 3, (int)elementTemp.DIAANIO);
+                        maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, ConstantesGenerales.CASO_DIAANIO, elementTemp.DIAANIO);
                         listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
                                                  where listTabindex.Contains(b.TABINDEX)
                                                  && b.SPANTIANIACT != null
@@ -481,7 +481,7 @@ namespace LectorCvsResultados.FlashOrdered
                              .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
                         break;
                     default:
-                        maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, 0, 0);
+                        maxFechaNumIndex = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex);
                         listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
                                                  where listTabindex.Contains(b.TABINDEX)
                                                  && b.SPANTIDIAACT != null
@@ -540,7 +540,7 @@ namespace LectorCvsResultados.FlashOrdered
                 switch (r)
                 {
                     case 4:
-                        listaFechas = ConsultasClassFO.ConsultarMaxFechasTabGroup(contexto, 1, elementTemp.DIASEM, strJoin);
+                        listaFechas = ConsultasClassFO.ConsultarMaxFechasTabGroup(contexto, strJoin, ConstantesGenerales.CASO_DIASEM, elementTemp.DIASEM);
                         listaIds = (from x in listaFechas
                                     select x.Id).ToList();
                         listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
@@ -548,7 +548,7 @@ namespace LectorCvsResultados.FlashOrdered
                                                  select b).ToList();
                         break;
                     case 5:
-                        listaFechas = ConsultasClassFO.ConsultarMaxFechasTabGroup(contexto, 2, elementTemp.DIAMES, strJoin);
+                        listaFechas = ConsultasClassFO.ConsultarMaxFechasTabGroup(contexto, strJoin, ConstantesGenerales.CASO_DIAMES, elementTemp.DIAMES);
                         listaIds = (from x in listaFechas
                                     select x.Id).ToList();
                         listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
@@ -556,7 +556,7 @@ namespace LectorCvsResultados.FlashOrdered
                                                  select b).ToList();
                         break;
                     case 6:
-                        listaFechas = ConsultasClassFO.ConsultarMaxFechasTabGroup(contexto, 3, elementTemp.DIAANIO, strJoin);
+                        listaFechas = ConsultasClassFO.ConsultarMaxFechasTabGroup(contexto, strJoin, ConstantesGenerales.CASO_DIAANIO, elementTemp.DIAANIO);
                         listaIds = (from x in listaFechas
                                     select x.Id).ToList();
                         listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
@@ -564,7 +564,7 @@ namespace LectorCvsResultados.FlashOrdered
                                                  select b).ToList();
                         break;
                     default:
-                        listaFechas = ConsultasClassFO.ConsultarMaxFechasTabGroup(contexto, 0, 0, strJoin);
+                        listaFechas = ConsultasClassFO.ConsultarMaxFechasTabGroup(contexto, strJoin);
                         listaIds = (from x in listaFechas
                                     select x.Id).ToList();
                         listaDatosUltimosSpan = (from b in contexto.FLASHORDERED
@@ -903,18 +903,27 @@ namespace LectorCvsResultados.FlashOrdered
 
             //Obtener los promedios
             List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexGen = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto);
-            List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexDiaSem = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto , 2, dayofweek);
-            List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexDiaMes = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto, 3, fecha.Day);
-            List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexDiaAnio = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto, 4, fecha.DayOfYear);
+            List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexDiaSem = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto , ConstantesGenerales.CASO_DIASEM, dayofweek);
+            List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexDiaMes = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto, ConstantesGenerales.CASO_DIAMES, fecha.Day);
+            List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexDiaAnio = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto, ConstantesGenerales.CASO_DIAANIO, fecha.DayOfYear);
             List<AgrupadorTotalTabIndexDTO> listaPromMaxGroupTabGen = ConsultasClassFO.ConsultarPromResultadosGroupTab(strJoin, fechaFormat, contexto);
-            List<AgrupadorTotalTabIndexDTO> listaPromMaxGroupTabDiaSem = ConsultasClassFO.ConsultarPromResultadosGroupTab(strJoin, fechaFormat, contexto, 2, dayofweek);
-            List<AgrupadorTotalTabIndexDTO> listaPromMaxGroupTabDiaMes = ConsultasClassFO.ConsultarPromResultadosGroupTab(strJoin, fechaFormat, contexto, 3, fecha.Day);
-            List<AgrupadorTotalTabIndexDTO> listaPromMaxGroupTabDiaAnio = ConsultasClassFO.ConsultarPromResultadosGroupTab(strJoin, fechaFormat, contexto, 4, fecha.DayOfYear);
+            List<AgrupadorTotalTabIndexDTO> listaPromMaxGroupTabDiaSem = ConsultasClassFO.ConsultarPromResultadosGroupTab(strJoin, fechaFormat, contexto, ConstantesGenerales.CASO_DIASEM, dayofweek);
+            List<AgrupadorTotalTabIndexDTO> listaPromMaxGroupTabDiaMes = ConsultasClassFO.ConsultarPromResultadosGroupTab(strJoin, fechaFormat, contexto, ConstantesGenerales.CASO_DIAMES, fecha.Day);
+            List<AgrupadorTotalTabIndexDTO> listaPromMaxGroupTabDiaAnio = ConsultasClassFO.ConsultarPromResultadosGroupTab(strJoin, fechaFormat, contexto, ConstantesGenerales.CASO_DIAANIO, fecha.DayOfYear);
 
             //Obtener los máximos tabindex seq
             List<AgrupadorMaxTabIndex> listaMaxTabindexSeq = ConsultasClassFO.ConsultarMaxSeqTabindex(maxTabindex, fechaFormat, contexto);
             List<AgrupadorMaxTabIndex> listaMaxTabindexGL = ConsultasClassFO.ConsultarMaxSeqTabindexGl(fechaFormat, contexto, strJoin);
 
+            //Obtener las fechas máximas de los tabindex
+            List<AgrupadorFechaNumValor> listaFechasMaxTabindexGen = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, fechaFormat);
+            List<AgrupadorFechaNumValor> listaFechasMaxTabindexDiaSem = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DIASEM, dayofweek);
+            List<AgrupadorFechaNumValor> listaFechasMaxTabindexDiaMes = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DIAMES, fecha.Day);
+            List<AgrupadorFechaNumValor> listaFechasMaxTabindexDiaAnio = ConsultasClassFO.ConsultarMaxFechaTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DIAANIO, fecha.DayOfYear);
+            List<AgrupadorFechaNumValor> listaFechasMaxTabindexGLGen = ConsultasClassFO.ConsultarMaxFechaTabindexGl(contexto, fechaFormat, strJoin);
+            List<AgrupadorFechaNumValor> listaFechasMaxTabindexGLDiaSem = ConsultasClassFO.ConsultarMaxFechaTabindexGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIASEM, dayofweek);
+            List<AgrupadorFechaNumValor> listaFechasMaxTabindexGLDiaMes = ConsultasClassFO.ConsultarMaxFechaTabindexGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIAMES, fecha.Day);
+            List<AgrupadorFechaNumValor> listaFechasMaxTabindexGLDiaAnio = ConsultasClassFO.ConsultarMaxFechaTabindexGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIAANIO, fecha.DayOfYear);
 
             foreach (var item in listaHtmlTemp)
             {
@@ -930,6 +939,14 @@ namespace LectorCvsResultados.FlashOrdered
                 aigDTO.AgrupadorPromGroupTabDiaSem = listaPromMaxGroupTabDiaSem.Where(x => x.Tabindex.Equals(item.TABINDEXLETTER) && x.GroupLetter.Equals(item.GROUPLETTER)).FirstOrDefault();
                 aigDTO.AgrupadorPromGroupTabDiaMes = listaPromMaxGroupTabDiaMes.Where(x => x.Tabindex.Equals(item.TABINDEXLETTER) && x.GroupLetter.Equals(item.GROUPLETTER)).FirstOrDefault();
                 aigDTO.AgrupadorPromGroupTabDiaAnio = listaPromMaxGroupTabDiaAnio.Where(x => x.Tabindex.Equals(item.TABINDEXLETTER) && x.GroupLetter.Equals(item.GROUPLETTER)).FirstOrDefault();
+                aigDTO.MaxFechaNumGen = (from x in listaFechasMaxTabindexGen where x.Tabindex.Equals(aigDTO.Tabindex) select x.FechaNum).FirstOrDefault();
+                aigDTO.MaxFechaNumDiaSem = (from x in listaFechasMaxTabindexDiaSem where x.Tabindex.Equals(aigDTO.Tabindex) select x.FechaNum).FirstOrDefault();
+                aigDTO.MaxFechaNumDiaMes = (from x in listaFechasMaxTabindexDiaMes where x.Tabindex.Equals(aigDTO.Tabindex) select x.FechaNum).FirstOrDefault();
+                aigDTO.MaxFechaNumDiaAnio = (from x in listaFechasMaxTabindexDiaAnio where x.TabindexLetter.Equals(aigDTO.Tabindex) select x.FechaNum).FirstOrDefault();
+                aigDTO.MaxFechaNumGlGen = (from x in listaFechasMaxTabindexGLGen where x.TabindexLetter.Equals(aigDTO.Tabindexletter) && x.GroupLetter.Equals(aigDTO.GroupLetter) select x.FechaNum).FirstOrDefault();
+                aigDTO.MaxFechaNumGlDiaSem = (from x in listaFechasMaxTabindexGLDiaSem where x.TabindexLetter.Equals(aigDTO.Tabindexletter) && x.GroupLetter.Equals(aigDTO.GroupLetter) select x.FechaNum).FirstOrDefault();
+                aigDTO.MaxFechaNumGlDiaMes = (from x in listaFechasMaxTabindexGLDiaMes where x.TabindexLetter.Equals(aigDTO.Tabindexletter) && x.GroupLetter.Equals(aigDTO.GroupLetter) select x.FechaNum).FirstOrDefault();
+                aigDTO.MaxFechaNumGlDiaAnio = (from x in listaFechasMaxTabindexGLDiaAnio where x.TabindexLetter.Equals(aigDTO.Tabindexletter) && x.GroupLetter.Equals(aigDTO.GroupLetter) select x.FechaNum).FirstOrDefault();
                 listaInfo.Add(aigDTO);
             }
             UtilGeneral.UtilFilesIO.EscribirArchivoCsv(listaHtmlTemp);

@@ -17,7 +17,7 @@ namespace LectorCvsResultados.FlashOrdered
             + "(SELECT MAX(" + ConstantesModel.FECHANUM + ") AS fechanum, " + ConstantesModel.TABINDEX + " "
             + "FROM " + ConstantesModel.FLASHORDERED + " "
             + "WHERE " + ConstantesModel.TABINDEX + " <= {0} "
-            + "AND " + ConstantesModel.FECHANUM + "    < {1} {3}"
+            + "AND " + ConstantesModel.FECHANUM + " < {1} {3}"
             + "GROUP BY " + ConstantesModel.TABINDEX + ") "
             + "SELECT f.{2} AS spantiempo, f." + ConstantesModel.TABINDEX + " AS " + ConstantesModel.TABINDEX + ", f." + ConstantesModel.FECHANUM + " AS fechanum "
             + "FROM " + ConstantesModel.FLASHORDERED + " f "
@@ -26,12 +26,12 @@ namespace LectorCvsResultados.FlashOrdered
 
         public const string QUERY_ULTIMOS_SPAN_TB_LETTER =
             "WITH registros AS "
-            + "(SELECT MAX(" + ConstantesModel.FECHANUM + ") AS " + ConstantesModel.FECHANUM + ", " + ConstantesModel.GROUPLETTER + ", " + ConstantesModel.TABINDEXLETTER + " "
+            + "(SELECT MAX(" + ConstantesModel.FECHANUM + ") AS fechanum, " + ConstantesModel.GROUPLETTER + ", " + ConstantesModel.TABINDEXLETTER + " "
             + "FROM " + ConstantesModel.FLASHORDERED + " "
             + "WHERE " + ConstantesModel.FECHANUM + " < {0} "
             + "AND {1} {3} "
             + "GROUP BY " + ConstantesModel.GROUPLETTER + "," + ConstantesModel.TABINDEXLETTER + ") "
-            + "SELECT f.{2}, f." + ConstantesModel.FECHANUM + " AS fechanum, f." + ConstantesModel.GROUPLETTER + " AS GroupLetter, f." + ConstantesModel.TABINDEXLETTER + " AS TabindexLetter "
+            + "SELECT f.{2} AS spantiempo, f." + ConstantesModel.FECHANUM + " AS fechanum, f." + ConstantesModel.GROUPLETTER + " AS GroupLetter, f." + ConstantesModel.TABINDEXLETTER + " AS TabindexLetter "
             + "FROM " + ConstantesModel.FLASHORDERED + " f "
             + "INNER JOIN registros r ON r." + ConstantesModel.GROUPLETTER + " = f." + ConstantesModel.GROUPLETTER + " "
             + "AND r." + ConstantesModel.TABINDEXLETTER + " = f." + ConstantesModel.TABINDEXLETTER + " "
@@ -135,14 +135,14 @@ namespace LectorCvsResultados.FlashOrdered
             "SELECT MAX(" + ConstantesModel.FECHANUM + ") AS fechanum, " + ConstantesModel.TABINDEX + " AS tabindex "
             + "FROM " + ConstantesModel.FLASHORDERED + " "
             + "WHERE " + ConstantesModel.TABINDEX + " <= {0} "
-            + "AND " + ConstantesModel.FECHANUM + " < {1} "
+            + "AND " + ConstantesModel.FECHANUM + " < {1} {2}"
             + "GROUP BY " + ConstantesModel.TABINDEX + "";
 
         public const string QUERY_MAX_FECHANUMTABINDEX_GL =
-            "SELECT MAX(" + ConstantesModel.FECHANUM + ") AS fechanum, " + ConstantesModel.TABINDEXLETTER + " AS tabindex, " + ConstantesModel.GROUPLETTER + " AS groupletter "
+            "SELECT MAX(" + ConstantesModel.FECHANUM + ") AS fechanum, " + ConstantesModel.TABINDEXLETTER + " AS TabindexLetter, " + ConstantesModel.GROUPLETTER + " AS GroupLetter "
             + "FROM " + ConstantesModel.FLASHORDERED + " "
             + "WHERE " + ConstantesModel.FECHANUM + " < {0} "
-            + "AND ({1}) "
+            + "AND ({1}) {2}"
             + "GROUP BY " + ConstantesModel.TABINDEXLETTER + ", " + ConstantesModel.GROUPLETTER + "";
     }
 }

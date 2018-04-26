@@ -36,27 +36,23 @@ namespace LectorCvsResultados.FlashOrdered
             int fechaNum, int valor = 0, int caso = 0)
         {
             string columna;
-            string filtroAnd;
+            string filtro = GetFiltro(caso, valor);
             switch (caso)
             {
-                case 1:
+                case ConstantesGenerales.CASO_DIASEM:
                     columna = ConstantesModel.SPANTISEMHIST;
-                    filtroAnd = "AND " + ConstantesModel.DIASEM + " = " + valor;
                     break;
-                case 2:
+                case ConstantesGenerales.CASO_DIAMES:
                     columna = ConstantesModel.SPANTIMESHIST;
-                    filtroAnd = "AND " + ConstantesModel.DIAMES + " = " + valor;
                     break;
-                case 3:
+                case ConstantesGenerales.CASO_DIAANIO:
                     columna = ConstantesModel.SPANTIANIHIST;
-                    filtroAnd = "AND " + ConstantesModel.DIAANIO + " = " + valor;
                     break;
                 default:
                     columna = ConstantesModel.SPANTIDIAHIST;
-                    filtroAnd = "";
                     break;
             }
-            string query = string.Format(ConstantesConsultaFO.QUERY_ULTIMOS_SPAN, tabIndex, fechaNum, columna, filtroAnd);
+            string query = string.Format(ConstantesConsultaFO.QUERY_ULTIMOS_SPAN, tabIndex, fechaNum, columna, filtro);
             return contexto.Database.SqlQuery<AgrupadorFechaNumValor>(query).ToList();
         }
 
@@ -124,7 +120,7 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">caso para consultar y armar el query</param>
         /// <param name="valor">valor a concatenar</param>
         /// <returns>Valor máximo de la fecha</returns>
-        public static int ConsultarMaxFechaTabindex(SisResultEntities contexto, int maxTabIndex, int caso, int valor)
+        public static int ConsultarMaxFechaTabindex(SisResultEntities contexto, int maxTabIndex, int caso = 0, int valor = 0)
         {
             string filtro = GetFiltro(caso, valor);
             string query = string.Format(ConstantesConsultaFO.QUERY_MAX_FECHA_TABINDEX, maxTabIndex, filtro);
@@ -169,7 +165,7 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="valor">valor a concatenar en el query</param>
         /// <param name="queryBody">cadena con el contenido de la consulta</param>
         /// <returns>Lista de objetos con la información</returns>
-        public static List<AgrupadorMaxFechasTGDTO> ConsultarMaxFechasTabGroup(SisResultEntities contexto, int caso, int valor, string queryBody)
+        public static List<AgrupadorMaxFechasTGDTO> ConsultarMaxFechasTabGroup(SisResultEntities contexto, string queryBody, int caso = 0, int valor = 0)
         {
             string filtro = GetFiltro(caso, valor);
             string query = string.Format(ConstantesConsultaFO.QUERY_MAXFECHAS_TABANDGROUPLETTER, queryBody, string.Format(filtro, valor));
@@ -186,7 +182,7 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">caso para adicionar filtro a la consulta</param>
         /// <param name="valor">Valor para el filtro</param>
         /// <returns></returns>
-        public static List<AgrupadorTotalTabIndexDTO> ConsultarPromResultadosMaxTabindex(int maxListIndex, string fechaFormat, SisResultEntities contexto, int caso = 1, int valor = 0)
+        public static List<AgrupadorTotalTabIndexDTO> ConsultarPromResultadosMaxTabindex(int maxListIndex, string fechaFormat, SisResultEntities contexto, int caso = 0, int valor = 0)
         {
             string filtro = GetFiltro(caso, valor);
             string query = string.Format(ConstantesConsultaFO.QUERY_PROM_RESULTS_INTO_TOTALTABINDEX, fechaFormat, maxListIndex, filtro);
@@ -203,7 +199,7 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">caso para evaluar la columna</param>
         /// <param name="valor">Valor a asignar</param>
         /// <returns>Lista de datos obtenida</returns>
-        public static List<AgrupadorTotalTabIndexDTO> ConsultarPromResultadosGroupTab(string queryBody, string fechaFormat, SisResultEntities contexto, int caso = 1, int valor = 0)
+        public static List<AgrupadorTotalTabIndexDTO> ConsultarPromResultadosGroupTab(string queryBody, string fechaFormat, SisResultEntities contexto, int caso = 0, int valor = 0)
         {
             string filtro = GetFiltro(caso, valor);
             string query = string.Format(ConstantesConsultaFO.QUERY_PROM_RESULTS_INTO_TOTALTABINDEX_GROUPANDTAB, fechaFormat, queryBody, filtro);
@@ -248,7 +244,7 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">caso para adicionar el filtro</param>
         /// <param name="valor">valor a adicionar al filtro</param>
         /// <returns></returns>
-        public static List<AgrupadorFechaNumValor> ConsultarMaxFechaTabindex(SisResultEntities contexto, int maxTabindex, string fechaFormat, int caso = 1, int valor = 0)
+        public static List<AgrupadorFechaNumValor> ConsultarMaxFechaTabindex(SisResultEntities contexto, int maxTabindex, string fechaFormat, int caso = 0, int valor = 0)
         {
             string filtro = GetFiltro(caso, valor);
             string query = string.Format(ConstantesConsultaFO.QUERY_MAX_FECHANUMTABINDEX, maxTabindex, fechaFormat, filtro);
@@ -265,7 +261,7 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">Caso para adicionar el filtro</param>
         /// <param name="valor">Valor para adicionar al filtro</param>
         /// <returns>Lista de elementos encontrados</returns>
-        public static List<AgrupadorFechaNumValor> ConsultarMaxFechaTabindexGl(SisResultEntities contexto, string fechaFormat, string queryBody, int caso = 1, int valor = 0)
+        public static List<AgrupadorFechaNumValor> ConsultarMaxFechaTabindexGl(SisResultEntities contexto, string fechaFormat, string queryBody, int caso = 0, int valor = 0)
         {
             string filtro = GetFiltro(caso, valor);
             string query = string.Format(ConstantesConsultaFO.QUERY_MAX_FECHANUMTABINDEX_GL, fechaFormat, queryBody, filtro);
@@ -278,13 +274,13 @@ namespace LectorCvsResultados.FlashOrdered
             string filtro;
             switch (caso)
             {
-                case 2:
+                case ConstantesGenerales.CASO_DIASEM:
                     filtro = string.Format("AND " + ConstantesModel.DIASEM + " = {0} ", valor);
                     break;
-                case 3:
+                case ConstantesGenerales.CASO_DIAMES:
                     filtro = string.Format("AND " + ConstantesModel.DIAMES + " = {0} ", valor);
                     break;
-                case 4:
+                case ConstantesGenerales.CASO_DIAANIO:
                     filtro = string.Format("AND " + ConstantesModel.DIAANIO + " = {0} ", valor);
                     break;
                 default:
