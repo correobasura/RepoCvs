@@ -102,8 +102,8 @@ namespace LectorCvsResultados.FlashOrdered
         public const string QUERY_PROM_RESULTS_INTO_TOTALTABINDEX_GROUPANDTAB =
             "WITH registros AS ( "
             + "SELECT " + ConstantesModel.GROUPLETTER + ", " + ConstantesModel.TABINDEXLETTER + ", " + ConstantesModel.DIFERENCIAG + " "
-            + "FROM flAShordered "
-            + "WHERE fechanum < {0} "
+            + "FROM " + ConstantesModel.FLASHORDERED + " "
+            + "WHERE " + ConstantesModel.FECHANUM + " < {0} "
             + "AND {1} {2}"
             + ") "
             + "SELECT a.cuenta/b.cuenta AS total, a.groupletter AS groupletter, a.tabindexletter AS tabindex, b.cuenta AS Apariciones "
@@ -119,7 +119,7 @@ namespace LectorCvsResultados.FlashOrdered
             + "AND a.tabindexletter = b.tabindexletter";
 
         public const string QUERY_MAX_TABINDEXSEQ_GEN =
-            "SELECT MAX(" + ConstantesModel.TABINDEXSEQ + ") AS total, tabindex AS tabindex"
+            "SELECT MAX(" + ConstantesModel.TABINDEXSEQ + ") AS total, tabindex AS tabindex "
             + "FROM " + ConstantesModel.FLASHORDERED + " "
             + "WHERE " + ConstantesModel.TABINDEX + " <= {0} "
             + "AND "+ConstantesModel.FECHANUM+" <= {1} "

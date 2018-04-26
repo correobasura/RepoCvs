@@ -38,12 +38,12 @@ namespace LectorCvsResultados.UtilGeneral
                 {
                     var item2 = htmltdNodes.ElementAt(i);
                     var data = item2.InnerText.Replace("&nbsp;", "").Replace("&amp;", "&").Replace("\n","").Replace("\r", "").Trim();
-                    if (i.Equals(1) && data.ToLower().Contains(strAfter))
+                    if (i.Equals(indexInicio+1) && data.ToLower().Contains(strAfter.ToLower()))
                     {
                         data = strFinal;
                         esAfter = true;
                     }
-                    if (i.Equals(3) && esAfter)
+                    if (i.Equals(indexInicio+3) && esAfter)
                     {
                         var htmlDocTd = new HtmlDocument();
                         htmlDocTd.LoadHtml(item2.InnerHtml);
