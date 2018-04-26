@@ -130,5 +130,19 @@ namespace LectorCvsResultados.FlashOrdered
             + "FROM " + ConstantesModel.FLASHORDERED + " "
             + "WHERE " + ConstantesModel.FECHANUM + " <= {0} AND {1} "
             + "GROUP BY groupletter, tabindexletter";
+
+        public const string QUERY_MAX_FECHANUMTABINDEX =
+            "SELECT MAX(" + ConstantesModel.FECHANUM + ") AS fechanum, " + ConstantesModel.TABINDEX + " AS tabindex "
+            + "FROM " + ConstantesModel.FLASHORDERED + " "
+            + "WHERE " + ConstantesModel.TABINDEX + " <= {0} "
+            + "AND " + ConstantesModel.FECHANUM + " < {1} "
+            + "GROUP BY " + ConstantesModel.TABINDEX + "";
+
+        public const string QUERY_MAX_FECHANUMTABINDEX_GL =
+            "SELECT MAX(" + ConstantesModel.FECHANUM + ") AS fechanum, " + ConstantesModel.TABINDEXLETTER + " AS tabindex, " + ConstantesModel.GROUPLETTER + " AS groupletter "
+            + "FROM " + ConstantesModel.FLASHORDERED + " "
+            + "WHERE " + ConstantesModel.FECHANUM + " < {0} "
+            + "AND ({1}) "
+            + "GROUP BY " + ConstantesModel.TABINDEXLETTER + ", " + ConstantesModel.GROUPLETTER + "";
     }
 }
