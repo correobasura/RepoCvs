@@ -84,7 +84,7 @@ namespace LectorCvsResultados.FlashOrdered
             + "AND r.groupletter = f.groupletter ";
 
         public const string QUERY_PROM_RESULTS_INTO_TOTALTABINDEX =
-            "SELECT a.cuenta/b.cuenta AS total, a.tabindex, b.cuenta AS Apariciones "
+            "SELECT a.cuenta/b.cuenta AS total, a.tabindex, b.cuenta AS Apariciones, RANK () OVER(ORDER BY a.cuenta/b.cuenta DESC) AS Rank "
             + "FROM (SELECT COUNT(1) AS cuenta, " + ConstantesModel.TABINDEX + " "
             + "FROM " + ConstantesModel.FLASHORDERED + " "
             + "WHERE " + ConstantesModel.DIFERENCIAG + " != 0 "
@@ -106,7 +106,7 @@ namespace LectorCvsResultados.FlashOrdered
             + "WHERE " + ConstantesModel.FECHANUM + " < {0} "
             + "AND {1} {2}"
             + ") "
-            + "SELECT a.cuenta/b.cuenta AS total, a.groupletter AS groupletter, a.tabindexletter AS tabindex, b.cuenta AS Apariciones "
+            + "SELECT a.cuenta/b.cuenta AS total, a.groupletter AS groupletter, a.tabindexletter AS tabindex, b.cuenta AS Apariciones, RANK () OVER(ORDER BY a.cuenta/b.cuenta DESC) AS Rank "
             + "FROM ( "
             + "SELECT count(1) AS cuenta, " + ConstantesModel.GROUPLETTER + ", " + ConstantesModel.TABINDEXLETTER + " "
             + "FROM registros "
@@ -132,17 +132,46 @@ namespace LectorCvsResultados.FlashOrdered
             + "GROUP BY groupletter, tabindexletter";
 
         public const string QUERY_MAX_FECHANUMTABINDEX =
-            "SELECT MAX(" + ConstantesModel.FECHANUM + ") AS fechanum, " + ConstantesModel.TABINDEX + " AS tabindex "
+            "WITH registros AS "
+            + "(SELECT MAX(" + ConstantesModel.FECHANUM + ") AS fechanum, " + ConstantesModel.TABINDEX + " AS tabindex "
             + "FROM " + ConstantesModel.FLASHORDERED + " "
             + "WHERE " + ConstantesModel.TABINDEX + " <= {0} "
             + "AND " + ConstantesModel.FECHANUM + " < {1} {2}"
-            + "GROUP BY " + ConstantesModel.TABINDEX + "";
+            + "GROUP BY " + ConstantesModel.TABINDEX + ") "
+            + "SELECT f.{3} AS spantiempo,f." + ConstantesModel.FECHANUM + " AS fechanum, f." + ConstantesModel.TABINDEX + " AS tabindex "
+            + "FROM " + ConstantesModel.FLASHORDERED + " f "
+            + "INNER JOIN registros r ON f." + ConstantesModel.FECHANUM + "  = r." + ConstantesModel.FECHANUM 
+                + " AND f." + ConstantesModel.TABINDEX + " = r." + ConstantesModel.TABINDEX + " ";
+
 
         public const string QUERY_MAX_FECHANUMTABINDEX_GL =
-            "SELECT MAX(" + ConstantesModel.FECHANUM + ") AS fechanum, " + ConstantesModel.TABINDEXLETTER + " AS TabindexLetter, " + ConstantesModel.GROUPLETTER + " AS GroupLetter "
+            "WITH registros AS "
+            + "(SELECT MAX(" + ConstantesModel.FECHANUM + ") AS fechanum, " + ConstantesModel.TABINDEXLETTER + " AS TabindexLetter, " + ConstantesModel.GROUPLETTER + " AS GroupLetter "
             + "FROM " + ConstantesModel.FLASHORDERED + " "
             + "WHERE " + ConstantesModel.FECHANUM + " < {0} "
             + "AND ({1}) {2}"
-            + "GROUP BY " + ConstantesModel.TABINDEXLETTER + ", " + ConstantesModel.GROUPLETTER + "";
+            + "GROUP BY " + ConstantesModel.TABINDEXLETTER + ", " + ConstantesModel.GROUPLETTER + ") "
+            + "SELECT f.{3} AS spantiempo,f." + ConstantesModel.FECHANUM + " AS fechanum, f." + ConstantesModel.TABINDEXLETTER + " AS TabindexLetter, f. " + ConstantesModel.GROUPLETTER + " AS GroupLetter "
+            + "FROM " + ConstantesModel.FLASHORDERED + " f "
+            + "INNER JOIN registros r ON f." + ConstantesModel.FECHANUM + "  = r." + ConstantesModel.FECHANUM 
+                + " AND f." + ConstantesModel.TABINDEXLETTER + " = r." + ConstantesModel.TABINDEXLETTER + " " 
+                + " AND f." + ConstantesModel.GROUPLETTER + " = r." + ConstantesModel.GROUPLETTER + " ";
+
+        public const string QUERY_RANK_SPANS_BY_TABINDEX =
+            "SELECT COUNT(1) AS total, {0} AS spanTiempo, " + ConstantesModel.TABINDEX + " AS tabindex, "
+            +"RANK () OVER (PARTITION BY " + ConstantesModel.TABINDEX + " ORDER BY COUNT(1) DESC) AS rank "
+            +"FROM " + ConstantesModel.FLASHORDERED + " "
+            +"WHERE ({1}) "
+            +"AND {0} IS NOT NULL {2} "
+            +"GROUP BY {0}, " + ConstantesModel.TABINDEX;
+
+        public const string QUERY_RANK_SPANS_BY_GL_TABINDEX =
+            "SELECT COUNT(1) AS total, {0} AS spanTiempo, " + ConstantesModel.TABINDEXLETTER + " AS tabindexletter, " + ConstantesModel.GROUPLETTER + " AS groupletter, "
+            + "RANK () OVER (PARTITION BY " + ConstantesModel.TABINDEXLETTER + ", " + ConstantesModel.GROUPLETTER + " ORDER BY COUNT(1) DESC) AS rank "
+            + "FROM " + ConstantesModel.FLASHORDERED + " "
+            + "WHERE ({1}) "
+            + "AND {0} IS NOT NULL {2} "
+            + "GROUP BY {0}, " + ConstantesModel.TABINDEXLETTER + ", " + ConstantesModel.GROUPLETTER + "";
+
     }
 }

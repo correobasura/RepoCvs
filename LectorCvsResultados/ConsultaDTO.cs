@@ -39,35 +39,14 @@ namespace LectorCvsResultados
 
     public class AgrupadorConteosTimeSpanDTO
     {
-
-        public int? DiaSemNum
-        {
-            get;
-            set;
-        }
-        public int? Fechanum
-        {
-            get;
-            set;
-        }
-
-        public int Rank
-        {
-            get;
-            set;
-        }
-
-        public int? Spantiempo
-        {
-            get;
-            set;
-        }
-
-        public int Total
-        {
-            get;
-            set;
-        }
+        public int DiaSemNum { get; set; }
+        public int Fechanum { get; set; }
+        public int Rank { get; set; }
+        public int Spantiempo { get; set; }
+        public int Total { get; set; }
+        public int TabIndex { get; set; }
+        public int TabIndexLetter { get; set; }
+        public string GroupLetter { get; set; }
     }
 
     public class AgrupadorFechaNumValor
@@ -146,30 +125,12 @@ namespace LectorCvsResultados
 
     public class AgrupadorTotalTabIndexDTO
     {
-        public int Lineindex
-        {
-            get; set;
-        }
-
-        public int Tabindex
-        {
-            get; set;
-        }
-
-        public double Total
-        {
-            get; set;
-        }
-
-        public int Apariciones
-        {
-            get; set;
-        }
-
-        public string GroupLetter
-        {
-            get;set;
-        }
+        public int Lineindex { get; set; }
+        public int Tabindex { get; set; }
+        public double Total { get; set; }
+        public int Apariciones { get; set; }
+        public string GroupLetter { get; set; }
+        public int Rank { get; set; }
     }
 
     public class AgrupadorTotalPercentSpanDTO
@@ -430,18 +391,53 @@ namespace LectorCvsResultados
         public AgrupadorTotalTabIndexDTO AgrupadorPromMaxTabindexDiaSem { get; set; }
         public AgrupadorTotalTabIndexDTO AgrupadorPromMaxTabindexDiaMes { get; set; }
         public AgrupadorTotalTabIndexDTO AgrupadorPromMaxTabindexDiaAnio { get; set; }
-        public AgrupadorTotalTabIndexDTO AgrupadorPromGroupTabGen { get; set; }
-        public AgrupadorTotalTabIndexDTO AgrupadorPromGroupTabDiaSem { get; set; }
-        public AgrupadorTotalTabIndexDTO AgrupadorPromGroupTabDiaMes { get; set; }
-        public AgrupadorTotalTabIndexDTO AgrupadorPromGroupTabDiaAnio { get; set; }
-        public int MaxFechaNumGen { get; set; }
-        public int MaxFechaNumDiaSem { get; set; }
-        public int MaxFechaNumDiaMes { get; set; }
-        public int MaxFechaNumDiaAnio { get; set; }
-        public int MaxFechaNumGlGen { get; set; }
-        public int MaxFechaNumGlDiaSem { get; set; }
-        public int MaxFechaNumGlDiaMes { get; set; }
-        public int MaxFechaNumGlDiaAnio { get; set; }
+        public AgrupadorTotalTabIndexDTO AgrupadorPromMaxGroupTabGen { get; set; }
+        public AgrupadorTotalTabIndexDTO AgrupadorPromMaxGroupTabDiaSem { get; set; }
+        public AgrupadorTotalTabIndexDTO AgrupadorPromMaxGroupTabDiaMes { get; set; }
+        public AgrupadorTotalTabIndexDTO AgrupadorPromMaxGroupTabDiaAnio { get; set; }
+        public AgrupadorFechaNumValor AgrUltFechaNumSpanGen { get; set; }
+        public AgrupadorFechaNumValor AgrUltFechaNumSpanDiaSem { get; set; }
+        public AgrupadorFechaNumValor AgrUltFechaNumSpanDiaMes { get; set; }
+        public AgrupadorFechaNumValor AgrUltFechaNumSpanDiaAnio { get; set; }
+        public AgrupadorFechaNumValor AgrUltFechaNumSpanGlGen { get; set; }
+        public AgrupadorFechaNumValor AgrUltFechaNumSpanGlDiaSem { get; set; }
+        public AgrupadorFechaNumValor AgrUltFechaNumSpanGlDiaMes { get; set; }
+        public AgrupadorFechaNumValor AgrUltFechaNumSpanGlDiaAnio { get; set; }
+        public List<AgrupadorConteosTimeSpanDTO> ListRankSpansGen { get; set; }
+        public List<AgrupadorConteosTimeSpanDTO> ListRankSpansDiaSem { get; set; }
+        public List<AgrupadorConteosTimeSpanDTO> ListRankSpansGlGen { get; set; }
+        public List<AgrupadorConteosTimeSpanDTO> ListRankSpansGlDiaSem { get; set; }
+        public int RankSpanActualGen { get; set; }
+        public int RankSpanActualDiaSem { get; set; }
+        public int RankSpanActualGlGen { get; set; }
+        public int RankSpanActualGlDiaSem { get; set; }
+        public int MaxRankSpanActualGen { get; set; }
+        public int MaxRankSpanActualDiaSem { get; set; }
+        public int MaxRankSpanActualGlGen { get; set; }
+        public int MaxRankSpanActualGlDiaSem { get; set; }
+        public int DiferenciaGTemp { get; set; }
+        public int MinSpanGlGen { get; set; }
+        public int MinSpanGlDiaSem { get; set; }
+        public int MinSpanTiGen { get; set; }
+        public int MinSpanTiDiaSem { get; set; }
+
+        public string Home { get; set; }
+        public string Away { get; set; }
+
+        public int Puntuacion { get; set; }
+        public List<int> TipoIncremento { get; set; }
+    }
+
+    public class DTOTemp
+    {
+        public int Positivos { get; set; }
+        public int Negativos { get; set; }
+        public double AvgPos { get { return Positivos + Negativos != 0 ? (Positivos*100)/(Positivos+ Negativos):0; } }
+        public double AvgNeg { get { return Positivos + Negativos != 0 ? (Negativos * 100) / (Positivos + Negativos):0; } }
+        public override string ToString()
+        {
+            return "Positivos:"+Positivos + ";" + "Negativos:"+Negativos + ";"+ "AvgPos:"+ AvgPos+";"+ "AvgNeg:"+AvgNeg;
+        }
     }
 
     public class AgrupadorMaxTabIndex
@@ -460,4 +456,9 @@ namespace LectorCvsResultados
         }
     }
 
+    public class InfoAnalisisDTO
+    {
+        public int Positivos { get; set; }
+        public int Negativos { get; set; }
+    }
 }

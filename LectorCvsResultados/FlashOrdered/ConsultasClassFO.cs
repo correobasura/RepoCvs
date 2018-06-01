@@ -35,23 +35,8 @@ namespace LectorCvsResultados.FlashOrdered
         public static List<AgrupadorFechaNumValor> ConsultarUltimoTimeSpan(SisResultEntities contexto, int tabIndex,
             int fechaNum, int valor = 0, int caso = 0)
         {
-            string columna;
+            string columna = GetColumnaTIHist(caso);
             string filtro = GetFiltro(caso, valor);
-            switch (caso)
-            {
-                case ConstantesGenerales.CASO_DIASEM:
-                    columna = ConstantesModel.SPANTISEMHIST;
-                    break;
-                case ConstantesGenerales.CASO_DIAMES:
-                    columna = ConstantesModel.SPANTIMESHIST;
-                    break;
-                case ConstantesGenerales.CASO_DIAANIO:
-                    columna = ConstantesModel.SPANTIANIHIST;
-                    break;
-                default:
-                    columna = ConstantesModel.SPANTIDIAHIST;
-                    break;
-            }
             string query = string.Format(ConstantesConsultaFO.QUERY_ULTIMOS_SPAN, tabIndex, fechaNum, columna, filtro);
             return contexto.Database.SqlQuery<AgrupadorFechaNumValor>(query).ToList();
         }
@@ -69,23 +54,8 @@ namespace LectorCvsResultados.FlashOrdered
         /// <returns>Elemento asociado</returns>
         public static List<AgrupadorFechaNumValor> ConsultarUltimoTimeSpan(SisResultEntities contexto, int fechaNum, string strJoin, int valor = 0, int caso = 0)
         {
-            string columna;
+            string columna = GetColumnaGlTIHist(caso);
             string filtro = GetFiltro(caso, valor);
-            switch (caso)
-            {
-                case 1:
-                    columna = ConstantesModel.SPANTIGLSEMHIST;
-                    break;
-                case 2:
-                    columna = ConstantesModel.SPANTIGLMESHIST;
-                    break;
-                case 3:
-                    columna = ConstantesModel.SPANTIGLANIHIST;
-                    break;
-                default:
-                    columna = ConstantesModel.SPANTIGLDIAHIST;
-                    break;
-            }
             string query = string.Format(ConstantesConsultaFO.QUERY_ULTIMOS_SPAN_TB_LETTER, fechaNum, strJoin, columna, filtro);
             return contexto.Database.SqlQuery<AgrupadorFechaNumValor>(query).ToList();
         }
@@ -244,10 +214,11 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">caso para adicionar el filtro</param>
         /// <param name="valor">valor a adicionar al filtro</param>
         /// <returns></returns>
-        public static List<AgrupadorFechaNumValor> ConsultarMaxFechaTabindex(SisResultEntities contexto, int maxTabindex, string fechaFormat, int caso = 0, int valor = 0)
+        public static List<AgrupadorFechaNumValor> ConsultarMaxFechaAndSpanTabindex(SisResultEntities contexto, int maxTabindex, string fechaFormat, int caso = 0, int valor = 0)
         {
             string filtro = GetFiltro(caso, valor);
-            string query = string.Format(ConstantesConsultaFO.QUERY_MAX_FECHANUMTABINDEX, maxTabindex, fechaFormat, filtro);
+            string columna = GetColumnaTIHist(caso);
+            string query = string.Format(ConstantesConsultaFO.QUERY_MAX_FECHANUMTABINDEX, maxTabindex, fechaFormat, filtro, columna);
             DbRawSqlQuery<AgrupadorFechaNumValor> data = contexto.Database.SqlQuery<AgrupadorFechaNumValor>(query);
             return data.AsEnumerable().ToList();
         }
@@ -261,11 +232,46 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">Caso para adicionar el filtro</param>
         /// <param name="valor">Valor para adicionar al filtro</param>
         /// <returns>Lista de elementos encontrados</returns>
-        public static List<AgrupadorFechaNumValor> ConsultarMaxFechaTabindexGl(SisResultEntities contexto, string fechaFormat, string queryBody, int caso = 0, int valor = 0)
+        public static List<AgrupadorFechaNumValor> ConsultarMaxFechaTabindexAndSpanGl(SisResultEntities contexto, string fechaFormat, string queryBody, int caso = 0, int valor = 0)
         {
             string filtro = GetFiltro(caso, valor);
-            string query = string.Format(ConstantesConsultaFO.QUERY_MAX_FECHANUMTABINDEX_GL, fechaFormat, queryBody, filtro);
+            string columna = GetColumnaGlTIHist(caso);
+            string query = string.Format(ConstantesConsultaFO.QUERY_MAX_FECHANUMTABINDEX_GL, fechaFormat, queryBody, filtro, columna);
             DbRawSqlQuery<AgrupadorFechaNumValor> data = contexto.Database.SqlQuery<AgrupadorFechaNumValor>(query);
+            return data.AsEnumerable().ToList();
+        }
+
+        /// <summary>
+        /// Método que realiza el rankeo de los spans para cada tabindex
+        /// </summary>
+        /// <param name="contexto">Instancia para las consultas</param>
+        /// <param name="queryBody">info de consulta</param>
+        /// <param name="caso">Caso para evaluar</param>
+        /// <param name="valor">Valor a asignar al filtro</param>
+        /// <returns>Listado de elementos</returns>
+        public static List<AgrupadorConteosTimeSpanDTO> ConsultarRanksTabindex(SisResultEntities contexto, string queryBody, int caso = 0, int valor = 0)
+        {
+            string columna = GetColumnaTIAct(caso);
+            string filtro = GetFiltro(caso, valor);
+            string query = string.Format(ConstantesConsultaFO.QUERY_RANK_SPANS_BY_TABINDEX, columna, queryBody, filtro);
+            DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
+            return data.AsEnumerable().ToList();
+        }
+
+        /// <summary>
+        /// Método que realiza el rankeo de los spans para cada tabindex
+        /// </summary>
+        /// <param name="contexto">Instancia para las consultas</param>
+        /// <param name="queryBody">info de consulta</param>
+        /// <param name="caso">Caso para evaluar</param>
+        /// <param name="valor">Valor a asignar al filtro</param>
+        /// <returns>Listado de elementos</returns>
+        public static List<AgrupadorConteosTimeSpanDTO> ConsultarRanksGlTabindex(SisResultEntities contexto, string queryBody, int caso = 0, int valor = 0)
+        {
+            string columna = GetColumnaGlTIAct(caso);
+            string filtro = GetFiltro(caso, valor);
+            string query = string.Format(ConstantesConsultaFO.QUERY_RANK_SPANS_BY_GL_TABINDEX, columna, queryBody, filtro);
+            DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
             return data.AsEnumerable().ToList();
         }
 
@@ -288,6 +294,90 @@ namespace LectorCvsResultados.FlashOrdered
                     break;
             }
             return filtro;
+        }
+
+        public static string GetColumnaTIHist(int caso)
+        {
+            string columna;
+            switch (caso)
+            {
+                case ConstantesGenerales.CASO_DIASEM:
+                    columna = ConstantesModel.SPANTISEMHIST;
+                    break;
+                case ConstantesGenerales.CASO_DIAMES:
+                    columna = ConstantesModel.SPANTIMESHIST;
+                    break;
+                case ConstantesGenerales.CASO_DIAANIO:
+                    columna = ConstantesModel.SPANTIANIHIST;
+                    break;
+                default:
+                    columna = ConstantesModel.SPANTIDIAHIST;
+                    break;
+            }
+            return columna;
+        }
+
+        public static string GetColumnaTIAct(int caso)
+        {
+            string columna;
+            switch (caso)
+            {
+                case ConstantesGenerales.CASO_DIASEM:
+                    columna = ConstantesModel.SPANTISEMACT;
+                    break;
+                case ConstantesGenerales.CASO_DIAMES:
+                    columna = ConstantesModel.SPANTIMESACT;
+                    break;
+                case ConstantesGenerales.CASO_DIAANIO:
+                    columna = ConstantesModel.SPANTIANIACT;
+                    break;
+                default:
+                    columna = ConstantesModel.SPANTIDIAACT;
+                    break;
+            }
+            return columna;
+        }
+
+        public static string GetColumnaGlTIHist(int caso)
+        {
+            string columna;
+            switch (caso)
+            {
+                case ConstantesGenerales.CASO_DIASEM:
+                    columna = ConstantesModel.SPANTIGLSEMHIST;
+                    break;
+                case ConstantesGenerales.CASO_DIAMES:
+                    columna = ConstantesModel.SPANTIGLMESHIST;
+                    break;
+                case ConstantesGenerales.CASO_DIAANIO:
+                    columna = ConstantesModel.SPANTIGLANIHIST;
+                    break;
+                default:
+                    columna = ConstantesModel.SPANTIGLDIAHIST;
+                    break;
+            }
+            return columna;
+        }
+
+        public static string GetColumnaGlTIAct(int caso)
+        {
+            string columna;
+            switch (caso)
+            {
+                case ConstantesGenerales.CASO_DIASEM:
+                    columna = ConstantesModel.SPANTIGLSEMACT;
+                    break;
+                case ConstantesGenerales.CASO_DIAMES:
+                    columna = ConstantesModel.SPANTIGLMESACT;
+                    break;
+                case ConstantesGenerales.CASO_DIAANIO:
+                    columna = ConstantesModel.SPANTIGLANIACT;
+                    break;
+                default:
+                    columna = ConstantesModel.SPANTIGLDIAACT;
+                    break;
+            }
+            return columna;
         }
     }
 }

@@ -113,7 +113,7 @@ namespace LectorCvsResultados.UtilGeneral
             return lista;
         }
 
-        public static List<FLASHORDERED> LeerInfoHtml(
+        public static List<FLASHORDERED> LeerInfoHtmlResetAll(
             DateTime fecha, int caso, decimal idInicio)
         {
             List<FLASHORDERED> listaHtmlFinal = new List<FLASHORDERED>();
