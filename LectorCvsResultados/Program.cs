@@ -486,65 +486,86 @@ namespace LectorCvsResultados
                 dictDatosGlDiaSem.Add(i, new DTOTemp());
                 dictDatosTiGen.Add(i, new DTOTemp());
             }
-            for (var i = laFecha; i < DateTime.Today; i = i.AddDays(1))
+            Dictionary<int, List<Dictionary<int, DTOTemp>>> dictGen = new Dictionary<int, List<Dictionary<int, DTOTemp>>>();
+            for (int val = 1; val <= 7; val++)
             {
-                int fecha = Convert.ToInt32(i.ToString("yyyyMMdd"));
-                dictTotalesDias.Add(fecha, new InfoAnalisisDTO());
-                List<AgrupadorInfoGeneralDTO> listaInfo = AnDataFlashOrdered.ValidarElementosDia(i, 1, contexto);
-                List<FLASHORDERED> listaDia = UtilGeneral.UtilHtml.LeerInfoHtml(i, 1);
-                foreach (var item in listaInfo)
+                for (var i = laFecha; i < DateTime.Today; i = i.AddDays(1))
                 {
-                    var data = (from x in listaDia where x.TABINDEX == item.Tabindex select x).FirstOrDefault();
-                    if (data == null) continue;
-                    if (data.DIFERENCIAG == 0)
+                    int dia = (int)i.DayOfWeek == 0 ? 7 : (int)i.DayOfWeek;
+                    if (dia != val) continue;
+                    int fecha = Convert.ToInt32(i.ToString("yyyyMMdd"));
+                    dictTotalesDias.Add(fecha, new InfoAnalisisDTO());
+                    List<AgrupadorInfoGeneralDTO> listaInfo = AnDataFlashOrdered.ValidarElementosDia(i, 1, contexto);
+                    List<FLASHORDERED> listaDia = UtilGeneral.UtilHtml.LeerInfoHtml(i, 1);
+                    foreach (var item in listaInfo)
                     {
-                        dictTotalesDias[fecha].Negativos++;
-                        dictDatosGlGen[item.RankSpanActualGlGen].Negativos++;
-                        dictDatosGlDiaSem[item.RankSpanActualGlDiaSem].Negativos++;
-                        dictDatosTiGen[item.RankSpanActualGen].Negativos++;
-                        foreach (var itemCaso in item.TipoIncremento)
+                        var data = (from x in listaDia where x.TABINDEX == item.Tabindex select x).FirstOrDefault();
+                        if (data == null) continue;
+                        if (data.DIFERENCIAG == 0)
                         {
-                            dict[itemCaso].Negativos++;
+                            dictTotalesDias[fecha].Negativos++;
+                            dictDatosGlGen[item.RankSpanActualGlGen].Negativos++;
+                            dictDatosGlDiaSem[item.RankSpanActualGlDiaSem].Negativos++;
+                            dictDatosTiGen[item.RankSpanActualGen].Negativos++;
+                            foreach (var itemCaso in item.TipoIncremento)
+                            {
+                                dict[itemCaso].Negativos++;
+                            }
+                        }
+                        else
+                        {
+                            dictTotalesDias[fecha].Positivos++;
+                            dictDatosGlGen[item.RankSpanActualGlGen].Positivos++;
+                            dictDatosGlDiaSem[item.RankSpanActualGlDiaSem].Positivos++;
+                            dictDatosTiGen[item.RankSpanActualGen].Positivos++;
+                            foreach (var itemCaso in item.TipoIncremento)
+                            {
+                                dict[itemCaso].Positivos++;
+                            }
                         }
                     }
-                    else
-                    {
-                        dictTotalesDias[fecha].Positivos++;
-                        dictDatosGlGen[item.RankSpanActualGlGen].Positivos++;
-                        dictDatosGlDiaSem[item.RankSpanActualGlDiaSem].Positivos++;
-                        dictDatosTiGen[item.RankSpanActualGen].Positivos++;
-                        foreach (var itemCaso in item.TipoIncremento)
-                        {
-                            dict[itemCaso].Positivos++;
-                        }
-                    }
+                    //List<AgrupadorInfoGeneralDTO> listaInfoFiltered = (from x in listaInfo where x.Puntuacion > 1 select x).ToList();
+                    //foreach (var item in listaInfoFiltered)
+                    //{
+                    //    var data = (from x in listaDia where x.TABINDEX == item.Tabindex select x).FirstOrDefault();
+                    //    if (data == null) continue;
+                    //    if(data.DIFERENCIAG == 0)
+                    //    {
+                    //        foreach (var itemCaso in item.TipoIncremento)
+                    //        {
+                    //            dict[itemCaso].Negativos++;
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        foreach (var itemCaso in item.TipoIncremento)
+                    //        {
+                    //            dict[itemCaso].Positivos++;
+                    //        }
+                    //    }
+                    //}
                 }
-                //List<AgrupadorInfoGeneralDTO> listaInfoFiltered = (from x in listaInfo where x.Puntuacion > 1 select x).ToList();
-                //foreach (var item in listaInfoFiltered)
-                //{
-                //    var data = (from x in listaDia where x.TABINDEX == item.Tabindex select x).FirstOrDefault();
-                //    if (data == null) continue;
-                //    if(data.DIFERENCIAG == 0)
-                //    {
-                //        foreach (var itemCaso in item.TipoIncremento)
-                //        {
-                //            dict[itemCaso].Negativos++;
-                //        }
-                //    }
-                //    else
-                //    {
-                //        foreach (var itemCaso in item.TipoIncremento)
-                //        {
-                //            dict[itemCaso].Positivos++;
-                //        }
-                //    }
-                //}
+                dictDatosGlGen = (from entry in dictDatosGlGen where entry.Value.AvgNeg > 25 orderby entry.Value.AvgNeg descending select entry).ToDictionary(x => x.Key, x => x.Value);
+                dictDatosGlDiaSem = (from entry in dictDatosGlDiaSem where entry.Value.AvgNeg > 25 orderby entry.Value.AvgNeg descending select entry).ToDictionary(x => x.Key, x => x.Value);
+                dictDatosTiGen = (from entry in dictDatosTiGen where entry.Value.AvgNeg > 25 orderby entry.Value.AvgNeg descending select entry).ToDictionary(x => x.Key, x => x.Value);
+                List<Dictionary<int, DTOTemp>> listDicts = new List<Dictionary<int, DTOTemp>>();
+                listDicts.Add((from x in dictDatosGlGen select x).ToDictionary(x => x.Key, x => x.Value));
+                listDicts.Add((from x in dictDatosGlDiaSem select x).ToDictionary(x => x.Key, x => x.Value));
+                listDicts.Add((from x in dictDatosTiGen select x).ToDictionary(x => x.Key, x => x.Value));
+                dictGen.Add(val, listDicts);
+                dictDatosGlGen.Clear();
+                dictDatosGlDiaSem.Clear();
+                dictDatosTiGen.Clear();
+                for (int i = 0; i < 30; i++)
+                {
+                    dictDatosGlGen.Add(i, new DTOTemp());
+                    dictDatosGlDiaSem.Add(i, new DTOTemp());
+                    dictDatosTiGen.Add(i, new DTOTemp());
+                }
             }
             //dictCounterRank = (from entry in dictCounterRank orderby entry.Value.Positivos descending, entry.Value.Negativos select entry).ToDictionary(x => x.Key, x => x.Value);
             //dictCounterRank = dictCounterRank.Take(100).ToDictionary(x => x.Key, x => x.Value);
-            dictDatosGlGen = (from entry in dictDatosGlGen orderby entry.Value.AvgNeg descending select entry).ToDictionary(x => x.Key, x => x.Value);
-            dictDatosGlDiaSem = (from entry in dictDatosGlDiaSem orderby entry.Value.AvgNeg descending select entry).ToDictionary(x => x.Key, x => x.Value);
-            dictDatosTiGen = (from entry in dictDatosTiGen orderby entry.Value.AvgNeg descending select entry).ToDictionary(x => x.Key, x => x.Value);
+            
             var infoFin = "";
             //Dictionary<int, DTOTemp> dictDatosGlGen = new Dictionary<int, DTOTemp>();
             //Dictionary<int, DTOTemp> dictDatosGlDiaSem = new Dictionary<int, DTOTemp>();

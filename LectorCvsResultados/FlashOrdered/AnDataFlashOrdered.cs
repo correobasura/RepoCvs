@@ -9,6 +9,35 @@ namespace LectorCvsResultados.FlashOrdered
 {
     public class AnDataFlashOrdered
     {
+
+
+        static string strGlGen1 = "11,5,6,4,8";
+        static string strGlDiaSem1 = "6,0";
+        static string strTiGen1 = "16,13,1,0,4,9,12";
+        static string strGlGen2 = "10,12,14,5,7,6,1,3";
+        static string strGlDiaSem2 = "3,2,5,0";
+        static string strTiGen2 = "8,0,5,10,4,3,1";
+        static string strGlGen3 = "13,12,10,11,3,4,7";
+        static string strGlDiaSem3 = "7,6,3";
+        static string strTiGen3 = "12,11,0,3";
+        static string strGlGen4 = "13,2,0,6,9,11,7";
+        static string strGlDiaSem4 = "2,5,4,0,2";
+        static string strTiGen4 = "0,15,11,7,3,4,11,14,2,12";
+        static string strGlGen5 = "12,8,9,2,4";
+        static string strGlDiaSem5 = "1,5,3";
+        static string strTiGen5 = "15,9,8,10,4,10,4,9,14";
+        static string strGlGen6 = "5,2,0,8,1";
+        static string strGlDiaSem6 = "4,1,2,10,13,2";
+        static string strTiGen6 = "11,5,8,9,1";
+        static string strGlGen7 = "11,2,1,4,5,7,10,12";
+        static string strGlDiaSem7 = "5,3";
+        static string strTiGen7 = "11,9,5,2,13";
+
+        private static Dictionary<int, List<int>> dictListGlGen = new Dictionary<int, List<int>>();
+        private static Dictionary<int, List<int>> dictListGlDiaSem = new Dictionary<int, List<int>>();
+        private static Dictionary<int, List<int>> dictListTiGen = new Dictionary<int, List<int>>();
+
+
         /// <summary>
         /// Valida los elementos ingresados desde cero
         /// </summary>
@@ -894,6 +923,33 @@ namespace LectorCvsResultados.FlashOrdered
 
         public static List<AgrupadorInfoGeneralDTO> ValidarElementosDia(DateTime fecha, int caso, SisResultEntities contexto)
         {
+            Dictionary<int, List<int>> dictListGlGen = new Dictionary<int, List<int>>();
+            dictListGlGen.Add(1, strGlGen1.Split(',').Select(Int32.Parse).ToList());
+            dictListGlGen.Add(2, strGlGen2.Split(',').Select(Int32.Parse).ToList());
+            dictListGlGen.Add(3, strGlGen3.Split(',').Select(Int32.Parse).ToList());
+            dictListGlGen.Add(4, strGlGen4.Split(',').Select(Int32.Parse).ToList());
+            dictListGlGen.Add(5, strGlGen5.Split(',').Select(Int32.Parse).ToList());
+            dictListGlGen.Add(6, strGlGen6.Split(',').Select(Int32.Parse).ToList());
+            dictListGlGen.Add(7, strGlGen7.Split(',').Select(Int32.Parse).ToList());
+
+            Dictionary<int, List<int>> dictListGlDiaSem = new Dictionary<int, List<int>>();
+            dictListGlDiaSem.Add(1, strGlDiaSem1.Split(',').Select(Int32.Parse).ToList());
+            dictListGlDiaSem.Add(2, strGlDiaSem2.Split(',').Select(Int32.Parse).ToList());
+            dictListGlDiaSem.Add(3, strGlDiaSem3.Split(',').Select(Int32.Parse).ToList());
+            dictListGlDiaSem.Add(4, strGlDiaSem4.Split(',').Select(Int32.Parse).ToList());
+            dictListGlDiaSem.Add(5, strGlDiaSem5.Split(',').Select(Int32.Parse).ToList());
+            dictListGlDiaSem.Add(6, strGlDiaSem6.Split(',').Select(Int32.Parse).ToList());
+            dictListGlDiaSem.Add(7, strGlDiaSem7.Split(',').Select(Int32.Parse).ToList());
+
+            Dictionary<int, List<int>> dictListTiGen = new Dictionary<int, List<int>>();
+            dictListTiGen.Add(1, strTiGen1.Split(',').Select(Int32.Parse).ToList());
+            dictListTiGen.Add(2, strTiGen2.Split(',').Select(Int32.Parse).ToList());
+            dictListTiGen.Add(3, strTiGen3.Split(',').Select(Int32.Parse).ToList());
+            dictListTiGen.Add(4, strTiGen4.Split(',').Select(Int32.Parse).ToList());
+            dictListTiGen.Add(5, strTiGen5.Split(',').Select(Int32.Parse).ToList());
+            dictListTiGen.Add(6, strTiGen6.Split(',').Select(Int32.Parse).ToList());
+            dictListTiGen.Add(7, strTiGen7.Split(',').Select(Int32.Parse).ToList());
+
             List<FLASHORDERED> listaHtmlTemp = UtilGeneral.UtilHtml.LeerInfoHtmlTempActual(fecha, caso);
             List<AgrupadorInfoGeneralDTO> listaInfo = new List<AgrupadorInfoGeneralDTO>();
             string strJoin = ObtenerJoinElementos(listaHtmlTemp);
@@ -1000,17 +1056,10 @@ namespace LectorCvsResultados.FlashOrdered
                 item.MaxRankSpanActualGlDiaSem = AsignarInfoMaxRank(item.ListRankSpansGlDiaSem);
                 item.MinSpanGlDiaSem = AsignarInfoMinSpan(item.ListRankSpansGlDiaSem);
 
-                if (item.RankSpanActualGlGen == 15 ||
-                    item.RankSpanActualGlGen == 12 ||
-                    item.RankSpanActualGlGen == 13 ||
-                    item.RankSpanActualGlGen == 11 ||
-                    item.RankSpanActualGen == 0 ||
-                    item.RankSpanActualGen == 4 ||
-                    item.RankSpanActualGen == 12 ||
-                    item.RankSpanActualGen == 1 ||
-                    item.RankSpanActualGen == 15 ||
-                    item.RankSpanActualGen == 11 ||
-                    item.RankSpanActualGlDiaSem == 6) continue;
+                if (dictListGlGen[dayofweek].IndexOf(item.RankSpanActualGlGen) != -1
+                    //|| dictListGlDiaSem[dayofweek].IndexOf(item.RankSpanActualGlDiaSem) != -1 
+                    || dictListTiGen[dayofweek].IndexOf(item.RankSpanActualGen) != -1
+                    ) continue;
 
                 listaFinal.Add(item);
             }
@@ -1039,11 +1088,8 @@ namespace LectorCvsResultados.FlashOrdered
                 }
                 listaFinalDep.Add(item);
             }
-            listaFinal = listaFinal.OrderBy(x => x.AgrupadorPromMaxGroupTabDiaSem.Rank).Take(60).ToList();
             listaFinal = listaFinalDep.OrderBy(x => x.AgrupadorPromMaxGroupTabGen.Rank).Take(50).ToList();
             listaFinal = listaFinal.OrderBy(x => x.AgrupadorPromMaxTabindexGen.Rank).Take(35).ToList();
-            //listaFinal = listaFinalDep.OrderBy(x => x.AgrupadorPromGroupTabGen.Rank).Take(60).ToList();
-            //listaFinal = listaFinal.OrderBy(x => x.AgrupadorPromGroupTabDiaSem.Rank).Take(35).ToList();
             return listaFinal;
         }
 
