@@ -10,28 +10,27 @@ namespace LectorCvsResultados.FlashOrdered
     public class AnDataFlashOrdered
     {
 
-
         static string strGlGen1 = "11,5,6,4,8";
-        static string strGlDiaSem1 = "6,0";
         static string strTiGen1 = "16,13,1,0,4,9,12";
         static string strGlGen2 = "10,12,14,5,7,6,1,3";
-        static string strGlDiaSem2 = "3,2,5,0";
         static string strTiGen2 = "8,0,5,10,4,3,1";
         static string strGlGen3 = "13,12,10,11,3,4,7";
-        static string strGlDiaSem3 = "7,6,3";
         static string strTiGen3 = "12,11,0,3";
         static string strGlGen4 = "13,2,0,6,9,11,7";
-        static string strGlDiaSem4 = "2,5,4,0,2";
         static string strTiGen4 = "0,15,11,7,3,4,11,14,2,12";
         static string strGlGen5 = "12,8,9,2,4";
-        static string strGlDiaSem5 = "1,5,3";
         static string strTiGen5 = "15,9,8,10,4,10,4,9,14";
         static string strGlGen6 = "5,2,0,8,1";
-        static string strGlDiaSem6 = "4,1,2,10,13,2";
         static string strTiGen6 = "11,5,8,9,1";
         static string strGlGen7 = "11,2,1,4,5,7,10,12";
-        static string strGlDiaSem7 = "5,3";
         static string strTiGen7 = "11,9,5,2,13";
+        static string strGlDiaSem1 = "5";
+        static string strGlDiaSem2 = "";
+        static string strGlDiaSem3 = "";
+        static string strGlDiaSem4 = "";
+        static string strGlDiaSem5 = "";
+        static string strGlDiaSem6 = "0,1";
+        static string strGlDiaSem7 = "";
 
         private static Dictionary<int, List<int>> dictListGlGen = new Dictionary<int, List<int>>();
         private static Dictionary<int, List<int>> dictListGlDiaSem = new Dictionary<int, List<int>>();
@@ -934,12 +933,12 @@ namespace LectorCvsResultados.FlashOrdered
 
             Dictionary<int, List<int>> dictListGlDiaSem = new Dictionary<int, List<int>>();
             dictListGlDiaSem.Add(1, strGlDiaSem1.Split(',').Select(Int32.Parse).ToList());
-            dictListGlDiaSem.Add(2, strGlDiaSem2.Split(',').Select(Int32.Parse).ToList());
-            dictListGlDiaSem.Add(3, strGlDiaSem3.Split(',').Select(Int32.Parse).ToList());
-            dictListGlDiaSem.Add(4, strGlDiaSem4.Split(',').Select(Int32.Parse).ToList());
-            dictListGlDiaSem.Add(5, strGlDiaSem5.Split(',').Select(Int32.Parse).ToList());
+            //dictListGlDiaSem.Add(2, strGlDiaSem2.Split(',').Select(Int32.Parse).ToList());
+            //dictListGlDiaSem.Add(3, strGlDiaSem3.Split(',').Select(Int32.Parse).ToList());
+            //dictListGlDiaSem.Add(4, strGlDiaSem4.Split(',').Select(Int32.Parse).ToList());
+            //dictListGlDiaSem.Add(5, strGlDiaSem5.Split(',').Select(Int32.Parse).ToList());
             dictListGlDiaSem.Add(6, strGlDiaSem6.Split(',').Select(Int32.Parse).ToList());
-            dictListGlDiaSem.Add(7, strGlDiaSem7.Split(',').Select(Int32.Parse).ToList());
+            //dictListGlDiaSem.Add(7, strGlDiaSem7.Split(',').Select(Int32.Parse).ToList());
 
             Dictionary<int, List<int>> dictListTiGen = new Dictionary<int, List<int>>();
             dictListTiGen.Add(1, strTiGen1.Split(',').Select(Int32.Parse).ToList());
@@ -956,7 +955,7 @@ namespace LectorCvsResultados.FlashOrdered
             int maxTabindex = (from x in listaHtmlTemp select x.TABINDEX).Max();
             string fechaFormat = fecha.ToString("yyyyMMdd");
             int dayofweek = (int)fecha.DayOfWeek == 0 ? 7 : (int)fecha.DayOfWeek;
-            int minRegistros = 250;
+            int minRegistros = 220;
 
             //Obtener los promedios
             List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexGen = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto);
@@ -1057,7 +1056,8 @@ namespace LectorCvsResultados.FlashOrdered
                 item.MinSpanGlDiaSem = AsignarInfoMinSpan(item.ListRankSpansGlDiaSem);
 
                 if (dictListGlGen[dayofweek].IndexOf(item.RankSpanActualGlGen) != -1
-                    //|| dictListGlDiaSem[dayofweek].IndexOf(item.RankSpanActualGlDiaSem) != -1 
+                    || (dictListGlDiaSem.ContainsKey(dayofweek) 
+                        && dictListGlDiaSem[dayofweek].IndexOf(item.RankSpanActualGlDiaSem) != -1)
                     || dictListTiGen[dayofweek].IndexOf(item.RankSpanActualGen) != -1
                     ) continue;
 
