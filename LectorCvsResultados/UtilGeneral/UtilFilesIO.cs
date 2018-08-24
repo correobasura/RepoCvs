@@ -1,16 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LectorCvsResultados.UtilGeneral
 {
     public class UtilFilesIO
     {
-        static string rutaBase = @"D:\OneDrive\Estimaciones\FS\";
+        private static string rutaBase = @"D:\OneDrive\Estimaciones\FS\";
+        private static string rutaBaseAn = @"D:\temp2\";
 
         public static void EscribirArchivoCsv(List<FLASHORDERED> lista)
         {
@@ -19,6 +15,17 @@ namespace LectorCvsResultados.UtilGeneral
             foreach (var item in lista)
             {
                 sw.WriteLine(item.ToString());
+            }
+            sw.Close();
+        }
+
+        public static void EscribirArchivoCsv(Dictionary<int, InfoAnalisisDTO> dict)
+        {
+            string fic = rutaBaseAn + "AnDataMinReg" + ".csv";
+            StreamWriter sw = new StreamWriter(fic);
+            foreach (var item in dict)
+            {
+                sw.WriteLine(item.Key + ";" + item.Value.ToString());
             }
             sw.Close();
         }

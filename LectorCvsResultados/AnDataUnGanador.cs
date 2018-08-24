@@ -78,7 +78,6 @@ namespace LectorCvsResultados
 
         private static List<int> ObtenerListaResultadosMuestra(SisResultEntities contexto, string fechaFormat, List<AgrupadorTotalTabIndexDTO> listaDatosOpcionados, int diaSemana, int fechaNum)
         {
-
             List<int> listaResultadosMuestra = new List<int>();
             for (int i = 0; i < listaDatosOpcionados.Count && listaResultadosMuestra.Count < 30; i++)
             {
@@ -154,7 +153,6 @@ namespace LectorCvsResultados
             //List<int> resultadosFinales = IndexFibonacci();
             ////for (int i = 0; i < listaResultadosMuestra.Count && resultadosFinales.Count<1; i++)
             ////{
-                
             ////    if (rankGral !=null && rankGral.Rank >= 4 && rankDia != null && rankDia.Rank >= 4)
             ////    {
             ////        resultadosFinales.Add(tabindex);
@@ -234,7 +232,6 @@ namespace LectorCvsResultados
         /// <returns></returns>
         public static Dictionary<int, AgrupadorTimeSpanDTO> RevisarTimeSpanDatos(DateTime FechaMax, SisResultEntities contexto)
         {
-
             Dictionary<int, AgrupadorTimeSpanDTO> dict = new Dictionary<int, AgrupadorTimeSpanDTO>();
             var laMin = DateTime.ParseExact("20170202", "yyyyMMdd", CultureInfo.InvariantCulture);
             for (; laMin <= FechaMax;)
@@ -266,7 +263,6 @@ namespace LectorCvsResultados
                             counter = 0;
                         }
                         counter--;
-
                     }
                 }
                 item.Value.ValoresAparicionAcumulada.Add(counter);
@@ -280,7 +276,6 @@ namespace LectorCvsResultados
                                                        Cantidad = g.Count()
                                                    }).ToList().ToDictionary(x => x.Valor, x => x.Cantidad);
                 item.Value.DictRachasAcumuladas = (from entry in item.Value.DictRachasAcumuladas orderby entry.Value ascending select entry).ToDictionary(x => x.Key, x => x.Value);
-
             }
             return dict;
         }
@@ -377,7 +372,6 @@ namespace LectorCvsResultados
                     }
                     contexto.USERRESULTTABLESFS.Add(uAnt);
                 }
-
             }
             contexto.USERRESULTTABLESFS.Add(u);
             dict[tabindex].UltimoGuardado = u;
@@ -411,6 +405,7 @@ namespace LectorCvsResultados
                                                  select b).OrderByDescending(b => b.FECHANUM).ThenBy(x => x.TABINDEX).AsEnumerable().ToList()
                              .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
                         break;
+
                     case 2:
                         maxFechaNumIndex = ConsultasClass.ConsultarMaxFechaTabindex(contexto, maxTabindex, 2, diamesnum);
                         listaDatosUltimosSpan = (from b in contexto.USERRESULTTABLESFS
@@ -421,6 +416,7 @@ namespace LectorCvsResultados
                                                  select b).OrderByDescending(b => b.FECHANUM).ThenBy(x => x.TABINDEX).AsEnumerable().ToList()
                              .GroupBy(p => p.TABINDEX).Select(g => g.First()).ToList();
                         break;
+
                     default:
                         maxFechaNumIndex = ConsultasClass.ConsultarMaxFechaTabindex(contexto, maxTabindex, 0, 0);
                         listaDatosUltimosSpan = (from b in contexto.USERRESULTTABLESFS
@@ -437,7 +433,7 @@ namespace LectorCvsResultados
                     int tabIndex = (int)listTabindex.ElementAt(i);
                     var uAnt = listaDatosUltimosSpan.Where(x => x.TABINDEX == tabIndex).FirstOrDefault();
                     var uActual = listElementosAgregados.Where(x => x.TABINDEX == tabIndex).FirstOrDefault();
-                    if(uAnt != null)
+                    if (uAnt != null)
                     {
                         ValidarSpanColumna(uAnt, uActual, r);
                     }
@@ -451,7 +447,7 @@ namespace LectorCvsResultados
             if (uActual.DIFERENCIAG == 0)
             {
                 if (casoColumna == 0)
-                {                
+                {
                     if (uAnt.SPANTIEMPO < 0)
                     {
                         uActual.SPANTIEMPO = --uAnt.SPANTIEMPO;
@@ -460,10 +456,9 @@ namespace LectorCvsResultados
                     else
                     {
                         uActual.SPANTIEMPO = -1;
-
                     }
                 }
-                else if(casoColumna == 1)
+                else if (casoColumna == 1)
                 {
                     if (uAnt.SPANTIEMPOSEM < 0)
                     {
@@ -473,10 +468,9 @@ namespace LectorCvsResultados
                     else
                     {
                         uActual.SPANTIEMPOSEM = -1;
-
                     }
                 }
-                else if(casoColumna == 2)
+                else if (casoColumna == 2)
                 {
                     if (uAnt.SPANTIEMPOMES < 0)
                     {
@@ -486,13 +480,12 @@ namespace LectorCvsResultados
                     else
                     {
                         uActual.SPANTIEMPOMES = -1;
-
                     }
                 }
             }
             else
             {
-                if(casoColumna == 0)
+                if (casoColumna == 0)
                 {
                     if (uAnt.SPANTIEMPO > 0)
                     {
@@ -502,10 +495,9 @@ namespace LectorCvsResultados
                     else
                     {
                         uActual.SPANTIEMPO = 1;
-
                     }
                 }
-                else if(casoColumna == 1)
+                else if (casoColumna == 1)
                 {
                     if (uAnt.SPANTIEMPOSEM > 0)
                     {
@@ -515,10 +507,9 @@ namespace LectorCvsResultados
                     else
                     {
                         uActual.SPANTIEMPOSEM = 1;
-
                     }
                 }
-                else if(casoColumna == 2)
+                else if (casoColumna == 2)
                 {
                     if (uAnt.SPANTIEMPOMES > 0)
                     {
@@ -528,7 +519,6 @@ namespace LectorCvsResultados
                     else
                     {
                         uActual.SPANTIEMPOMES = 1;
-
                     }
                 }
             }
@@ -638,7 +628,7 @@ namespace LectorCvsResultados
             }
             else if (diasemana == 4)
             {
-                if (objSpanActual.Spantiempo >=15) return;
+                if (objSpanActual.Spantiempo >= 15) return;
                 else if (objSpanActualSem.Spantiempo >= 14) return;
                 listaSpansDiarioNo.Add(-2);
                 listaSpansDiarioNo.Add(-3);
@@ -651,7 +641,7 @@ namespace LectorCvsResultados
                 listaSpansDiaSemDiaMesNo.Add(8);
                 listaSpansDiaSemDiaMesNo.Add(2);
             }
-            else if(diasemana == 5)
+            else if (diasemana == 5)
             {
                 listaSpansDiarioNo.Add(9);
                 listaSpansDiarioNo.Add(19);
@@ -674,7 +664,7 @@ namespace LectorCvsResultados
                 listaSpansDiaSemNo.Add(-3);
                 listaSpansDiaSemNo.Add(20);
             }
-            else if(diasemana == 7)
+            else if (diasemana == 7)
             {
                 if (objSpanActual.Spantiempo >= 12) return;
                 else if (objSpanActualSem.Spantiempo >= 13) return;
@@ -691,9 +681,7 @@ namespace LectorCvsResultados
             else if (listaSpansDiaSemNo.IndexOf(objSpanActualSem.Spantiempo) != -1) return;
             else if (listaSpansDiaSemDiaMesNo.IndexOf(objSpanActualMes.Spantiempo) != -1) return;
 
-            
             //int total = objSpanActual.Spantiempo + objSpanActualSem.Spantiempo + objSpanActualMes.Spantiempo;
-
 
             //DateTime dt = DateTime.ParseExact(fechaFormat, "yyyyMMdd", CultureInfo.InvariantCulture);
             //List<AgrupadorConteosTimeSpanDTO> listaspanActual = ConsultasClass.ConsultarConteoSpanTiempo(contexto, tabindex, objSpanActual.FechaNum + "");
@@ -726,32 +714,32 @@ namespace LectorCvsResultados
         {
             if (!listspantiempo.ToList().Any())
                 return 0;
-
-            AgrupadorConteosTimeSpanDTO act = listspantiempo.ElementAt(0);
-            if (act.Spantiempo != null)
-            {
-                return (int)act.Spantiempo;
-            }
-            else
-            {
-                int spanActual = 0;
-                int lastElement = 0;
-                for (int i = 0; i < listspantiempo.Count; i++)
-                {
-                    act = listspantiempo.ElementAt(i);
-                    if (act.Spantiempo != null)
-                    {
-                        lastElement = (int)act.Spantiempo;
-                        break;
-                    }
-                    spanActual++;
-                }
-                if (lastElement > 0)
-                {
-                    spanActual = spanActual * -1;
-                }
-                return spanActual;
-            }
+            else return listspantiempo.ElementAt(0).Spantiempo;
+            //AgrupadorConteosTimeSpanDTO act = listspantiempo.ElementAt(0);
+            //if (act.Spantiempo != null)
+            //{
+            //    return (int)act.Spantiempo;
+            //}
+            //else
+            //{
+            //    int spanActual = 0;
+            //    int lastElement = 0;
+            //    for (int i = 0; i < listspantiempo.Count; i++)
+            //    {
+            //        act = listspantiempo.ElementAt(i);
+            //        if (act.Spantiempo != null)
+            //        {
+            //            lastElement = (int)act.Spantiempo;
+            //            break;
+            //        }
+            //        spanActual++;
+            //    }
+            //    if (lastElement > 0)
+            //    {
+            //        spanActual = spanActual * -1;
+            //    }
+            //    return spanActual;
+            //}
         }
 
         /// <summary>
@@ -783,12 +771,12 @@ namespace LectorCvsResultados
             int menor = 0;
             int mayor = 1;
             int total = 0;
-            while(mayor < 12)
+            while (mayor < 12)
             {
                 total = menor + mayor;
                 menor = mayor;
                 mayor = total;
-                lista.Add(total-1);
+                lista.Add(total - 1);
             }
             return lista;
         }

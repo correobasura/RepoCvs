@@ -73,6 +73,12 @@
       <DependentUpon>SisResultModel.tt</DependentUpon>
     </Compile>
     <Compile Include="AnDataMayorUno.cs" />
+    <Compile Include="ANDATAPERCENTUNG.cs">
+      <DependentUpon>SisResultModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ANDATASELECTEDINFO.cs">
+      <DependentUpon>SisResultModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="AnDataUnGanador.cs" />
     <Compile Include="ConstantesConsulta.cs" />
     <Compile Include="ConsultaDTO.cs" />
@@ -80,7 +86,11 @@
     <Compile Include="FLASHORDERED.cs">
       <DependentUpon>SisResultModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="FlashOrdered\AnDataSelectedInfo.cs" />
     <Compile Include="FlashOrdered\AnDataFlashOrdered.cs" />
+    <Compile Include="TOTALESDIA.cs">
+      <DependentUpon>SisResultModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="UtilGeneral\ConstantesGenerales.cs" />
     <Compile Include="FlashOrdered\ConstantesModel.cs" />
     <Compile Include="FlashOrdered\ConstantesConsultaFO.cs" />
@@ -107,6 +117,7 @@
     </Compile>
     <Compile Include="UtilGeneral\UtilFilesIO.cs" />
     <Compile Include="UtilGeneral\UtilHtml.cs" />
+    <Compile Include="UtilGeneral\UtilValidate.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

@@ -1,10 +1,10 @@
 ﻿using HtmlAgilityPack;
+using LectorCvsResultados.FlashOrdered;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace LectorCvsResultados.UtilGeneral
 {
@@ -24,6 +24,7 @@ namespace LectorCvsResultados.UtilGeneral
 
             var htmlNodes = doc.DocumentNode.SelectNodes("//tr");
             List<FLASHORDERED> lista = new List<FLASHORDERED>();
+            int indexer = 0;
             foreach (HtmlNode item in htmlNodes)
             {
                 var htmlDoc = new HtmlDocument();
@@ -37,13 +38,13 @@ namespace LectorCvsResultados.UtilGeneral
                 for (int i = indexInicio; i < htmltdNodes.Count; i++)
                 {
                     var item2 = htmltdNodes.ElementAt(i);
-                    var data = item2.InnerText.Replace("&nbsp;", "").Replace("&amp;", "&").Replace("\n","").Replace("\r", "").Trim();
-                    if (i.Equals(indexInicio+1) && data.ToLower().Contains(strAfter.ToLower()))
+                    var data = item2.InnerText.Replace("&nbsp;", "").Replace("&amp;", "&").Replace("\n", "").Replace("\r", "").Trim();
+                    if (i.Equals(indexInicio + 1) && data.ToLower().Contains(strAfter.ToLower()))
                     {
                         data = strFinal;
                         esAfter = true;
                     }
-                    if (i.Equals(indexInicio+3) && esAfter)
+                    if (i.Equals(indexInicio + 3) && esAfter)
                     {
                         var htmlDocTd = new HtmlDocument();
                         htmlDocTd.LoadHtml(item2.InnerHtml);
@@ -65,6 +66,8 @@ namespace LectorCvsResultados.UtilGeneral
                 infoFs.RESULT = datos[3];
                 infoFs.Away = datos[4];
                 infoFs.Half = datos[5].Replace("&nbsp;", "").Replace("(", "").Replace(")", "").Trim();
+
+                infoFs.TABINDEX = ++indexer;
                 lista.Add(infoFs);
             }
             List<FLASHORDERED> listaTemp = new List<FLASHORDERED>();
@@ -83,17 +86,14 @@ namespace LectorCvsResultados.UtilGeneral
                     item.intChar = Convert.ToInt32(item.Home[0]);
                     lista.Add(item);
                 }
-
             }
 
             lista = lista.OrderBy(x => x.intChar).ThenBy(x => x.Home).ThenBy(x => x.Away).ToList();
-            
-            int indexer = 0;
+
             string letter = lista.ElementAt(0).Home[0].ToString();
             int indexLetter = 1;
             foreach (var item in lista)
             {
-                item.TABINDEX = ++indexer;
                 if (!item.Home[0].ToString().Equals(letter))
                 {
                     indexLetter = 1;
@@ -110,6 +110,7 @@ namespace LectorCvsResultados.UtilGeneral
                 item.GROUPLETTER = letter;
                 item.TABINDEXLETTER = indexLetter++;
             }
+            lista = lista.OrderBy(x => x.TABINDEX).ToList();
             return lista;
         }
 
@@ -311,8 +312,44 @@ namespace LectorCvsResultados.UtilGeneral
                 strFinal = "finalizado";
             }
             var pathTemp = path + "T" + ".html";
-            List<FLASHORDERED> listaHtmlTemp = LeerHtml(indexInicio, strAfter, strFinal, pathTemp);
+            List<FLASHORDERED> listaHtmlTemp = new List<FLASHORDERED>();
+            if (!File.Exists(pathTemp))
+            {
+                listaHtmlTemp = LeerHtml(indexInicio, strAfter, strFinal, path + ".html");
+            }
+            else
+            {
+                listaHtmlTemp = LeerHtml(indexInicio, strAfter, strFinal, pathTemp);
+            }
+            foreach (var item in listaHtmlTemp)
+            {
+                item.FECHA = fecha;
+            }
+
             return listaHtmlTemp;
+        }
+
+        public static string ObtenerJoinElementos(List<FLASHORDERED> listaElementos)
+        {
+            List<string> listaDistinctChar = listaElementos.Select(x => x.GROUPLETTER).Distinct().ToList();
+            Dictionary<string, int> keyValuePairMaxIndexChar = new Dictionary<string, int>();
+            foreach (var item in listaDistinctChar)
+            {
+                int maxValueIndexChar = (from x in listaElementos
+                                         where x.GROUPLETTER.Equals(item)
+                                         select x.TABINDEXLETTER).Max();
+                keyValuePairMaxIndexChar.Add(item, maxValueIndexChar);
+            }
+            string agrupador = "({0})";
+            string temp = "(" + ConstantesModel.GROUPLETTER + "  = '{0}' AND " + ConstantesModel.TABINDEXLETTER + " <= {1})";
+            List<string> listaJoins = new List<string>();
+            foreach (var item in keyValuePairMaxIndexChar)
+            {
+                listaJoins.Add(string.Format(temp, item.Key, item.Value));
+            }
+            string strJoin = string.Join(" OR ", listaJoins);
+            strJoin = string.Format(agrupador, strJoin);
+            return strJoin;
         }
     }
 }

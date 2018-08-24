@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LectorCvsResultados
 {
@@ -27,10 +25,12 @@ namespace LectorCvsResultados
                     columna = "SPANTIEMPOSEM";
                     filtro = "AND diasemnum = " + valor;
                     break;
+
                 case 2:
                     columna = "SPANTIEMPOMES";
                     filtro = "AND diamesnum = " + valor;
                     break;
+
                 default:
                     columna = "spantiempo";
                     filtro = "";
@@ -58,10 +58,12 @@ namespace LectorCvsResultados
                     columna = "SPANTIEMPOSEM";
                     filtro = "AND diasemnum = " + valor;
                     break;
+
                 case 2:
                     columna = "SPANTIEMPOMES";
                     filtro = "AND diamesnum = " + valor;
                     break;
+
                 default:
                     columna = "spantiempo";
                     filtro = "";
@@ -112,15 +114,17 @@ namespace LectorCvsResultados
                 {
                     case 1:
                     case 2:
-                    //case 5:
+                        //case 5:
                         query = string.Format(ConstantesConsulta.QUERY_SELECCION_ORDENADA_MAS_VALORES_FECHA_PROM, fechaFormat, maxListIndex);
                         break;
+
                     case 3:
                     case 4:
                     case 5:
                     case 7:
                         query = string.Format(ConstantesConsulta.QUERY_SELECCION_ORDENADA_MAS_VALORES_DIASEM, fechaFormat, maxListIndex, dayofweek);
                         break;
+
                     default:
                         query = query = string.Format(ConstantesConsulta.QUERY_CONTEO_VALORES_DIA_SEMANA_DIAMES, fechaFormat, maxListIndex, dayofweek, dt.Day);
                         break;
@@ -151,9 +155,11 @@ namespace LectorCvsResultados
                 case 1:
                     filtro = "AND diasemnum = " + valor;
                     break;
+
                 case 2:
                     filtro = "AND diamesnum = " + valor;
                     break;
+
                 default:
                     filtro = "";
                     break;
@@ -267,10 +273,12 @@ namespace LectorCvsResultados
                     columna = "spantiemposemhist";
                     filtroAnd = "AND diasemnum = " + dayofweek;
                     break;
+
                 case 2:
                     columna = "spantiempomeshist";
                     filtroAnd = "AND diamesnum = " + dt.Day;
                     break;
+
                 default:
                     columna = "spantiempohist";
                     filtroAnd = "";
@@ -278,7 +286,7 @@ namespace LectorCvsResultados
             }
             string query = string.Format(ConstantesConsulta.QUERY_ULTIMO_SPAN, tabIndex, fechaFormat, columna, filtroAnd);
             AgrupadorFechaNumValor a = contexto.Database.SqlQuery<AgrupadorFechaNumValor>(query).FirstOrDefault();
-            return a != null ? a: new AgrupadorFechaNumValor();
+            return a != null ? a : new AgrupadorFechaNumValor();
         }
 
         /// <summary>
@@ -305,7 +313,6 @@ namespace LectorCvsResultados
             return contexto.Database.SqlQuery<double>(query).Single();
         }
 
-        
         public static List<AgrupadorTotalTabIndexDTO> ObtenerDatosListIndex(string fechaFormat, SisResultEntities contexto)
         {
             DateTime dt = DateTime.ParseExact(fechaFormat, "yyyyMMdd", CultureInfo.InvariantCulture);
@@ -331,6 +338,7 @@ namespace LectorCvsResultados
                     int dayofweek = (int)dt.DayOfWeek == 0 ? 7 : (int)dt.DayOfWeek;
                     filtroAnd = "AND diasemnum = " + dayofweek;
                     break;
+
                 default:
                     filtroAnd = "";
                     break;

@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LectorCvsResultados.FlashOrdered
+﻿namespace LectorCvsResultados.FlashOrdered
 {
     public class ConstantesConsultaFO
     {
         public const string QUERY_MAX_ID_ACTUAL =
             "SELECT COALESCE(MAX(" + ConstantesModel.ID + "), 0)"
-            + "FROM " + ConstantesModel.FLASHORDERED+" ";
+            + "FROM {0}";
 
         public const string QUERY_ULTIMOS_SPAN =
             "WITH registros AS "
@@ -122,7 +116,7 @@ namespace LectorCvsResultados.FlashOrdered
             "SELECT MAX(" + ConstantesModel.TABINDEXSEQ + ") AS total, tabindex AS tabindex "
             + "FROM " + ConstantesModel.FLASHORDERED + " "
             + "WHERE " + ConstantesModel.TABINDEX + " <= {0} "
-            + "AND "+ConstantesModel.FECHANUM+" <= {1} "
+            + "AND " + ConstantesModel.FECHANUM + " <= {1} "
             + "GROUP BY tabindex";
 
         public const string QUERY_MAX_TABINDEXSEQ_GL =
@@ -140,9 +134,8 @@ namespace LectorCvsResultados.FlashOrdered
             + "GROUP BY " + ConstantesModel.TABINDEX + ") "
             + "SELECT f.{3} AS spantiempo,f." + ConstantesModel.FECHANUM + " AS fechanum, f." + ConstantesModel.TABINDEX + " AS tabindex "
             + "FROM " + ConstantesModel.FLASHORDERED + " f "
-            + "INNER JOIN registros r ON f." + ConstantesModel.FECHANUM + "  = r." + ConstantesModel.FECHANUM 
+            + "INNER JOIN registros r ON f." + ConstantesModel.FECHANUM + "  = r." + ConstantesModel.FECHANUM
                 + " AND f." + ConstantesModel.TABINDEX + " = r." + ConstantesModel.TABINDEX + " ";
-
 
         public const string QUERY_MAX_FECHANUMTABINDEX_GL =
             "WITH registros AS "
@@ -153,17 +146,17 @@ namespace LectorCvsResultados.FlashOrdered
             + "GROUP BY " + ConstantesModel.TABINDEXLETTER + ", " + ConstantesModel.GROUPLETTER + ") "
             + "SELECT f.{3} AS spantiempo,f." + ConstantesModel.FECHANUM + " AS fechanum, f." + ConstantesModel.TABINDEXLETTER + " AS TabindexLetter, f. " + ConstantesModel.GROUPLETTER + " AS GroupLetter "
             + "FROM " + ConstantesModel.FLASHORDERED + " f "
-            + "INNER JOIN registros r ON f." + ConstantesModel.FECHANUM + "  = r." + ConstantesModel.FECHANUM 
-                + " AND f." + ConstantesModel.TABINDEXLETTER + " = r." + ConstantesModel.TABINDEXLETTER + " " 
+            + "INNER JOIN registros r ON f." + ConstantesModel.FECHANUM + "  = r." + ConstantesModel.FECHANUM
+                + " AND f." + ConstantesModel.TABINDEXLETTER + " = r." + ConstantesModel.TABINDEXLETTER + " "
                 + " AND f." + ConstantesModel.GROUPLETTER + " = r." + ConstantesModel.GROUPLETTER + " ";
 
         public const string QUERY_RANK_SPANS_BY_TABINDEX =
             "SELECT COUNT(1) AS total, {0} AS spanTiempo, " + ConstantesModel.TABINDEX + " AS tabindex, "
-            +"RANK () OVER (PARTITION BY " + ConstantesModel.TABINDEX + " ORDER BY COUNT(1) DESC) AS rank "
-            +"FROM " + ConstantesModel.FLASHORDERED + " "
-            +"WHERE ({1}) "
-            +"AND {0} IS NOT NULL {2} "
-            +"GROUP BY {0}, " + ConstantesModel.TABINDEX;
+            + "RANK () OVER (PARTITION BY " + ConstantesModel.TABINDEX + " ORDER BY COUNT(1) DESC) AS rank "
+            + "FROM " + ConstantesModel.FLASHORDERED + " "
+            + "WHERE ({1}) "
+            + "AND {0} IS NOT NULL {2} "
+            + "GROUP BY {0}, " + ConstantesModel.TABINDEX;
 
         public const string QUERY_RANK_SPANS_BY_GL_TABINDEX =
             "SELECT COUNT(1) AS total, {0} AS spanTiempo, " + ConstantesModel.TABINDEXLETTER + " AS tabindexletter, " + ConstantesModel.GROUPLETTER + " AS groupletter, "
@@ -173,5 +166,21 @@ namespace LectorCvsResultados.FlashOrdered
             + "AND {0} IS NOT NULL {2} "
             + "GROUP BY {0}, " + ConstantesModel.TABINDEXLETTER + ", " + ConstantesModel.GROUPLETTER + "";
 
+        public const string QUERY_RANK_PERCENT =
+            "SELECT b.total/a.total AS Prob, b.percent AS Percent, RANK () OVER (order by b.total/a.total) AS rank, b.total AS TotalGen, a.total AS TotalDif "
+            + "FROM (SELECT COUNT(1) AS total, percent "
+            + "FROM andatapercentung "
+            + "WHERE fechanum >= {2} AND fechanum < {0} {1} "
+            + "AND tipoorden = {3} "
+            + "GROUP BY percent "
+            + ") a, "
+            + "(SELECT COUNT(1) AS total, percent "
+            + "FROM andatapercentung "
+            + "WHERE fechanum >= {2} AND fechanum < {0} {1} "
+            + "AND tipoorden = {3} "
+            + "AND diferenciag != 0 "
+            + "GROUP BY percent "
+            + ") b "
+            + "WHERE a.percent = b.percent ";
     }
 }

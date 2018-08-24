@@ -1,25 +1,34 @@
-﻿using LectorCvsResultados.FlashOrdered;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LectorCvsResultados.FlashOrdered
 {
     public class ConsultasClassFO
     {
-
         /// <summary>
         /// Consulta el máximo id almacenado
         /// </summary>
         /// <param name="contexto">instancia para las consultas</param>
         /// <returns>valor del máximo id incrementado en 1</returns>
-        public static int ConsultarMaxIdActual(SisResultEntities contexto)
+        public static int ConsultarMaxIdActual(SisResultEntities contexto, int tabla)
         {
-            string query = string.Format(ConstantesConsultaFO.QUERY_MAX_ID_ACTUAL);
+            string tbl = "";
+            switch (tabla)
+            {
+                case ConstantesGenerales.TBL_FLASH:
+                    tbl = ConstantesModel.FLASHORDERED;
+                    break;
+
+                case ConstantesGenerales.TBL_PERCENT:
+                    tbl = ConstantesModel.ANDATAPERCENTUNG;
+                    break;
+
+                case ConstantesGenerales.TBL_SELECTINFO:
+                    tbl = ConstantesModel.ANDATASELECTEDINFO;
+                    break;
+            }
+            string query = string.Format(ConstantesConsultaFO.QUERY_MAX_ID_ACTUAL, tbl);
             return contexto.Database.SqlQuery<int>(query).FirstOrDefault() + 1;
         }
 
@@ -283,12 +292,15 @@ namespace LectorCvsResultados.FlashOrdered
                 case ConstantesGenerales.CASO_DIASEM:
                     filtro = string.Format("AND " + ConstantesModel.DIASEM + " = {0} ", valor);
                     break;
+
                 case ConstantesGenerales.CASO_DIAMES:
                     filtro = string.Format("AND " + ConstantesModel.DIAMES + " = {0} ", valor);
                     break;
+
                 case ConstantesGenerales.CASO_DIAANIO:
                     filtro = string.Format("AND " + ConstantesModel.DIAANIO + " = {0} ", valor);
                     break;
+
                 default:
                     filtro = "";
                     break;
@@ -304,12 +316,15 @@ namespace LectorCvsResultados.FlashOrdered
                 case ConstantesGenerales.CASO_DIASEM:
                     columna = ConstantesModel.SPANTISEMHIST;
                     break;
+
                 case ConstantesGenerales.CASO_DIAMES:
                     columna = ConstantesModel.SPANTIMESHIST;
                     break;
+
                 case ConstantesGenerales.CASO_DIAANIO:
                     columna = ConstantesModel.SPANTIANIHIST;
                     break;
+
                 default:
                     columna = ConstantesModel.SPANTIDIAHIST;
                     break;
@@ -325,12 +340,15 @@ namespace LectorCvsResultados.FlashOrdered
                 case ConstantesGenerales.CASO_DIASEM:
                     columna = ConstantesModel.SPANTISEMACT;
                     break;
+
                 case ConstantesGenerales.CASO_DIAMES:
                     columna = ConstantesModel.SPANTIMESACT;
                     break;
+
                 case ConstantesGenerales.CASO_DIAANIO:
                     columna = ConstantesModel.SPANTIANIACT;
                     break;
+
                 default:
                     columna = ConstantesModel.SPANTIDIAACT;
                     break;
@@ -346,12 +364,15 @@ namespace LectorCvsResultados.FlashOrdered
                 case ConstantesGenerales.CASO_DIASEM:
                     columna = ConstantesModel.SPANTIGLSEMHIST;
                     break;
+
                 case ConstantesGenerales.CASO_DIAMES:
                     columna = ConstantesModel.SPANTIGLMESHIST;
                     break;
+
                 case ConstantesGenerales.CASO_DIAANIO:
                     columna = ConstantesModel.SPANTIGLANIHIST;
                     break;
+
                 default:
                     columna = ConstantesModel.SPANTIGLDIAHIST;
                     break;
@@ -367,17 +388,36 @@ namespace LectorCvsResultados.FlashOrdered
                 case ConstantesGenerales.CASO_DIASEM:
                     columna = ConstantesModel.SPANTIGLSEMACT;
                     break;
+
                 case ConstantesGenerales.CASO_DIAMES:
                     columna = ConstantesModel.SPANTIGLMESACT;
                     break;
+
                 case ConstantesGenerales.CASO_DIAANIO:
                     columna = ConstantesModel.SPANTIGLANIACT;
                     break;
+
                 default:
                     columna = ConstantesModel.SPANTIGLDIAACT;
                     break;
             }
             return columna;
+        }
+
+        /// <summary>
+        /// Método que realiza el rankeo de los spans para cada tabindex
+        /// </summary>
+        /// <param name="contexto">Instancia para las consultas</param>
+        /// <param name="queryBody">info de consulta</param>
+        /// <param name="caso">Caso para evaluar</param>
+        /// <param name="valor">Valor a asignar al filtro</param>
+        /// <returns>Listado de elementos</returns>
+        public static List<AgrupadorConteosTimeSpanDTO> ConsultarPercent(SisResultEntities contexto, string fechanum, int valor, string fechaMin, int tipoOrden, int caso)
+        {
+            string filtro = GetFiltro(caso, valor);
+            string query = string.Format(ConstantesConsultaFO.QUERY_RANK_PERCENT, fechanum, filtro, fechaMin, tipoOrden);
+            DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
+            return data.AsEnumerable().ToList();
         }
     }
 }

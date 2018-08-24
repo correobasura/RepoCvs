@@ -74,13 +74,13 @@ namespace LectorCvsResultados
 
     public int SPANTIGLANIHIST { get; set; }
 
-    public Nullable<System.DateTime> FECHA { get; set; }
+    public System.DateTime FECHA { get; set; }
 
     public int FECHANUM { get; set; }
 
-    public Nullable<int> TABINDEXSEQ { get; set; }
+    public int TABINDEXSEQ { get; set; }
 
-    public Nullable<decimal> TABINDEXLETTERSEQ { get; set; }
+    public int TABINDEXLETTERSEQ { get; set; }
 
         [NotMapped]
         public string Hora { get; set; }

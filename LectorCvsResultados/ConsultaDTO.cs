@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LectorCvsResultados
 {
@@ -31,6 +28,7 @@ namespace LectorCvsResultados
             get;
             set;
         }
+
         public override string ToString()
         {
             return TotalPositivosMuestras + ";" + MaxValue + ";" + MinValue + ";" + Porcentaje;
@@ -47,6 +45,10 @@ namespace LectorCvsResultados
         public int TabIndex { get; set; }
         public int TabIndexLetter { get; set; }
         public string GroupLetter { get; set; }
+        public int Percent { get; set; }
+        public double Prob { get; set; }
+        public int TotalGen { get; set; }
+        public int TotalDif { get; set; }
     }
 
     public class AgrupadorFechaNumValor
@@ -73,7 +75,7 @@ namespace LectorCvsResultados
 
         public string GroupLetter
         {
-            get;set;
+            get; set;
         }
     }
 
@@ -193,11 +195,13 @@ namespace LectorCvsResultados
         {
             get; set;
         }
+
         public string UltimoParecido
         {
             get;
             set;
         }
+
         public override string ToString()
         {
             return +TotalDatos + ";" + ResultadosPositivos + ";" + PromedioPositivo + ";" + ResultadosNegativos + ";" + PromedioNegativo + ";" + MinimoApariciones + ";" + Fecha + ";" + UltimoParecido + ";" + AnalizedData;
@@ -253,102 +257,127 @@ namespace LectorCvsResultados
         {
             get; set;
         }
+
         public string Hora
         {
             get; set;
         }
+
         public String Estado
         {
             get; set;
         }
+
         public String Home
         {
             get; set;
         }
+
         public String Result
         {
             get; set;
         }
+
         public String Away
         {
             get; set;
         }
+
         public String Half
         {
             get; set;
         }
+
         public int GHome
         {
             get; set;
         }
+
         public int GAway
         {
             get; set;
         }
+
         public int DiferenciaG
         {
             get; set;
         }
+
         public int TotalG
         {
             get; set;
         }
+
         public char GroupLetter
         {
             get; set;
         }
+
         public int GroupIndexLetter
         {
             get; set;
         }
+
         public int DiaSem
         {
             get; set;
         }
+
         public int DiaMes
         {
             get; set;
         }
+
         public int DiaAnio
         {
             get; set;
         }
+
         public int? SpanDiarioActual
         {
             get; set;
         }
+
         public int SpanDiarioHistorico
         {
             get; set;
         }
+
         public int? SpanSemanaActual
         {
             get; set;
         }
+
         public int SpanSemanaHistorico
         {
             get; set;
         }
+
         public int? SpanMesActual
         {
             get; set;
         }
+
         public int SpanMesHistorico
         {
             get; set;
         }
+
         public int SpanAnioActual
         {
             get; set;
         }
+
         public int SpanAnioHistorico
         {
             get; set;
         }
+
         public DateTime Fecha
         {
             get; set;
         }
+
         public override string ToString()
         {
             return IndexOrdered + ";" + Hora + ";" + Estado + ";" + Home + ";" + Result
@@ -368,14 +397,17 @@ namespace LectorCvsResultados
         {
             get; set;
         }
+
         public int Fechanum
         {
             get; set;
         }
+
         public int Tabindexletter
         {
             get; set;
         }
+
         public string GroupLetter
         {
             get; set;
@@ -405,19 +437,25 @@ namespace LectorCvsResultados
         public AgrupadorFechaNumValor AgrUltFechaNumSpanGlDiaAnio { get; set; }
         public List<AgrupadorConteosTimeSpanDTO> ListRankSpansGen { get; set; }
         public List<AgrupadorConteosTimeSpanDTO> ListRankSpansDiaSem { get; set; }
+        public List<AgrupadorConteosTimeSpanDTO> ListRankSpansDiaMes { get; set; }
         public List<AgrupadorConteosTimeSpanDTO> ListRankSpansGlGen { get; set; }
         public List<AgrupadorConteosTimeSpanDTO> ListRankSpansGlDiaSem { get; set; }
+        public List<AgrupadorConteosTimeSpanDTO> ListRankSpansGlDiaMes { get; set; }
         public int RankSpanActualGen { get; set; }
         public int RankSpanActualDiaSem { get; set; }
+        public int RankSpanActualDiaMes { get; set; }
         public int RankSpanActualGlGen { get; set; }
         public int RankSpanActualGlDiaSem { get; set; }
+        public int RankSpanActualGlDiaMes { get; set; }
         public int MaxRankSpanActualGen { get; set; }
         public int MaxRankSpanActualDiaSem { get; set; }
         public int MaxRankSpanActualGlGen { get; set; }
         public int MaxRankSpanActualGlDiaSem { get; set; }
+        public int MaxRankSpanActualGlDiaMes { get; set; }
         public int DiferenciaGTemp { get; set; }
         public int MinSpanGlGen { get; set; }
         public int MinSpanGlDiaSem { get; set; }
+        public int MinSpanGlDiaMes { get; set; }
         public int MinSpanTiGen { get; set; }
         public int MinSpanTiDiaSem { get; set; }
 
@@ -426,18 +464,9 @@ namespace LectorCvsResultados
 
         public int Puntuacion { get; set; }
         public List<int> TipoIncremento { get; set; }
-    }
-
-    public class DTOTemp
-    {
-        public int Positivos { get; set; }
-        public int Negativos { get; set; }
-        public double AvgPos { get { return Positivos + Negativos != 0 ? (Positivos*100)/(Positivos+ Negativos):0; } }
-        public double AvgNeg { get { return Positivos + Negativos != 0 ? (Negativos * 100) / (Positivos + Negativos):0; } }
-        public override string ToString()
-        {
-            return "Positivos:"+Positivos + ";" + "Negativos:"+Negativos + ";"+ "AvgPos:"+ AvgPos+";"+ "AvgNeg:"+AvgNeg;
-        }
+        public int Percent { get; set; }
+        public int PosTemp { get; set; }
+        public int TipoOrden { get; set; }
     }
 
     public class AgrupadorMaxTabIndex
@@ -446,10 +475,12 @@ namespace LectorCvsResultados
         {
             get; set;
         }
+
         public int Tabindex
         {
             get; set;
         }
+
         public string GroupLetter
         {
             get; set;
@@ -460,5 +491,12 @@ namespace LectorCvsResultados
     {
         public int Positivos { get; set; }
         public int Negativos { get; set; }
+        public double AvgPos { get { return Positivos + Negativos != 0 ? (Positivos * 100000) / (Positivos + Negativos) : 0; } }
+        public double AvgNeg { get { return Positivos + Negativos != 0 ? (Negativos * 100000) / (Positivos + Negativos) : 0; } }
+
+        public override string ToString()
+        {
+            return Positivos + ";" + Negativos + ";" + AvgPos + ";" + AvgNeg;
+        }
     }
 }

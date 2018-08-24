@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LectorCvsResultados.FlashOrdered
+﻿namespace LectorCvsResultados.FlashOrdered
 {
     public class ConstantesModel
     {
@@ -42,5 +36,15 @@ namespace LectorCvsResultados.FlashOrdered
         public const string FECHANUM = "fechanum";
         public const string TABINDEXSEQ = "tabindexseq";
         public const string TABINDEXLETTERSEQ = "tabindexletterseq";
+
+        public const string ANDATAPERCENTUNG = "andatapercentung";
+
+        public const string PERCENT = "percent";
+        public const string MESNUM = "mesnum";
+        public const string DIAMESNUM = "diamesnum";
+        public const string DIASEMNUM = "diasemnum";
+        public const string DIAANIONUM = "diaanionum";
+
+        public const string ANDATASELECTEDINFO = "andataselectedinfo";
     }
 }

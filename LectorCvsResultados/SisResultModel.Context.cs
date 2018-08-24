@@ -38,6 +38,12 @@ public partial class SisResultEntities : DbContext
 
     public virtual DbSet<FLASHORDERED> FLASHORDERED { get; set; }
 
+    public virtual DbSet<ANDATAPERCENTUNG> ANDATAPERCENTUNG { get; set; }
+
+    public virtual DbSet<TOTALESDIA> TOTALESDIA { get; set; }
+
+    public virtual DbSet<ANDATASELECTEDINFO> ANDATASELECTEDINFO { get; set; }
+
 }
 
 }
