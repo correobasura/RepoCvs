@@ -419,5 +419,12 @@ namespace LectorCvsResultados.FlashOrdered
             DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
             return data.AsEnumerable().ToList();
         }
+
+        public static List<AgrupadorConteosTimeSpanDTO> ConsultarProbSelectedInfo(SisResultEntities contexto, string fechanum, string spanCol, string rankCol, string fechaMax)
+        {
+            string query = string.Format(ConstantesConsultaFO.QUERY_COUNT_PROB_SELINF, fechanum, spanCol, rankCol, fechaMax);
+            DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
+            return data.AsEnumerable().ToList();
+        }
     }
 }

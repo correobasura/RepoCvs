@@ -48,6 +48,10 @@ public partial class ANDATASELECTEDINFO
 
     public decimal DIFERENCIAG { get; set; }
 
+    public decimal DIASEM { get; set; }
+
+    public decimal DIAMES { get; set; }
+
 }
 
 }

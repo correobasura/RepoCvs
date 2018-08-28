@@ -55,6 +55,8 @@
           <Property Name="SPANTABDIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="RANKSPANTABDIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="DIFERENCIAG" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="DIASEM" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="DIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
         </EntityType>
         <EntityType Name="FLASHORDERED">
           <Key>
@@ -264,6 +266,8 @@
           <Property Name="SPANTABDIAMES" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="RANKSPANTABDIAMES" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="DIFERENCIAG" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="DIASEM" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="DIAMES" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -379,6 +383,8 @@
           <EntitySetMapping Name="ANDATASELECTEDINFO">
             <EntityTypeMapping TypeName="SistResultModel.ANDATASELECTEDINFO">
               <MappingFragment StoreEntitySet="ANDATASELECTEDINFO">
+                <ScalarProperty Name="DIAMES" ColumnName="DIAMES" />
+                <ScalarProperty Name="DIASEM" ColumnName="DIASEM" />
                 <ScalarProperty Name="DIFERENCIAG" ColumnName="DIFERENCIAG" />
                 <ScalarProperty Name="RANKSPANTABDIAMES" ColumnName="RANKSPANTABDIAMES" />
                 <ScalarProperty Name="SPANTABDIAMES" ColumnName="SPANTABDIAMES" />

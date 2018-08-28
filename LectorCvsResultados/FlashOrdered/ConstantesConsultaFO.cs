@@ -182,5 +182,20 @@
             + "GROUP BY percent "
             + ") b "
             + "WHERE a.percent = b.percent ";
+
+        public const string QUERY_COUNT_PROB_SELINF =
+            "SELECT a.total/b.total AS Prob, a.{1} AS Spantiempo, a.{2} AS Rank, b.total AS Total "
+            + "FROM ( "
+            + "SELECT COUNT(1) AS total, {1}, {2}  "
+            + "FROM andataselectedinfo  "
+            + "WHERE diferenciag != 0 "
+            + "AND fechanum BETWEEN {0} AND {3} "
+            + "GROUP BY {1}, {2}) a, ( "
+            + "SELECT COUNT(1) AS total, {1}, {2}  "
+            + "FROM andataselectedinfo  "
+            + "WHERE fechanum BETWEEN {0} AND {3} "
+            + "GROUP BY {1}, {2}) b "
+            + "WHERE a.{1} = b.{1} "
+            + "AND a.{2} = b.{2} ";
     }
 }

@@ -18,6 +18,7 @@ namespace LectorCvsResultados.FlashOrdered
             ANDATASELECTEDINFO a;
             List<ANDATASELECTEDINFO> listInfoAdd = new List<ANDATASELECTEDINFO>();
             int idInicio = ConsultasClassFO.ConsultarMaxIdActual(contexto, ConstantesGenerales.TBL_SELECTINFO);
+            int dayofweek = (int)fecha.DayOfWeek == 0 ? 7 : (int)fecha.DayOfWeek;
             foreach (var item in listaTemp)
             {
                 var data = (from x in listaDia where x.TABINDEX == item.Tabindex select x).FirstOrDefault();
@@ -38,6 +39,8 @@ namespace LectorCvsResultados.FlashOrdered
                 a.RANKSPANTABDIAMES = item.RankSpanActualDiaMes;
                 a.FECHANUM = data.FECHANUM;
                 a.DIFERENCIAG = data.DIFERENCIAG;
+                a.DIASEM = dayofweek;
+                a.DIAMES = fecha.Day;
                 listInfoAdd.Add(a);
             }
             contexto.ANDATASELECTEDINFO.AddRange(listInfoAdd);

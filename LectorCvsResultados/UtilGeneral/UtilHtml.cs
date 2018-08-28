@@ -62,9 +62,9 @@ namespace LectorCvsResultados.UtilGeneral
                 string[] datos = sb.ToString().Split(';');
                 infoFs.Hora = datos[0];
                 infoFs.Estado = datos[1];
-                infoFs.Home = datos[2];
+                infoFs.Home = datos[2].ToUpper();
                 infoFs.RESULT = datos[3];
-                infoFs.Away = datos[4];
+                infoFs.Away = datos[4].ToUpper();
                 infoFs.Half = datos[5].Replace("&nbsp;", "").Replace("(", "").Replace(")", "").Trim();
 
                 infoFs.TABINDEX = ++indexer;
@@ -90,7 +90,7 @@ namespace LectorCvsResultados.UtilGeneral
 
             lista = lista.OrderBy(x => x.intChar).ThenBy(x => x.Home).ThenBy(x => x.Away).ToList();
 
-            string letter = lista.ElementAt(0).Home[0].ToString();
+            string letter = lista.ElementAt(0).Home[0].ToString().ToUpper();
             int indexLetter = 1;
             foreach (var item in lista)
             {

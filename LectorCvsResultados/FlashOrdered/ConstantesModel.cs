@@ -46,5 +46,17 @@
         public const string DIAANIONUM = "diaanionum";
 
         public const string ANDATASELECTEDINFO = "andataselectedinfo";
+        public const string SPANGLGEN = "spanglgen";
+        public const string RANKSPANGLGEN = "rankspanglgen";
+        public const string SPANGLDIASEM = "spangldiasem";
+        public const string RANKSPANGLDIASEM = "rankspangldiasem";
+        public const string SPANGLDIAMES = "spangldiames";
+        public const string RANKSPANGLDIAMES = "rankspangldiames";
+        public const string SPANTABGEN = "spantabgen";
+        public const string RANKSPANTABGEN = "rankspantabgen";
+        public const string SPANTABDIASEM = "spantabdiasem";
+        public const string RANKSPANTABDIASEM = "rankspantabdiasem";
+        public const string SPANTABDIAMES = "spantabdiames";
+        public const string RANKSPANTABDIAMES = "rankspantabdiames";
     }
 }
