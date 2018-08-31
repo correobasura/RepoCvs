@@ -412,17 +412,17 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">Caso para evaluar</param>
         /// <param name="valor">Valor a asignar al filtro</param>
         /// <returns>Listado de elementos</returns>
-        public static List<AgrupadorConteosTimeSpanDTO> ConsultarPercent(SisResultEntities contexto, string fechanum, int valor, string fechaMin, int tipoOrden, int caso)
+        public static List<AgrupadorConteosTimeSpanDTO> ConsultarPercent(SisResultEntities contexto, string fechanum, int valor, int tipoOrden, int caso, string fechaMin = "")
         {
             string filtro = GetFiltro(caso, valor);
-            string query = string.Format(ConstantesConsultaFO.QUERY_RANK_PERCENT, fechanum, filtro, fechaMin, tipoOrden);
+            string query = string.Format(ConstantesConsultaFO.QUERY_RANK_PERCENT, fechanum, filtro, tipoOrden, fechaMin);
             DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
             return data.AsEnumerable().ToList();
         }
 
-        public static List<AgrupadorConteosTimeSpanDTO> ConsultarProbSelectedInfo(SisResultEntities contexto, string fechanum, string spanCol, string rankCol, string fechaMax)
+        public static List<AgrupadorConteosTimeSpanDTO> ConsultarProbSelectedInfo(SisResultEntities contexto, string spanCol, string rankCol, string fechaMax, string fechaMin="")
         {
-            string query = string.Format(ConstantesConsultaFO.QUERY_COUNT_PROB_SELINF, fechanum, spanCol, rankCol, fechaMax);
+            string query = string.Format(ConstantesConsultaFO.QUERY_COUNT_PROB_SELINF, fechaMin, spanCol, rankCol, fechaMax);
             DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
             return data.AsEnumerable().ToList();
         }

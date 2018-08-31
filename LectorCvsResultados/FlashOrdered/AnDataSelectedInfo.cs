@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LectorCvsResultados.UtilGeneral;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,11 +15,15 @@ namespace LectorCvsResultados.FlashOrdered
         public static void GuardarElementosSelectedInfo(SisResultEntities contexto, DateTime fecha, int valorTotal, List<FLASHORDERED> listaDia)
         {
             List<FLASHORDERED> listaHtmlTemp = AnDataFlashOrdered.GetListaTemp(fecha, 1, contexto, valorTotal);
-            List<AgrupadorInfoGeneralDTO> listaTemp = AnDataFlashOrdered.GetListaInfoAsignn(fecha, 1, contexto, listaHtmlTemp);
+            string strJoin = UtilHtml.ObtenerJoinElementos(listaHtmlTemp);
+            int maxTabindex = (from x in listaHtmlTemp select x.TABINDEX).Max();
+            string fechaFormat = fecha.ToString("yyyyMMdd");
+            int dayofweek = (int)fecha.DayOfWeek == 0 ? 7 : (int)fecha.DayOfWeek;
+            List<AgrupadorInfoGeneralDTO> listaTemp = AnDataFlashOrdered.GetListaInfoAsignn(fecha, 1, contexto, listaHtmlTemp,
+                dayofweek, fechaFormat, maxTabindex, strJoin);
             ANDATASELECTEDINFO a;
             List<ANDATASELECTEDINFO> listInfoAdd = new List<ANDATASELECTEDINFO>();
             int idInicio = ConsultasClassFO.ConsultarMaxIdActual(contexto, ConstantesGenerales.TBL_SELECTINFO);
-            int dayofweek = (int)fecha.DayOfWeek == 0 ? 7 : (int)fecha.DayOfWeek;
             foreach (var item in listaTemp)
             {
                 var data = (from x in listaDia where x.TABINDEX == item.Tabindex select x).FirstOrDefault();

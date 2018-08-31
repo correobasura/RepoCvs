@@ -373,6 +373,8 @@ namespace LectorCvsResultados
             InsertarFORecientes();
             //UtilValidate.TestValidateMinReg(contexto);
             List<AgrupadorInfoGeneralDTO> listaTemp;
+            List<AgrupadorInfoGeneralDTO> listaPos = new List<AgrupadorInfoGeneralDTO>();
+            List<AgrupadorInfoGeneralDTO> listaNeg = new List<AgrupadorInfoGeneralDTO>();
             List<FLASHORDERED> listaHtmlTemp;
             List<FLASHORDERED> listaDia;
             int fecha;
@@ -383,19 +385,21 @@ namespace LectorCvsResultados
             //{
             //    dictRanks.Add(i, new InfoAnalisisDTO());
             //}
-            //Dictionary<int, InfoAnalisisDTO> dictGen = new Dictionary<int, InfoAnalisisDTO>();
-            //for (int j = -30; j < -4; j++)
+            Dictionary<int, InfoAnalisisDTO> dictGen = new Dictionary<int, InfoAnalisisDTO>();
+            //for (double j = 0.80; j < 0.95; j = j + 0.01)
+            //for (int j = -50; j < -9; j++)
             //{
             //    dictGen.Add(j, new InfoAnalisisDTO());
-            dictTotalesDias.Clear();
-            string strVar = "";
-            for (var i = DateTime.Today; i <= DateTime.Today; i = i.AddDays(1))
-            {
+                dictTotalesDias.Clear();
+                string strVar = "";
+                for (var i = DateTime.Today.AddDays(-30); i < DateTime.Today; i = i.AddDays(1))
+                //for (var i = DateTime.Today; i <= DateTime.Today; i = i.AddDays(1))
+                {
                 fecha = Convert.ToInt32(i.ToString("yyyyMMdd"));
                 dictTotalesDias.Add(fecha, new InfoAnalisisDTO());
 
                 listaHtmlTemp = AnDataFlashOrdered.GetListaTemp(i, 1, contexto, VAL_TOTAL);
-                listaTemp = AnDataFlashOrdered.ValidarElementosDia(i, 1, contexto, listaHtmlTemp, 0);
+                listaTemp = AnDataFlashOrdered.ValidarElementosDia(i, 1, contexto, listaHtmlTemp);
                 listaDia = UtilGeneral.UtilHtml.LeerInfoHtml(i, 1);
                 foreach (var item in listaTemp)
                 {
@@ -410,19 +414,21 @@ namespace LectorCvsResultados
                     {
                         dictTotalesDias[fecha].Negativos++;
                         dictRanks[strVar].Negativos++;
+                        listaNeg.Add(item);
                     }
                     else
                     {
                         dictTotalesDias[fecha].Positivos++;
                         dictRanks[strVar].Positivos++;
+                        listaPos.Add(item);
                     }
                 }
             }
             //    dictGen[j].Positivos = (from entry in dictTotalesDias select entry.Value.Positivos).Sum();
             //    dictGen[j].Negativos = (from entry in dictTotalesDias select entry.Value.Negativos).Sum();
             //}
-            //dictGen = (from entry in dictGen orderby entry.Value.Positivos descending, entry.Value.Negativos select entry).ToDictionary(x => x.Key, x => x.Value);
-            dictRanks = (from entry in dictRanks orderby entry.Value.AvgPos descending, entry.Value.AvgNeg select entry).ToDictionary(x => x.Key, x => x.Value);
+            //dictGen = (from x in dictGen orderby x.Value.AvgPos descending, x.Value.AvgNeg, x.Value.Positivos descending select x).ToDictionary(x => x.Key, x => x.Value);
+            //dictRanks = (from entry in dictRanks orderby entry.Value.AvgPos descending, entry.Value.AvgNeg select entry).ToDictionary(x => x.Key, x => x.Value);
             var dataIn = "";
         }
 

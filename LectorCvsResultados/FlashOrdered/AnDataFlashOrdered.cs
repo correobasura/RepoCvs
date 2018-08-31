@@ -370,9 +370,10 @@ namespace LectorCvsResultados.FlashOrdered
             List<int> listTabindex;
             FLASHORDERED elementTemp;
             List<int> listaFechaNum = (from x in lista orderby x.FECHANUM select x.FECHANUM).Distinct().ToList();
+            List<FLASHORDERED> listaPersist;
             foreach (var fechaNum in listaFechaNum)
             {
-                List<FLASHORDERED> listaPersist = lista.Where(x => x.FECHANUM == fechaNum).OrderBy(x => x.ID).ToList();
+                listaPersist = lista.Where(x => x.FECHANUM == fechaNum).OrderBy(x => x.ID).ToList();
                 td = new TOTALESDIA();
                 td.ID = fechaNum;
                 td.TOTAL = listaPersist.Count;
@@ -896,92 +897,95 @@ namespace LectorCvsResultados.FlashOrdered
         }
 
         public static List<AgrupadorInfoGeneralDTO> ValidarElementosDia(DateTime fecha, int caso,
-            SisResultEntities contexto, List<FLASHORDERED> listaHtmlTemp, int percent)
+            SisResultEntities contexto, List<FLASHORDERED> listaHtmlTemp, double valor=-30)
         {
-            List<string> lstaStrs = new List<string>();
-
-            lstaStrs.Add("4-12");
-            lstaStrs.Add("9-12");
-            lstaStrs.Add("17-8");
-            lstaStrs.Add("10-6");
-            lstaStrs.Add("14-4");
-            lstaStrs.Add("11-7");
-            lstaStrs.Add("13-0");
-            lstaStrs.Add("6-8");
-            lstaStrs.Add("8-12");
-            lstaStrs.Add("15-6");
-            lstaStrs.Add("14-6");
-            lstaStrs.Add("7-10");
-            lstaStrs.Add("7-11");
-            lstaStrs.Add("14-8");
-            lstaStrs.Add("13-4");
-            lstaStrs.Add("14-10");
-            lstaStrs.Add("0-10");
-            lstaStrs.Add("0-8");
-            lstaStrs.Add("6-13");
-            lstaStrs.Add("6-12");
-            lstaStrs.Add("5-13");
-            lstaStrs.Add("6-15");
-            lstaStrs.Add("3-16");
-            lstaStrs.Add("10-8");
-            lstaStrs.Add("4-15");
-            lstaStrs.Add("17-5");
-            lstaStrs.Add("14-11");
-            lstaStrs.Add("0-12");
-            lstaStrs.Add("10-11");
-            lstaStrs.Add("17-4");
-            lstaStrs.Add("3-15");
-            lstaStrs.Add("6-11");
-            lstaStrs.Add("13-12");
-            lstaStrs.Add("9-13");
-            lstaStrs.Add("8-13");
-            lstaStrs.Add("9-11");
-            lstaStrs.Add("15-4");
-            lstaStrs.Add("0-13");
-            lstaStrs.Add("11-12");
-            lstaStrs.Add("15-2");
-            lstaStrs.Add("13-10");
-            lstaStrs.Add("0-11");
-            lstaStrs.Add("8-15");
-            lstaStrs.Add("1-10");
-            lstaStrs.Add("10-3");
-            lstaStrs.Add("0-6");
-
-            List<AgrupadorInfoGeneralDTO> listaInfo = GetListaInfoAsignn(fecha, caso, contexto, listaHtmlTemp);
-
-            //listaInfo = FilterElementosTabindex(contexto, lstTabIndex, fechaFormat, listaInfo, strJoin);
-            //DateTime fechaMin = fecha.AddDays(percent);
-            //listaInfo = listaInfo.OrderBy(x => x.AgrupadorPromMaxTabindexGen.Rank).ToList();
-            //List<AgrupadorConteosTimeSpanDTO> listPercentsTab = ConsultasClassFO.ConsultarPercent(contexto, fechaFormat, dayofweek, fechaMin.ToString("yyyyMMdd"), ConstantesGenerales.ORDEN_TABINDEX_GEN, 0);
-            //listaInfo = GetListOrdered(fecha, contexto, listaInfo, listPercentsTab, listaHtmlTemp.Count);
-
-            /*listaInfo = FilterElementosTabindexGl(contexto, lstTabIndex, fechaFormat, listaInfo, strJoin, percent);
-            DateTime fechaMin = fecha.AddDays(percent);
-            listaInfo = listaInfo.OrderBy(x => x.AgrupadorPromMaxGroupTabGen.Rank).ToList();
-            List<AgrupadorConteosTimeSpanDTO> listPercentsTab = ConsultasClassFO.ConsultarPercent(contexto, fechaFormat, dayofweek, fechaMin.ToString("yyyyMMdd"), ConstantesGenerales.ORDEN_GROUP_LETTER_GEN, 0);
-            listaInfo = GetListOrdered(fecha, contexto, listaInfo, listPercentsTab, listaHtmlTemp.Count);*/
-
-            List<AgrupadorInfoGeneralDTO> listaFiltered = new List<AgrupadorInfoGeneralDTO>();
-            string strVar;
-            foreach (var item in listaInfo)
-            {
-                strVar = item.RankSpanActualGlGen + "-" + item.RankSpanActualGen;
-                if (lstaStrs.IndexOf(strVar) != -1)
-                {
-                    listaFiltered.Add(item);
-                }
-            }
-            return listaFiltered;
-        }
-
-        public static List<AgrupadorInfoGeneralDTO> GetListaInfoAsignn(DateTime fecha, int caso,
-            SisResultEntities contexto, List<FLASHORDERED> listaHtmlTemp)
-        {
-            List<AgrupadorInfoGeneralDTO> listaInfo = new List<AgrupadorInfoGeneralDTO>();
             string strJoin = UtilHtml.ObtenerJoinElementos(listaHtmlTemp);
             int maxTabindex = (from x in listaHtmlTemp select x.TABINDEX).Max();
             string fechaFormat = fecha.ToString("yyyyMMdd");
             int dayofweek = (int)fecha.DayOfWeek == 0 ? 7 : (int)fecha.DayOfWeek;
+            List<AgrupadorInfoGeneralDTO> listaInfo = GetListaInfoAsignn(fecha, caso, contexto, listaHtmlTemp,
+                dayofweek, fechaFormat, maxTabindex, strJoin);
+            IncrementInfoPointsPercent(fecha, contexto, listaHtmlTemp, listaInfo, fechaFormat, dayofweek);
+            //ConsultarProbSelectedInfo
+
+            //string fechaMinformat = "fechanum > " + fecha.AddDays(valor).ToString("yyyyMMdd") + " AND";
+            List<AgrupadorConteosTimeSpanDTO> listSelectedInfo
+                = ConsultasClassFO.ConsultarProbSelectedInfo(contexto,
+                ConstantesModel.SPANGLGEN, ConstantesModel.RANKSPANGLGEN, fechaFormat);
+            foreach (var aigDTO in listaInfo)
+            {
+                var data = (from x in listSelectedInfo
+                            where x.Spantiempo.Equals(aigDTO.AgrUltFechaNumSpanGlGen.Spantiempo)
+                            && x.Rank.Equals(aigDTO.RankSpanActualGlGen)
+                            select x).FirstOrDefault();
+                if (data != null && data.Prob >= 0.91)
+                {
+                    aigDTO.Puntuacion++;
+                }
+            }
+            //listSelectedInfo = ConsultasClassFO.ConsultarProbSelectedInfo(contexto,
+            //    ConstantesModel.SPANTABGEN, ConstantesModel.RANKSPANTABGEN, fechaFormat, fechaMinformat);
+
+            //foreach (var aigDTO in listaInfo)
+            //{
+            //    var data = (from x in listSelectedInfo
+            //                where x.Spantiempo.Equals(aigDTO.AgrUltFechaNumSpanGen.Spantiempo)
+            //                && x.Rank.Equals(aigDTO.RankSpanActualGen)
+            //                select x).FirstOrDefault();
+            //    if (data != null && data.Prob >= 0.9)
+            //    {
+            //        aigDTO.Puntuacion++;
+            //    }
+            //}
+
+            return listaInfo.Where(x => x.Puntuacion > 0).ToList();
+        }
+
+        private static void IncrementSelectedInfo(double valor, List<AgrupadorInfoGeneralDTO> listaInfo, List<AgrupadorConteosTimeSpanDTO> listSelectedInfo)
+        {
+            foreach (var aigDTO in listaInfo)
+            {
+                var data = (from x in listSelectedInfo
+                            where x.Spantiempo.Equals(aigDTO.AgrUltFechaNumSpanGlGen.Spantiempo)
+                            && x.Rank.Equals(aigDTO.RankSpanActualGlGen)
+                            select x).FirstOrDefault();
+                if (data != null && data.Prob >= valor)
+                {
+                    aigDTO.Puntuacion++;
+                }
+            }
+        }
+
+        private static void IncrementInfoPointsPercent(DateTime fecha, SisResultEntities contexto, List<FLASHORDERED> listaHtmlTemp, List<AgrupadorInfoGeneralDTO> listaInfo, string fechaformat, int dayofweek)
+        {
+            List<AgrupadorConteosTimeSpanDTO> listPercentsTab;
+
+            string fechaMinformat = "fechanum > " + fecha.AddDays(-32).ToString("yyyyMMdd") + " AND";
+
+            listaInfo = listaInfo.OrderBy(x => x.AgrupadorPromMaxTabindexGen.Rank).ToList();
+            listPercentsTab = ConsultasClassFO.ConsultarPercent(contexto, fechaformat, dayofweek, ConstantesGenerales.ORDEN_TABINDEX_GEN, 0, fechaMinformat);
+            GetListOrdered(fecha, contexto, listaInfo, listPercentsTab, listaHtmlTemp.Count);
+            //listPercentsTab = ConsultasClassFO.ConsultarPercent(contexto, fechaformat, dayofweek, ConstantesGenerales.ORDEN_TABINDEX_GEN, ConstantesGenerales.CASO_DIASEM);
+            //GetListOrdered(fecha, contexto, listaInfo, listPercentsTab, listaHtmlTemp.Count);
+            //listPercentsTab = ConsultasClassFO.ConsultarPercent(contexto, fechaformat, fecha.Day, ConstantesGenerales.ORDEN_TABINDEX_GEN, ConstantesGenerales.CASO_DIAMES);
+            //GetListOrdered(fecha, contexto, listaInfo, listPercentsTab, listaHtmlTemp.Count);
+
+            //fechaMinformat = "fechanum > " + fecha.AddDays(-36).ToString("yyyyMMdd") + " AND";
+
+            //listaInfo = listaInfo.OrderBy(x => x.AgrupadorPromMaxGroupTabGen.Rank).ToList();
+            //listPercentsTab = ConsultasClassFO.ConsultarPercent(contexto, fechaformat, dayofweek, ConstantesGenerales.ORDEN_GROUP_LETTER_GEN, 0, fechaMinformat);
+            //GetListOrdered(fecha, contexto, listaInfo, listPercentsTab, listaHtmlTemp.Count);
+            //listPercentsTab = ConsultasClassFO.ConsultarPercent(contexto, fechaformat, dayofweek, ConstantesGenerales.ORDEN_GROUP_LETTER_GEN, ConstantesGenerales.CASO_DIASEM);
+            //GetListOrdered(fecha, contexto, listaInfo, listPercentsTab, listaHtmlTemp.Count);
+            //listPercentsTab = ConsultasClassFO.ConsultarPercent(contexto, fechaformat, fecha.Day, ConstantesGenerales.ORDEN_GROUP_LETTER_GEN, ConstantesGenerales.CASO_DIAMES);
+            //GetListOrdered(fecha, contexto, listaInfo, listPercentsTab, listaHtmlTemp.Count);
+        }
+
+        public static List<AgrupadorInfoGeneralDTO> GetListaInfoAsignn(DateTime fecha, int caso,
+            SisResultEntities contexto, List<FLASHORDERED> listaHtmlTemp, int dayofweek, string fechaFormat,
+            int maxTabindex, string strJoin)
+        {
+            List<AgrupadorInfoGeneralDTO> listaInfo = new List<AgrupadorInfoGeneralDTO>();
 
             //Obtener los promedios
             List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexGen = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto);
@@ -1087,7 +1091,7 @@ namespace LectorCvsResultados.FlashOrdered
             {
                 if (item.AgrUltFechaNumSpanGlGen != null)
                 {
-                    item.ListRankSpansGlGen = (from x in listaRanksGlGen where x.TabIndexLetter.Equals(item.Tabindexletter) && x.GroupLetter.Equals(item.GroupLetter) select x).ToList();
+                    item.ListRankSpansGlGen = GetListSpanRank(listaRanksGlGen, item,1);
                     item.RankSpanActualGlGen = AsignarInfoRank(item.ListRankSpansGlGen, item.AgrUltFechaNumSpanGlGen.Spantiempo);
                     if (item.RankSpanActualGlGen != 0)
                     {
@@ -1102,7 +1106,7 @@ namespace LectorCvsResultados.FlashOrdered
 
                 if (item.AgrUltFechaNumSpanGlDiaSem != null)
                 {
-                    item.ListRankSpansGlDiaSem = (from x in listaRanksGlDiaSem where x.TabIndexLetter.Equals(item.Tabindexletter) && x.GroupLetter.Equals(item.GroupLetter) select x).ToList();
+                    item.ListRankSpansGlDiaSem = GetListSpanRank(listaRanksGlDiaSem, item,1);
                     item.RankSpanActualGlDiaSem = AsignarInfoRank(item.ListRankSpansGlDiaSem, item.AgrUltFechaNumSpanGlDiaSem.Spantiempo);
                     if (item.RankSpanActualGlDiaSem != 0)
                     {
@@ -1117,7 +1121,7 @@ namespace LectorCvsResultados.FlashOrdered
 
                 if (item.AgrUltFechaNumSpanGlDiaMes != null)
                 {
-                    item.ListRankSpansGlDiaMes = (from x in listaRanksGlDiaMes where x.TabIndexLetter.Equals(item.Tabindexletter) && x.GroupLetter.Equals(item.GroupLetter) select x).ToList();
+                    item.ListRankSpansGlDiaMes = GetListSpanRank(listaRanksGlDiaMes, item,1);
                     item.RankSpanActualGlDiaMes = AsignarInfoRank(item.ListRankSpansGlDiaMes, item.AgrUltFechaNumSpanGlDiaMes.Spantiempo);
                     if (item.RankSpanActualGlDiaMes != 0)
                     {
@@ -1132,7 +1136,7 @@ namespace LectorCvsResultados.FlashOrdered
 
                 if (item.AgrUltFechaNumSpanGen != null)
                 {
-                    item.ListRankSpansGen = (from x in listaRanksGen where x.TabIndex.Equals(item.Tabindex) select x).ToList();
+                    item.ListRankSpansGen = GetListSpanRank(listaRanksGen, item, 2);
                     item.RankSpanActualGen = AsignarInfoRank(item.ListRankSpansGen, item.AgrUltFechaNumSpanGen.Spantiempo);
                     if (item.RankSpanActualGen != 0)
                     {
@@ -1147,7 +1151,7 @@ namespace LectorCvsResultados.FlashOrdered
 
                 if (item.AgrUltFechaNumSpanDiaSem != null)
                 {
-                    item.ListRankSpansDiaSem = (from x in listaRanksDiaSem where x.TabIndex.Equals(item.Tabindex) select x).ToList();
+                    item.ListRankSpansDiaSem = GetListSpanRank(listaRanksDiaSem, item, 2);
                     item.RankSpanActualDiaSem = AsignarInfoRank(item.ListRankSpansDiaSem, item.AgrUltFechaNumSpanDiaSem.Spantiempo);
                     if (item.RankSpanActualDiaSem != 0)
                     {
@@ -1162,7 +1166,7 @@ namespace LectorCvsResultados.FlashOrdered
 
                 if (item.AgrUltFechaNumSpanDiaMes != null)
                 {
-                    item.ListRankSpansDiaMes = (from x in listaRanksDiaMes where x.TabIndex.Equals(item.Tabindex) select x).ToList();
+                    item.ListRankSpansDiaMes = GetListSpanRank(listaRanksDiaMes, item, 2);
                     item.RankSpanActualDiaMes = AsignarInfoRank(item.ListRankSpansDiaMes, item.AgrUltFechaNumSpanDiaMes.Spantiempo);
                     if (item.RankSpanActualDiaMes != 0)
                     {
@@ -1178,59 +1182,16 @@ namespace LectorCvsResultados.FlashOrdered
             return listaInfo;
         }
 
-        private static List<AgrupadorInfoGeneralDTO> FilterElementosTabindex(SisResultEntities contexto,
-            int maxTabindex, string fechaFormat, List<AgrupadorInfoGeneralDTO> listaInfo, string strJoin, int percent = 100)
+        private static List <AgrupadorConteosTimeSpanDTO> GetListSpanRank(List<AgrupadorConteosTimeSpanDTO> lista, AgrupadorInfoGeneralDTO item, int caso)
         {
-            List<AgrupadorInfoGeneralDTO> listaFiltered = new List<AgrupadorInfoGeneralDTO>();
-            List<int> listTabindex = (from x in listaInfo select x.Tabindex).ToList();
-            //int rank = 0;
-            List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexGen = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto);
-            listaPromMaxTabindexGen = (from x in listaPromMaxTabindexGen where listTabindex.IndexOf(x.Tabindex) != -1 select x).OrderBy(x => x.Rank).ToList();
-            //int totalElementos = listaInfo.Count;
-            //int percentRemove = (percent * totalElementos) / 100;
-            foreach (var itemProm in listaPromMaxTabindexGen)
+            if(caso == 1)
             {
-                var item = (from x in listaInfo where x.Tabindex.Equals(itemProm.Tabindex) select x).FirstOrDefault();
-                item.AgrupadorPromMaxTabindexGen = itemProm;
-                //rank++;
-                //if (rank > percentRemove)
-                //{
-                //    continue;
-                //}
-                listaFiltered.Add(item);
+                return (from x in lista where x.TabIndexLetter.Equals(item.Tabindexletter) && x.GroupLetter.Equals(item.GroupLetter) select x).ToList();
             }
-            return listaFiltered;
-        }
-
-        private static List<AgrupadorInfoGeneralDTO> FilterElementosTabindexGl(SisResultEntities contexto,
-            int maxTabindex, string fechaFormat, List<AgrupadorInfoGeneralDTO> listaInfo, string strJoin, int percent = 99)
-        {
-            List<AgrupadorInfoGeneralDTO> listaFiltered = new List<AgrupadorInfoGeneralDTO>();
-            List<AgrupadorTotalTabIndexDTO> listaPromMaxGroupTabGen = ConsultasClassFO.ConsultarPromResultadosGroupTab(strJoin, fechaFormat, contexto);
-            //List<AgrupadorTotalTabIndexDTO> listaPromMaxGroupTab = ConsultasClassFO.ConsultarPromResultadosGroupTab(strJoin, fechaFormat, contexto);
-            //int totalElementos = listaInfo.Count;
-            //int rank = 0;
-            //int percentRemove = (percent * totalElementos) / 100;
-            //foreach (var item in listaPromMaxGroupTab)
-            //{
-            //    var data = (from x in listaInfo where x.Tabindexletter.Equals(item.Tabindex) && x.GroupLetter.Equals(item.GroupLetter) select x).FirstOrDefault();
-            //    if (data == null) continue;
-            //    listaPromMaxGroupTabGen.Add(item);
-            //}
-            foreach (var itemProm in listaPromMaxGroupTabGen)
+            else
             {
-                var item = (from x in listaInfo
-                            where x.Tabindexletter.Equals(itemProm.Tabindex)
-        && x.GroupLetter.Equals(itemProm.GroupLetter)
-                            select x).FirstOrDefault();
-                item.AgrupadorPromMaxGroupTabGen = itemProm;
-                //if (++rank > percentRemove)
-                //{
-                //    continue;
-                //}
-                listaFiltered.Add(item);
+                return (from x in lista where x.TabIndex.Equals(item.Tabindex) select x).ToList();
             }
-            return listaFiltered;
         }
 
         public static List<FLASHORDERED> GetListaTemp(DateTime fecha, int casoResource, SisResultEntities contexto, int valorMinimo)
@@ -1388,17 +1349,18 @@ namespace LectorCvsResultados.FlashOrdered
             List<AgrupadorConteosTimeSpanDTO> listPercent, int totalDia)
         {
             int pos = 1;
-            List<AgrupadorInfoGeneralDTO> listaFinal = new List<AgrupadorInfoGeneralDTO>();
             foreach (var aigDTO in listaInfo)
             {
                 aigDTO.PosTemp = pos++;
                 double value = (double)(aigDTO.PosTemp * 100) / totalDia;
                 int posPercent = (int)Math.Ceiling(value);
                 var data = (from x in listPercent where x.Percent.Equals(posPercent) select x).FirstOrDefault();
-                if (data != null && data.Rank <= 5) continue;
-                listaFinal.Add(aigDTO);
+                if (data != null && data.Prob>=0.91)
+                {
+                    aigDTO.Puntuacion++;
+                }
             }
-            return listaFinal;
+            return listaInfo;
         }
 
         public static int AsignarInfoRank(List<AgrupadorConteosTimeSpanDTO> lista, int spanActual)
