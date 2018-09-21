@@ -1,10 +1,13 @@
 ﻿using HtmlAgilityPack;
 using LectorCvsResultados.FlashOrdered;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace LectorCvsResultados.UtilGeneral
 {
@@ -350,6 +353,169 @@ namespace LectorCvsResultados.UtilGeneral
             string strJoin = string.Join(" OR ", listaJoins);
             strJoin = string.Format(agrupador, strJoin);
             return strJoin;
+        }
+
+        public static string GetAsync(DateTime fecha, string pathTemplate)
+        {
+            string anio = fecha.ToString("yyyy");
+            string mes = fecha.ToString("MM");
+            string dia = fecha.ToString("dd");
+            string html = string.Empty;
+            string url = @"https://es.soccerway.com/matches/{0}/{1}/{2}/";
+            //string urlIn = @"https://es.soccerway.com/a/block_date_matches?block_id=page_matches_1_block_date_matches_1&callback_params={"block_service_id":"matches_index_block_datematches","date":"2010-01-01"}&action=showMatches&params={"competition_id":583}"
+
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create(string.Format(url, anio, mes, dia));
+            //request.AutomaticDecompression = DecompressionMethods.GZip;
+
+            //using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            //using (Stream stream = response.GetResponseStream())
+            //using (StreamReader reader = new StreamReader(stream))
+            //{
+            //    html = reader.ReadToEnd();
+            //}
+            var idCompetition = "";
+            var doc = GetAsyncIn(fecha, idCompetition, 0);
+            //var htmlWeb = new HtmlWeb();
+            //htmlWeb.OverrideEncoding = Encoding.UTF8;
+            //var doc = htmlWeb.Load(string.Format(url, anio, mes, dia));
+            //var bodyInfo = doc.DocumentNode.SelectNodes("//tbody")[0];
+            var bodyInfo = doc.DocumentNode.SelectNodes("//tbody")[0];
+            var htmlBodyContent = new HtmlDocument();
+            htmlBodyContent.LoadHtml(bodyInfo.InnerHtml);
+            var htmltrNodes = htmlBodyContent.DocumentNode.SelectNodes("//tr").Where(x => x.Id != string.Empty);
+
+            var expanded = false;
+            StringBuilder sb = new StringBuilder();
+            Regex rgxNumbers = new Regex(@"[0-9]");
+            Regex rgxLetters = new Regex(@"[a-zA-Z]");
+
+            foreach (var item in htmltrNodes)
+            {
+                var atributtes = item.Attributes.ToDictionary(x => x.Name, x => x.Value);
+                expanded = atributtes["class"].IndexOf("expanded") != -1;
+                if (item.Id.Equals(string.Empty)) continue;
+                if (atributtes.ContainsKey("stage-value"))
+                {
+                    idCompetition = item.Id.Split('-')[1];
+                    if (expanded)
+                        continue;
+                }
+                if (expanded)
+                {
+                    sb.Append(CreateTrNode(GetMatchData(rgxNumbers, rgxLetters, item)));
+                }
+                else
+                {
+                    var dataNodes = GetAsyncIn(fecha, idCompetition, 1).DocumentNode.SelectNodes("//tr");
+                    foreach (var dataNode in dataNodes)
+                    {
+                        if (dataNode.Id.Equals(string.Empty)) continue;
+                        sb.Append(CreateTrNode(GetMatchData(rgxNumbers, rgxLetters, dataNode)));
+                    }
+                }
+
+            }
+            html = GetTemplate(pathTemplate) + sb.ToString() + "</table></body></html>";
+            return html;
+        }
+
+        private static string GetMatchData(Regex rgxNumbers, Regex rgxLetters, HtmlNode item)
+        {
+            List<string> lstInfo = new List<string>();
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(item.InnerHtml);
+
+            var htmltdNodes = htmlDoc.DocumentNode.SelectNodes("//td");
+            lstInfo.Add(htmltdNodes[0].InnerText);
+            lstInfo.Add(getAnchorInfo(htmltdNodes[1].InnerHtml, "title"));
+            string result = getAnchorInfo(htmltdNodes[2].InnerHtml, "");
+            if (rgxNumbers.IsMatch(result))
+            {
+                if (rgxLetters.IsMatch(result))
+                {
+                    htmlDoc = GetAsyncIn(DateTime.Today, getAnchorInfo(htmltdNodes[2].InnerHtml, "href"), 2);
+                    var info = htmlDoc.DocumentNode.SelectNodes("//div[@id='page_match_1_block_match_info_4-wrapper']");
+                    htmlDoc = new HtmlDocument();
+                    htmlDoc.LoadHtml(info[0].InnerHtml);
+                    var infoDetails = htmlDoc.DocumentNode.SelectNodes("//div[@class='details clearfix']");
+                    htmlDoc = new HtmlDocument();
+                    htmlDoc.LoadHtml(infoDetails[1].InnerHtml);
+                    var ddNodes = htmlDoc.DocumentNode.SelectNodes("//dd");
+                    result = ddNodes[0].InnerText;
+                }
+            }
+            lstInfo.Add(result);
+            lstInfo.Add(getAnchorInfo(htmltdNodes[3].InnerHtml, "title"));
+            return CreateTdNotes(lstInfo);
+        }
+
+        private static string getAnchorInfo(string innerText, string property)
+        {
+            var document = new HtmlDocument();
+            document.LoadHtml(innerText);
+            var anchorNodes = document.DocumentNode.SelectNodes("//a");
+            return property != string.Empty ? anchorNodes[0].Attributes.ToDictionary(x => x.Name, x => x.Value)[property]
+                : anchorNodes[0].InnerText.Replace("\n", "").Trim();
+        }
+
+        private static string GetTemplate(string pathTemplate)
+        {
+            return File.ReadAllText(pathTemplate);
+        }
+
+        private static string CreateTrNode(string info)
+        {
+            return "<tr>" + info + "</tr>";
+        }
+
+        private static string CreateTdNotes(List<string> lstInfo)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<td></td><td></td>");
+            foreach (var item in lstInfo)
+            {
+                sb.Append("<td>" + item + "</td>");
+            }
+            return sb.ToString();
+        }
+
+        public static HtmlDocument GetAsyncIn(DateTime fecha, string info, int caso)
+        {
+            string anio = fecha.ToString("yyyy");
+            string mes = fecha.ToString("MM");
+            string dia = fecha.ToString("dd");
+            string html = string.Empty;
+            string url = "";
+            var htmlDocument = new HtmlDocument();
+            var htmlWeb = new HtmlWeb();
+            htmlWeb.OverrideEncoding = Encoding.UTF8;
+            switch (caso)
+            {
+                case 1:
+                    url = @"https://es.soccerway.com/a/block_date_matches?block_id=page_matches_1_block_date_matches_1&callback_params=%7B%22block_service_id%22%3A%22matches_index_block_datematches%22%2C%22date%22%3A%22{0}-{1}-{2}%22%2C%22stage-value%22%3A%221%22%7D&action=showMatches&params=%7B%22competition_id%22%3A{3}%7D";
+
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(string.Format(url, anio, mes, dia, info));
+                    request.AutomaticDecompression = DecompressionMethods.GZip;
+
+                    using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                    using (Stream stream = response.GetResponseStream())
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        html = reader.ReadToEnd();
+                    }
+                    JObject json = JObject.Parse(html);
+                    htmlDocument.LoadHtml(json.SelectToken("commands[0].parameters.content").ToString().Replace("\\/", "/"));
+                    break;
+                case 2:
+                    url = @"https://es.soccerway.com" + info;
+                    htmlDocument = htmlWeb.Load(string.Format(url, anio, mes, dia));
+                    break;
+                default:
+                    url = @"https://es.soccerway.com/matches/{0}/{1}/{2}/";
+                    htmlDocument = htmlWeb.Load(string.Format(url, anio, mes, dia));
+                    break;
+            }
+            return htmlDocument;
         }
     }
 }
