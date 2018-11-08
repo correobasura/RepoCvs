@@ -4,13 +4,10 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="14c848ef82a94a7fb353a1577bb6756d" Name="Diagram1" ZoomLevel="88">
-        <EntityTypeShape EntityType="SistResultModel.ANALISTINDEXUNG" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="SistResultModel.USERRESULTTABLESFS" Width="1.5" PointX="3.375" PointY="0.75" />
+      <Diagram DiagramId="14c848ef82a94a7fb353a1577bb6756d" Name="Diagram1" ZoomLevel="73">
         <EntityTypeShape EntityType="SistResultModel.FLASHORDERED" Width="1.5" PointX="0.75" PointY="4.75" />
-        <EntityTypeShape EntityType="SistResultModel.ANDATAPERCENTUNG" Width="1.5" PointX="5.375" PointY="0.75" />
         <EntityTypeShape EntityType="SistResultModel.TOTALESDIA" Width="1.5" PointX="5.375" PointY="4.75" />
-        <EntityTypeShape EntityType="SistResultModel.ANDATASELECTEDINFO" Width="1.5" PointX="7.375" PointY="0.75" />
+        <EntityTypeShape EntityType="SistResultModel.ANDATAMINRANK" PointX="7.375" PointY="0.75" Width="1.5" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

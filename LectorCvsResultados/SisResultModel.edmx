@@ -5,58 +5,28 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="SistResultModel.Store" Provider="Oracle.ManagedDataAccess.Client" ProviderManifestToken="11.2" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="ANALISTINDEXUNG">
+        <EntityType Name="ANDATAMINRANK">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="FECHA" Type="date" />
-          <Property Name="LINEINDEX" Type="number" Precision="38" Scale="0" />
-          <Property Name="RESULT" Type="number" Precision="38" Scale="0" />
-          <Property Name="FECHANUM" Type="number" Precision="38" Scale="0" />
-          <Property Name="MESNUM" Type="number" Precision="38" Scale="0" />
-          <Property Name="DIAMESNUM" Type="number" Precision="38" Scale="0" />
-          <Property Name="DIASEMNUM" Type="number" Precision="38" Scale="0" />
-          <Property Name="ULTIMOTIMESPAN" Type="number" Precision="38" Scale="0" />
-          <Property Name="ULTIMOTIMESPANSEM" Type="number" Precision="38" Scale="0" />
-          <Property Name="ULTIMOTIMESPANMES" Type="number" Precision="38" Scale="0" />
-        </EntityType>
-        <EntityType Name="ANDATAPERCENTUNG">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="FECHA" Type="date" Nullable="false" />
           <Property Name="FECHANUM" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="PERCENT" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="DIFERENCIAG" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="MESNUM" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="DIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="DIASEM" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="DIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="DIAANIO" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="TIPOORDEN" Type="number" Precision="38" Scale="0" Nullable="false" />
-        </EntityType>
-        <EntityType Name="ANDATASELECTEDINFO">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="FECHANUM" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="SPANGLGEN" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="RANKSPANGLGEN" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="SPANGLDIASEM" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="RANKSPANGLDIASEM" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="SPANGLDIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="RANKSPANGLDIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="SPANTABGEN" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="RANKSPANTABGEN" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="SPANTABDIASEM" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="RANKSPANTABDIASEM" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="SPANTABDIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="RANKSPANTABDIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="DIFERENCIAG" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="DIASEM" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="DIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="DIFERENCIAG" Type="number" Precision="38" Scale="0" />
+          <Property Name="INFOAGRUPDIASEMMESTI" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="INFOAGRUPDIASEMMESGL" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="RANKSPANACTUALGEN" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="RANKSPANACTUALDIASEM" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="RANKSPANACTUALDIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="RANKSPANACTUALGLGEN" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="RANKSPANACTUALGLDIASEM" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="RANKSPANACTUALGLDIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="RANKSPANACTUALGLDIAANIO" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="RANKSPANACTUALDIAANIO" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="KEYRANK" Type="varchar2" MaxLength="20" Nullable="false" />
+          <Property Name="KEYRANKGRAL" Type="varchar2" MaxLength="20" Nullable="false" />
         </EntityType>
         <EntityType Name="FLASHORDERED">
           <Key>
@@ -74,6 +44,9 @@
           <Property Name="DIASEM" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="DIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="DIAANIO" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="MESNUM" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="IDCOMPETITION" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="TABINDEXCOMPETITION" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="SPANTIDIAACT" Type="number" Precision="38" Scale="0" />
           <Property Name="SPANTIDIAHIST" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="SPANTISEMACT" Type="number" Precision="38" Scale="0" />
@@ -94,6 +67,7 @@
           <Property Name="FECHANUM" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="TABINDEXSEQ" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="TABINDEXLETTERSEQ" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="TABINDEXCOMPETSEQ" Type="number" Precision="38" Scale="0" Nullable="false" />
         </EntityType>
         <EntityType Name="TOTALESDIA">
           <Key>
@@ -102,92 +76,20 @@
           <Property Name="ID" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="TOTAL" Type="number" Precision="38" Scale="0" Nullable="false" />
         </EntityType>
-        <EntityType Name="USERRESULTTABLESFS">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="FECHA" Type="date" />
-          <Property Name="TABINDEX" Type="number" Precision="38" Scale="0" />
-          <Property Name="HORA" Type="varchar2" MaxLength="5" />
-          <Property Name="MARCADOR" Type="varchar2" MaxLength="10" />
-          <Property Name="GLOCAL" Type="number" Precision="38" Scale="0" />
-          <Property Name="GVISITANTE" Type="number" Precision="38" Scale="0" />
-          <Property Name="DIFERENCIAG" Type="number" Precision="38" Scale="0" />
-          <Property Name="TOTALG" Type="number" Precision="38" Scale="0" />
-          <Property Name="FECHANUM" Type="number" Precision="38" Scale="0" />
-          <Property Name="MESNUM" Type="number" Precision="38" Scale="0" />
-          <Property Name="DIAMESNUM" Type="number" Precision="38" Scale="0" />
-          <Property Name="DIASEMNUM" Type="number" Precision="38" Scale="0" />
-          <Property Name="SPANTIEMPO" Type="number" Precision="38" Scale="0" />
-          <Property Name="SPANTIEMPOHIST" Type="number" Precision="38" Scale="0" />
-          <Property Name="TABINDEXSEQ" Type="number" Precision="38" Scale="0" />
-          <Property Name="SPANTIEMPOSEM" Type="number" Precision="38" Scale="0" />
-          <Property Name="SPANTIEMPOSEMHIST" Type="number" Precision="38" Scale="0" />
-          <Property Name="SPANTIEMPOMES" Type="number" Precision="38" Scale="0" />
-          <Property Name="SPANTIEMPOMESHIST" Type="number" Precision="38" Scale="0" />
-        </EntityType>
         <EntityContainer Name="SistResultModelStoreContainer">
-          <EntitySet Name="ANALISTINDEXUNG" EntityType="Self.ANALISTINDEXUNG" Schema="USERRESULTTABLES" store:Type="Tables" />
-          <EntitySet Name="ANDATAPERCENTUNG" EntityType="Self.ANDATAPERCENTUNG" Schema="USERRESULTTABLES" store:Type="Tables" />
-          <EntitySet Name="ANDATASELECTEDINFO" EntityType="Self.ANDATASELECTEDINFO" Schema="USERRESULTTABLES" store:Type="Tables" />
+          <EntitySet Name="ANDATAMINRANK" EntityType="Self.ANDATAMINRANK" Schema="USERRESULTTABLES" store:Type="Tables" />
           <EntitySet Name="FLASHORDERED" EntityType="Self.FLASHORDERED" Schema="USERRESULTTABLES" store:Type="Tables" />
           <EntitySet Name="TOTALESDIA" EntityType="Self.TOTALESDIA" Schema="USERRESULTTABLES" store:Type="Tables" />
-          <EntitySet Name="USERRESULTTABLESFS" EntityType="Self.USERRESULTTABLESFS" Schema="USERRESULTTABLES" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="SistResultModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="SisResultEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="ANALISTINDEXUNG" EntityType="SistResultModel.ANALISTINDEXUNG" />
-          <EntitySet Name="USERRESULTTABLESFS" EntityType="SistResultModel.USERRESULTTABLESFS" />
           <EntitySet Name="FLASHORDERED" EntityType="SistResultModel.FLASHORDERED" />
-          <EntitySet Name="ANDATAPERCENTUNG" EntityType="SistResultModel.ANDATAPERCENTUNG" />
           <EntitySet Name="TOTALESDIA" EntityType="SistResultModel.TOTALESDIA" />
-          <EntitySet Name="ANDATASELECTEDINFO" EntityType="SistResultModel.ANDATASELECTEDINFO" />
+          <EntitySet Name="ANDATAMINRANK" EntityType="SistResultModel.ANDATAMINRANK" />
         </EntityContainer>
-        <EntityType Name="ANALISTINDEXUNG">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="FECHA" Type="DateTime" />
-          <Property Name="LINEINDEX" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="RESULT" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="FECHANUM" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="MESNUM" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="DIAMESNUM" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="DIASEMNUM" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="ULTIMOTIMESPAN" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="ULTIMOTIMESPANSEM" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="ULTIMOTIMESPANMES" Type="Decimal" Precision="38" Scale="0" />
-        </EntityType>
-        <EntityType Name="USERRESULTTABLESFS">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="FECHA" Type="DateTime" />
-          <Property Name="TABINDEX" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="HORA" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
-          <Property Name="MARCADOR" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="GLOCAL" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="GVISITANTE" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="DIFERENCIAG" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="TOTALG" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="FECHANUM" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="MESNUM" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="DIAMESNUM" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="DIASEMNUM" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="SPANTIEMPO" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="SPANTIEMPOHIST" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="TABINDEXSEQ" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="SPANTIEMPOSEM" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="SPANTIEMPOSEMHIST" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="SPANTIEMPOMES" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="SPANTIEMPOMESHIST" Type="Decimal" Precision="38" Scale="0" />
-        </EntityType>
         <EntityType Name="FLASHORDERED">
           <Key>
             <PropertyRef Name="ID" />
@@ -224,21 +126,10 @@
           <Property Name="FECHANUM" Type="Int32" Nullable="false" />
           <Property Name="TABINDEXSEQ" Type="Int32" Nullable="false" />
           <Property Name="TABINDEXLETTERSEQ" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="ANDATAPERCENTUNG">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="FECHA" Type="DateTime" Nullable="false" />
-          <Property Name="FECHANUM" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="PERCENT" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="DIFERENCIAG" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="MESNUM" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="DIAMES" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="DIASEM" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="DIAANIO" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="TIPOORDEN" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="MESNUM" Type="Int32" Nullable="false" />
+          <Property Name="IDCOMPETITION" Type="Int32" Nullable="false" />
+          <Property Name="TABINDEXCOMPETITION" Type="Int32" Nullable="false" />
+          <Property Name="TABINDEXCOMPETSEQ" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
         </EntityType>
         <EntityType Name="TOTALESDIA">
           <Key>
@@ -247,27 +138,28 @@
           <Property Name="ID" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="TOTAL" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
         </EntityType>
-        <EntityType Name="ANDATASELECTEDINFO">
+        <EntityType Name="ANDATAMINRANK">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="FECHANUM" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="SPANGLGEN" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="RANKSPANGLGEN" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="SPANGLDIASEM" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="RANKSPANGLDIASEM" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="SPANGLDIAMES" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="RANKSPANGLDIAMES" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="SPANTABGEN" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="RANKSPANTABGEN" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="SPANTABDIASEM" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="RANKSPANTABDIASEM" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="SPANTABDIAMES" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="RANKSPANTABDIAMES" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="DIFERENCIAG" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="DIASEM" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="DIAMES" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="ID" Nullable="false" Precision="38" Scale="0" Type="Decimal" />
+          <Property Name="FECHANUM" Nullable="false" Type="Int32" />
+          <Property Name="INFOAGRUPDIASEMMESTI" Nullable="false" Type="Int32" />
+          <Property Name="INFOAGRUPDIASEMMESGL" Nullable="false" Type="Int32" />
+          <Property Name="RANKSPANACTUALGEN" Nullable="false" Type="Int32" />
+          <Property Name="RANKSPANACTUALDIASEM" Nullable="false" Type="Int32" />
+          <Property Name="RANKSPANACTUALDIAMES" Nullable="false" Type="Int32" />
+          <Property Name="RANKSPANACTUALGLGEN" Nullable="false" Type="Int32" />
+          <Property Name="RANKSPANACTUALGLDIASEM" Nullable="false" Type="Int32" />
+          <Property Name="RANKSPANACTUALGLDIAMES" Nullable="false" Type="Int32" />
+          <Property Name="RANKSPANACTUALGLDIAANIO" Nullable="false" Type="Int32" />
+          <Property Name="RANKSPANACTUALDIAANIO" Nullable="false" Type="Int32" />
+          <Property Name="DIASEM" Type="Int32" Nullable="false" />
+          <Property Name="DIAMES" Type="Int32" Nullable="false" />
+          <Property Name="DIAANIO" Type="Int32" Nullable="false" />
+          <Property Name="DIFERENCIAG" Type="Int32" Nullable="true" />
+          <Property Name="KEYRANK" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="KEYRANKGRAL" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -275,52 +167,13 @@
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="SistResultModelStoreContainer" CdmEntityContainer="SisResultEntities">
-          <EntitySetMapping Name="ANALISTINDEXUNG">
-            <EntityTypeMapping TypeName="SistResultModel.ANALISTINDEXUNG">
-              <MappingFragment StoreEntitySet="ANALISTINDEXUNG">
-                <ScalarProperty Name="ULTIMOTIMESPANMES" ColumnName="ULTIMOTIMESPANMES" />
-                <ScalarProperty Name="ULTIMOTIMESPANSEM" ColumnName="ULTIMOTIMESPANSEM" />
-                <ScalarProperty Name="ULTIMOTIMESPAN" ColumnName="ULTIMOTIMESPAN" />
-                <ScalarProperty Name="DIASEMNUM" ColumnName="DIASEMNUM" />
-                <ScalarProperty Name="DIAMESNUM" ColumnName="DIAMESNUM" />
-                <ScalarProperty Name="MESNUM" ColumnName="MESNUM" />
-                <ScalarProperty Name="FECHANUM" ColumnName="FECHANUM" />
-                <ScalarProperty Name="RESULT" ColumnName="RESULT" />
-                <ScalarProperty Name="LINEINDEX" ColumnName="LINEINDEX" />
-                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="USERRESULTTABLESFS">
-            <EntityTypeMapping TypeName="SistResultModel.USERRESULTTABLESFS">
-              <MappingFragment StoreEntitySet="USERRESULTTABLESFS">
-                <ScalarProperty Name="SPANTIEMPOMESHIST" ColumnName="SPANTIEMPOMESHIST" />
-                <ScalarProperty Name="SPANTIEMPOMES" ColumnName="SPANTIEMPOMES" />
-                <ScalarProperty Name="SPANTIEMPOSEMHIST" ColumnName="SPANTIEMPOSEMHIST" />
-                <ScalarProperty Name="SPANTIEMPOSEM" ColumnName="SPANTIEMPOSEM" />
-                <ScalarProperty Name="TABINDEXSEQ" ColumnName="TABINDEXSEQ" />
-                <ScalarProperty Name="SPANTIEMPOHIST" ColumnName="SPANTIEMPOHIST" />
-                <ScalarProperty Name="SPANTIEMPO" ColumnName="SPANTIEMPO" />
-                <ScalarProperty Name="DIASEMNUM" ColumnName="DIASEMNUM" />
-                <ScalarProperty Name="DIAMESNUM" ColumnName="DIAMESNUM" />
-                <ScalarProperty Name="MESNUM" ColumnName="MESNUM" />
-                <ScalarProperty Name="FECHANUM" ColumnName="FECHANUM" />
-                <ScalarProperty Name="TOTALG" ColumnName="TOTALG" />
-                <ScalarProperty Name="DIFERENCIAG" ColumnName="DIFERENCIAG" />
-                <ScalarProperty Name="GVISITANTE" ColumnName="GVISITANTE" />
-                <ScalarProperty Name="GLOCAL" ColumnName="GLOCAL" />
-                <ScalarProperty Name="MARCADOR" ColumnName="MARCADOR" />
-                <ScalarProperty Name="HORA" ColumnName="HORA" />
-                <ScalarProperty Name="TABINDEX" ColumnName="TABINDEX" />
-                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="FLASHORDERED">
             <EntityTypeMapping TypeName="SistResultModel.FLASHORDERED">
               <MappingFragment StoreEntitySet="FLASHORDERED">
+                <ScalarProperty Name="TABINDEXCOMPETSEQ" ColumnName="TABINDEXCOMPETSEQ" />
+                <ScalarProperty Name="TABINDEXCOMPETITION" ColumnName="TABINDEXCOMPETITION" />
+                <ScalarProperty Name="IDCOMPETITION" ColumnName="IDCOMPETITION" />
+                <ScalarProperty Name="MESNUM" ColumnName="MESNUM" />
                 <ScalarProperty Name="TABINDEXLETTERSEQ" ColumnName="TABINDEXLETTERSEQ" />
                 <ScalarProperty Name="TABINDEXSEQ" ColumnName="TABINDEXSEQ" />
                 <ScalarProperty Name="FECHANUM" ColumnName="FECHANUM" />
@@ -356,22 +209,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="ANDATAPERCENTUNG">
-            <EntityTypeMapping TypeName="SistResultModel.ANDATAPERCENTUNG">
-              <MappingFragment StoreEntitySet="ANDATAPERCENTUNG">
-                <ScalarProperty Name="TIPOORDEN" ColumnName="TIPOORDEN" />
-                <ScalarProperty Name="DIAANIO" ColumnName="DIAANIO" />
-                <ScalarProperty Name="DIASEM" ColumnName="DIASEM" />
-                <ScalarProperty Name="DIAMES" ColumnName="DIAMES" />
-                <ScalarProperty Name="MESNUM" ColumnName="MESNUM" />
-                <ScalarProperty Name="DIFERENCIAG" ColumnName="DIFERENCIAG" />
-                <ScalarProperty Name="PERCENT" ColumnName="PERCENT" />
-                <ScalarProperty Name="FECHANUM" ColumnName="FECHANUM" />
-                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="TOTALESDIA">
             <EntityTypeMapping TypeName="SistResultModel.TOTALESDIA">
               <MappingFragment StoreEntitySet="TOTALESDIA">
@@ -380,24 +217,25 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="ANDATASELECTEDINFO">
-            <EntityTypeMapping TypeName="SistResultModel.ANDATASELECTEDINFO">
-              <MappingFragment StoreEntitySet="ANDATASELECTEDINFO">
+          <EntitySetMapping Name="ANDATAMINRANK">
+            <EntityTypeMapping TypeName="SistResultModel.ANDATAMINRANK">
+              <MappingFragment StoreEntitySet="ANDATAMINRANK">
+                <ScalarProperty Name="KEYRANKGRAL" ColumnName="KEYRANKGRAL" />
+                <ScalarProperty Name="KEYRANK" ColumnName="KEYRANK" />
+                <ScalarProperty Name="DIFERENCIAG" ColumnName="DIFERENCIAG" />
+                <ScalarProperty Name="DIAANIO" ColumnName="DIAANIO" />
                 <ScalarProperty Name="DIAMES" ColumnName="DIAMES" />
                 <ScalarProperty Name="DIASEM" ColumnName="DIASEM" />
-                <ScalarProperty Name="DIFERENCIAG" ColumnName="DIFERENCIAG" />
-                <ScalarProperty Name="RANKSPANTABDIAMES" ColumnName="RANKSPANTABDIAMES" />
-                <ScalarProperty Name="SPANTABDIAMES" ColumnName="SPANTABDIAMES" />
-                <ScalarProperty Name="RANKSPANTABDIASEM" ColumnName="RANKSPANTABDIASEM" />
-                <ScalarProperty Name="SPANTABDIASEM" ColumnName="SPANTABDIASEM" />
-                <ScalarProperty Name="RANKSPANTABGEN" ColumnName="RANKSPANTABGEN" />
-                <ScalarProperty Name="SPANTABGEN" ColumnName="SPANTABGEN" />
-                <ScalarProperty Name="RANKSPANGLDIAMES" ColumnName="RANKSPANGLDIAMES" />
-                <ScalarProperty Name="SPANGLDIAMES" ColumnName="SPANGLDIAMES" />
-                <ScalarProperty Name="RANKSPANGLDIASEM" ColumnName="RANKSPANGLDIASEM" />
-                <ScalarProperty Name="SPANGLDIASEM" ColumnName="SPANGLDIASEM" />
-                <ScalarProperty Name="RANKSPANGLGEN" ColumnName="RANKSPANGLGEN" />
-                <ScalarProperty Name="SPANGLGEN" ColumnName="SPANGLGEN" />
+                <ScalarProperty Name="RANKSPANACTUALDIAANIO" ColumnName="RANKSPANACTUALDIAANIO" />
+                <ScalarProperty Name="RANKSPANACTUALGLDIAANIO" ColumnName="RANKSPANACTUALGLDIAANIO" />
+                <ScalarProperty Name="RANKSPANACTUALGLDIAMES" ColumnName="RANKSPANACTUALGLDIAMES" />
+                <ScalarProperty Name="RANKSPANACTUALGLDIASEM" ColumnName="RANKSPANACTUALGLDIASEM" />
+                <ScalarProperty Name="RANKSPANACTUALGLGEN" ColumnName="RANKSPANACTUALGLGEN" />
+                <ScalarProperty Name="RANKSPANACTUALDIAMES" ColumnName="RANKSPANACTUALDIAMES" />
+                <ScalarProperty Name="RANKSPANACTUALDIASEM" ColumnName="RANKSPANACTUALDIASEM" />
+                <ScalarProperty Name="RANKSPANACTUALGEN" ColumnName="RANKSPANACTUALGEN" />
+                <ScalarProperty Name="INFOAGRUPDIASEMMESGL" ColumnName="INFOAGRUPDIASEMMESGL" />
+                <ScalarProperty Name="INFOAGRUPDIASEMMESTI" ColumnName="INFOAGRUPDIASEMMESTI" />
                 <ScalarProperty Name="FECHANUM" ColumnName="FECHANUM" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>

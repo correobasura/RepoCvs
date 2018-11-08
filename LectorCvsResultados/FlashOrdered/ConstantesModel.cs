@@ -16,6 +16,7 @@
         public const string DIASEM = "diasem";
         public const string DIAMES = "diames";
         public const string DIAANIO = "diaanio";
+        public const string MESNUM = "mesnum";
         public const string SPANTIDIAACT = "spantidiaact";
         public const string SPANTIDIAHIST = "spantidiahist";
         public const string SPANTISEMACT = "spantisemact";
@@ -36,11 +37,13 @@
         public const string FECHANUM = "fechanum";
         public const string TABINDEXSEQ = "tabindexseq";
         public const string TABINDEXLETTERSEQ = "tabindexletterseq";
+        public const string TABINDEXCOMPSEQ = "tabindexcompetseq";
+        public const string IDCOMPETITION = "idcompetition";
+        public const string TABINDEXCOMPETITION = "tabindexcompetition";
 
         public const string ANDATAPERCENTUNG = "andatapercentung";
 
         public const string PERCENT = "percent";
-        public const string MESNUM = "mesnum";
         public const string DIAMESNUM = "diamesnum";
         public const string DIASEMNUM = "diasemnum";
         public const string DIAANIONUM = "diaanionum";
@@ -58,5 +61,8 @@
         public const string RANKSPANTABDIASEM = "rankspantabdiasem";
         public const string SPANTABDIAMES = "spantabdiames";
         public const string RANKSPANTABDIAMES = "rankspantabdiames";
+        public const string ANDATAMINRANK = "andataminrank";
+        public const string KEYRANK = "keyrank";
+        public const string KEYRANKGRAL = "keyrankgral";
     }
 }

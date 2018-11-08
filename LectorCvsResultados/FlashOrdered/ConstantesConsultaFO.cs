@@ -55,15 +55,22 @@
             + "GROUP BY " + ConstantesModel.TABINDEXLETTER + " ORDER BY 1";
 
         public const string QUERY_NEXT_TABINDEX_SEQ =
-            "SELECT COALESCE(MAX(" + ConstantesModel.TABINDEXSEQ + "),0) "
+            "SELECT COALESCE(MAX(" + ConstantesModel.TABINDEXSEQ + "),0) AS Apariciones, " + ConstantesModel.TABINDEX + " AS tabindex "
             + "FROM " + ConstantesModel.FLASHORDERED + " "
-            + "WHERE " + ConstantesModel.TABINDEX + " = {0}";
+            + "WHERE " + ConstantesModel.TABINDEX + " <= {0} "
+            + "GROUP BY " + ConstantesModel.TABINDEX;
 
         public const string QUERY_NEXT_TABINDEXLETTER_SEQ =
-            "SELECT COALESCE(MAX(" + ConstantesModel.TABINDEXLETTERSEQ + "),0) "
+            "SELECT COALESCE(MAX(" + ConstantesModel.TABINDEXLETTERSEQ + "),0) AS Apariciones, " + ConstantesModel.GROUPLETTER + " AS GroupLetter, " + ConstantesModel.TABINDEXLETTER + " AS tabindex "
             + "FROM " + ConstantesModel.FLASHORDERED + " "
-            + "WHERE " + ConstantesModel.GROUPLETTER + " = '{0}' "
-            + "AND " + ConstantesModel.TABINDEXLETTER + " = {1}";
+            + "WHERE {0} "
+            + "GROUP BY " + ConstantesModel.GROUPLETTER + ", " + ConstantesModel.TABINDEXLETTER;
+
+        public const string QUERY_NEXT_TABINDEX_COMP_SEQ =
+            "SELECT COALESCE(MAX(" + ConstantesModel.TABINDEXCOMPSEQ + "),0) AS Apariciones, " + ConstantesModel.IDCOMPETITION + " AS Lineindex, " + ConstantesModel.TABINDEXCOMPETITION + " AS tabindex "
+            + "FROM " + ConstantesModel.FLASHORDERED + " "
+            + "WHERE "+ ConstantesModel.IDCOMPETITION +" IN ({0}) "
+            + "GROUP BY " + ConstantesModel.IDCOMPETITION + ", " + ConstantesModel.TABINDEXCOMPETITION;
 
         public const string QUERY_MAXFECHAS_TABANDGROUPLETTER =
             "WITH registros AS ( "
@@ -197,5 +204,102 @@
             + "GROUP BY {1}, {2}) b "
             + "WHERE a.{1} = b.{1} "
             + "AND a.{2} = b.{2} ";
+
+        //public const string QUERY_COUNT_PROB_DIADIAMES =
+        //    "SELECT b.total/a.total AS Total, a.tabindex AS Tabindex "
+        //    + "FROM "
+        //    + "(SELECT COUNT(1) AS total, tabindex "
+        //    + "FROM flashordered "
+        //    + "WHERE mesnum     = {0} "
+        //    + "AND fechanum     < {1} "
+        //    + "AND tabindex     <= {2} "
+        //    + "AND diferenciag != 0 "
+        //    + "GROUP BY tabindex)B, "
+        //    + "(SELECT COUNT(1) AS total, tabindex "
+        //    + "FROM flashordered "
+        //    + "WHERE mesnum = {0} "
+        //    + "AND fechanum   < {1} "
+        //    + "AND tabindex   <= {2} "
+        //    + "GROUP BY tabindex )A "
+        //    + "WHERE a.tabindex = b.tabindex "
+        //    + "AND b.total/a.total >= 0.85 "
+        //    + "ORDER BY 1 DESC";
+
+        //public const string QUERY_COUNT_PROB_DIADIAMES_GL =
+        //    "SELECT b.total/a.total AS Total, a.tabindexletter AS Tabindex, b.groupletter AS Groupletter "
+        //    + "FROM "
+        //    + "(SELECT COUNT(1) AS total, tabindexletter, groupletter "
+        //    + "FROM flashordered "
+        //    + "WHERE mesnum     = {0} "
+        //    + "AND fechanum     < {1} AND {2} "
+        //    + "AND diferenciag != 0 "
+        //    + "GROUP BY tabindexletter, groupletter)B, "
+        //    + "(SELECT COUNT(1) AS total, tabindexletter, groupletter "
+        //    + "FROM flashordered "
+        //    + "WHERE mesnum = {0} "
+        //    + "AND fechanum < {1} AND {2} "
+        //    + "GROUP BY tabindexletter, groupletter)A "
+        //    + "WHERE a.tabindexletter = b.tabindexletter "
+        //    + "AND a.groupletter      = b.groupletter "
+        //    + "AND b.total/a.total >= 0.85 "
+        //    + "ORDER BY 1 DESC";
+
+        public const string QUERY_COUNT_PROB_DIADIAMES =
+            "SELECT b.total/a.total AS Total, a.tabindex AS Tabindex "
+            + "FROM "
+            + "(SELECT COUNT(1) AS total, tabindex "
+            + "FROM flashordered "
+            + "WHERE mesnum     = {0} "
+            + "AND fechanum     < {1} "
+            + "AND tabindex     <= {2} "
+            + "AND diferenciag != 0 "
+            + "GROUP BY tabindex)B, "
+            + "(SELECT COUNT(1) AS total, tabindex "
+            + "FROM flashordered "
+            + "WHERE mesnum = {0} "
+            + "AND fechanum   < {1} "
+            + "AND tabindex   <= {2} "
+            + "GROUP BY tabindex )A "
+            + "WHERE a.tabindex = b.tabindex "
+            + "AND b.total/a.total >= 0.85 "
+            + "ORDER BY 1 DESC";
+
+        public const string QUERY_COUNT_PROB_DIADIAMES_GL =
+            "SELECT b.total/a.total AS Total, a.tabindexletter AS Tabindex, b.groupletter AS Groupletter "
+            + "FROM "
+            + "(SELECT COUNT(1) AS total, tabindexletter, groupletter "
+            + "FROM flashordered "
+            + "WHERE mesnum     = {0} "
+            + "AND fechanum     < {1} AND {2} "
+            + "AND diferenciag != 0 "
+            + "GROUP BY tabindexletter, groupletter)B, "
+            + "(SELECT COUNT(1) AS total, tabindexletter, groupletter "
+            + "FROM flashordered "
+            + "WHERE mesnum = {0} "
+            + "AND fechanum < {1} AND {2} "
+            + "GROUP BY tabindexletter, groupletter)A "
+            + "WHERE a.tabindexletter = b.tabindexletter "
+            + "AND a.groupletter      = b.groupletter "
+            + "AND b.total/a.total >= 0.85 "
+            + "ORDER BY 1 DESC";
+
+        public const string QUERY_COUNT_PROB_RANK =
+            "SELECT a.total/b.total AS Prob, a.{2} AS Key"
+            + " FROM "
+            + " (SELECT count(1) AS total, {2}"
+            + " FROM AnDataMinRank"
+            + " WHERE fechanum < {0}"
+            + " AND diferenciag != 0"
+            + " {1} "
+            + " GROUP BY {2}) a"
+            + " , ("
+            + " SELECT count(1) AS total, {2}"
+            + " FROM AnDataMinRank"
+            + " WHERE fechanum < {0}"
+            + " {1} "
+            + " GROUP BY {2}"
+            + " )b"
+            + " WHERE  a.{2} = b.{2}"
+            + " AND a.total/b.total > 0.80";
     }
 }

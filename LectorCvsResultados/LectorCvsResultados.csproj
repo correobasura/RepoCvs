@@ -69,14 +69,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ANALISTINDEXUNG.cs">
-      <DependentUpon>SisResultModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="AnDataMayorUno.cs" />
-    <Compile Include="ANDATAPERCENTUNG.cs">
-      <DependentUpon>SisResultModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ANDATASELECTEDINFO.cs">
+    <Compile Include="ANDATAMINRANK.cs">
       <DependentUpon>SisResultModel.tt</DependentUpon>
     </Compile>
     <Compile Include="AnDataUnGanador.cs" />
@@ -88,6 +82,7 @@
     </Compile>
     <Compile Include="FlashOrdered\AnDataSelectedInfo.cs" />
     <Compile Include="FlashOrdered\AnDataFlashOrdered.cs" />
+    <Compile Include="FlashOrdered\AnDataRank.cs" />
     <Compile Include="TOTALESDIA.cs">
       <DependentUpon>SisResultModel.tt</DependentUpon>
     </Compile>
@@ -111,9 +106,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SisResultModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="USERRESULTTABLESFS.cs">
-      <DependentUpon>SisResultModel.tt</DependentUpon>
     </Compile>
     <Compile Include="UtilGeneral\UtilFilesIO.cs" />
     <Compile Include="UtilGeneral\UtilHtml.cs" />

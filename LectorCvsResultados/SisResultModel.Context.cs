@@ -32,17 +32,11 @@ public partial class SisResultEntities : DbContext
     }
 
 
-    public virtual DbSet<ANALISTINDEXUNG> ANALISTINDEXUNG { get; set; }
-
-    public virtual DbSet<USERRESULTTABLESFS> USERRESULTTABLESFS { get; set; }
-
     public virtual DbSet<FLASHORDERED> FLASHORDERED { get; set; }
-
-    public virtual DbSet<ANDATAPERCENTUNG> ANDATAPERCENTUNG { get; set; }
 
     public virtual DbSet<TOTALESDIA> TOTALESDIA { get; set; }
 
-    public virtual DbSet<ANDATASELECTEDINFO> ANDATASELECTEDINFO { get; set; }
+    public virtual DbSet<ANDATAMINRANK> ANDATAMINRANK { get; set; }
 
 }
 

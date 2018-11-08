@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 
@@ -26,6 +27,9 @@ namespace LectorCvsResultados.FlashOrdered
 
                 case ConstantesGenerales.TBL_SELECTINFO:
                     tbl = ConstantesModel.ANDATASELECTEDINFO;
+                    break;
+                case ConstantesGenerales.TBL_MINRANK:
+                    tbl = ConstantesModel.ANDATAMINRANK;
                     break;
             }
             string query = string.Format(ConstantesConsultaFO.QUERY_MAX_ID_ACTUAL, tbl);
@@ -117,10 +121,10 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="contexto">Instancia para realizar la consulta</param>
         /// <param name="tabIndex">Tabindex sobre el que se realiza la validación</param>
         /// <returns></returns>
-        public static int ConsultarNextTabindexSeq(SisResultEntities contexto, decimal? tabIndex)
+        public static List<AgrupadorTotalTabIndexDTO> ConsultarNextTabindexSeq(SisResultEntities contexto, decimal? tabIndex)
         {
             string query = string.Format(ConstantesConsultaFO.QUERY_NEXT_TABINDEX_SEQ, tabIndex);
-            return contexto.Database.SqlQuery<int>(query).Single() + 1;
+            return contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query).ToList();
         }
 
         /// <summary>
@@ -130,10 +134,23 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="groupLetter">grupo para la consulta</param>
         /// <param name="tabIndexLetter">tabindex letter</param>
         /// <returns>valor de la siguiente secuencia</returns>
-        public static int ConsultarNextTabindexLetterSeq(SisResultEntities contexto, string groupLetter, decimal? tabIndexLetter)
+        public static List<AgrupadorTotalTabIndexDTO> ConsultarNextTabindexLetterSeq(SisResultEntities contexto, string srtJoin)
         {
-            string query = string.Format(ConstantesConsultaFO.QUERY_NEXT_TABINDEXLETTER_SEQ, groupLetter, tabIndexLetter);
-            return contexto.Database.SqlQuery<int>(query).Single() + 1;
+            string query = string.Format(ConstantesConsultaFO.QUERY_NEXT_TABINDEXLETTER_SEQ, srtJoin);
+            return contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query).ToList();
+        }
+
+        /// <summary>
+        /// Consulta el siguiente valor para un tabindexletter y un groupletter
+        /// </summary>
+        /// <param name="contexto">instancia para la consulta</param>
+        /// <param name="groupLetter">grupo para la consulta</param>
+        /// <param name="tabIndexLetter">tabindex letter</param>
+        /// <returns>valor de la siguiente secuencia</returns>
+        public static List<AgrupadorTotalTabIndexDTO> ConsultarNextTabCompSeq(SisResultEntities contexto, List<int> lstCompt)
+        {
+            string query = string.Format(ConstantesConsultaFO.QUERY_NEXT_TABINDEX_COMP_SEQ, string.Join(",", lstCompt));
+            return contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query).ToList();
         }
 
         /// <summary>
@@ -300,7 +317,9 @@ namespace LectorCvsResultados.FlashOrdered
                 case ConstantesGenerales.CASO_DIAANIO:
                     filtro = string.Format("AND " + ConstantesModel.DIAANIO + " = {0} ", valor);
                     break;
-
+                case ConstantesGenerales.CASO_MESNUM:
+                    filtro = string.Format("AND " + ConstantesModel.MESNUM + " = {0} ", valor);
+                    break;
                 default:
                     filtro = "";
                     break;
@@ -404,6 +423,22 @@ namespace LectorCvsResultados.FlashOrdered
             return columna;
         }
 
+        public static string GetColumnaRank(int caso)
+        {
+            string columna;
+            switch (caso)
+            {
+                case ConstantesGenerales.KEY_RANK:
+                    columna = ConstantesModel.KEYRANK;
+                    break;
+
+                default:
+                    columna = ConstantesModel.KEYRANKGRAL;
+                    break;
+            }
+            return columna;
+        }
+
         /// <summary>
         /// Método que realiza el rankeo de los spans para cada tabindex
         /// </summary>
@@ -423,6 +458,43 @@ namespace LectorCvsResultados.FlashOrdered
         public static List<AgrupadorConteosTimeSpanDTO> ConsultarProbSelectedInfo(SisResultEntities contexto, string spanCol, string rankCol, string fechaMax, string fechaMin="")
         {
             string query = string.Format(ConstantesConsultaFO.QUERY_COUNT_PROB_SELINF, fechaMin, spanCol, rankCol, fechaMax);
+            DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
+            return data.AsEnumerable().ToList();
+        }
+
+        //internal static List<AgrupadorTotalTabIndexDTO> ConsultarAgrupadorDiaMesDia(SisResultEntities contexto, string fechaformat, int dayofweek, int day, int maxTabindex)
+        //{
+        //    string query = string.Format(ConstantesConsultaFO.QUERY_COUNT_PROB_DIADIAMES, dayofweek, day, fechaformat, maxTabindex);
+        //    DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
+        //    return data.AsEnumerable().ToList();
+        //}
+
+        //internal static List<AgrupadorTotalTabIndexDTO> ConsultarAgrupadorDiaMesDiaGl(SisResultEntities contexto, string fechaformat, int dayofweek, int day, string queryBody)
+        //{
+        //    string query = string.Format(ConstantesConsultaFO.QUERY_COUNT_PROB_DIADIAMES_GL, dayofweek, day, fechaformat, queryBody);
+        //    DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
+        //    return data.AsEnumerable().ToList();
+        //}
+
+        internal static List<AgrupadorTotalTabIndexDTO> ConsultarAgrupadorDiaMesDia(SisResultEntities contexto, string fechaformat, int dayofweek, int day, int maxTabindex)
+        {
+            string query = string.Format(ConstantesConsultaFO.QUERY_COUNT_PROB_DIADIAMES, dayofweek, fechaformat, maxTabindex);
+            DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
+            return data.AsEnumerable().ToList();
+        }
+
+        internal static List<AgrupadorTotalTabIndexDTO> ConsultarAgrupadorDiaMesDiaGl(SisResultEntities contexto, string fechaformat, int dayofweek, int day, string queryBody)
+        {
+            string query = string.Format(ConstantesConsultaFO.QUERY_COUNT_PROB_DIADIAMES_GL, dayofweek, fechaformat, queryBody);
+            DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
+            return data.AsEnumerable().ToList();
+        }
+
+        public static List<AgrupadorConteosTimeSpanDTO> ConsultarProbRankInfo(SisResultEntities contexto, int casoCol, int casoRange, string fechaMax, int valor)
+        {
+            string col = GetColumnaRank(casoCol);
+            string filtro = GetFiltro(casoRange, valor);
+            string query = string.Format(ConstantesConsultaFO.QUERY_COUNT_PROB_RANK, fechaMax, filtro, col);
             DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
             return data.AsEnumerable().ToList();
         }
