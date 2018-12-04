@@ -25,7 +25,7 @@ namespace LectorCvsResultados.UtilGeneral
                     dictTotalesDias.Add(fecha, new InfoAnalisisDTO());
 
                     listaHtmlTemp = AnDataFlashOrdered.GetListaTemp(i, 1, contexto, j);
-                    listaTemp = AnDataFlashOrdered.ValidarElementosDia(i, 1, contexto, listaHtmlTemp);
+                    listaTemp = AnDataFlashOrdered.ValidarElementosDia(i, 1, contexto, listaHtmlTemp,0);
                     listaDia = UtilGeneral.UtilHtml.LeerInfoHtml(i, 1);
                     foreach (var item in listaTemp)
                     {

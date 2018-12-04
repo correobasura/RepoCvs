@@ -3,11 +3,13 @@ using LectorCvsResultados.FlashOrdered;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using Unidecode.NET;
 
 namespace LectorCvsResultados.UtilGeneral
 {
@@ -48,11 +50,11 @@ namespace LectorCvsResultados.UtilGeneral
                 }
                 string[] datos = sb.ToString().Split(';');
                 infoFs.Hora = datos[0];
-                infoFs.Home = datos[2].Replace("'", "").ToUpper();
+                infoFs.Home = datos[2].Replace("'", "").Unidecode().ToUpper();
                 bool na = datos[3].Trim().Equals("-");
                 infoFs.RESULT = na ? "": datos[3];
                 infoFs.Estado = na ? "":infoFs.RESULT.Trim().Length > 1 ? datos[1] : "";
-                infoFs.Away = datos[4].ToUpper();
+                infoFs.Away = datos[4].Replace("'", "").Unidecode().ToUpper();
                 infoFs.IDCOMPETITION = Convert.ToInt32(datos[5]);
                 if (!idCompetition.Equals(infoFs.IDCOMPETITION))
                 {
@@ -263,12 +265,10 @@ namespace LectorCvsResultados.UtilGeneral
                         }
                     }
                 }
-                listaHtmlFinal = listaHtmlFinal.Where(x => x.Estado.Equals(strFinal)).ToList();
             }
             else
             {
                 listaHtmlFinal = LeerHtml(indexInicio, strAfter, strFinal, path + ".html");
-                listaHtmlFinal = listaHtmlFinal.Where(x => x.Estado.Equals(strFinal)).ToList();
             }
             foreach (var item in listaHtmlFinal)
             {
@@ -328,7 +328,7 @@ namespace LectorCvsResultados.UtilGeneral
                 keyValuePairMaxIndexChar.Add(item, maxValueIndexChar);
             }
             string agrupador = "({0})";
-            string temp = "(" + ConstantesModel.GROUPLETTER + "  = '{0}' AND " + ConstantesModel.TABINDEXLETTER + " <= {1})";
+            string temp = "(" + ConstantesModel.GROUPLETTER + " = '{0}' AND " + ConstantesModel.TABINDEXLETTER + " <= {1})";
             List<string> listaJoins = new List<string>();
             foreach (var item in keyValuePairMaxIndexChar)
             {
@@ -572,7 +572,14 @@ namespace LectorCvsResultados.UtilGeneral
 
             var htmltdNodes = htmlDoc.DocumentNode.SelectNodes("//td");
             lstInfo.Add(htmltdNodes[0].InnerText.Trim());
-            lstInfo.Add("FP");
+            if (esActual)
+            {
+                lstInfo.Add("----");
+            }
+            else
+            {
+                lstInfo.Add("FP");
+            }
             var htmlDocMatchInfo = new HtmlDocument();
             htmlDocMatchInfo.LoadHtml(htmltdNodes[2].InnerHtml);
             var spanNodes = htmlDocMatchInfo.DocumentNode.SelectNodes("//span[@class='team team1']")[0];

@@ -5,29 +5,6 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="SistResultModel.Store" Provider="Oracle.ManagedDataAccess.Client" ProviderManifestToken="11.2" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="ANDATAMINRANK">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="FECHANUM" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="DIASEM" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="DIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="DIAANIO" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="DIFERENCIAG" Type="number" Precision="38" Scale="0" />
-          <Property Name="INFOAGRUPDIASEMMESTI" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="INFOAGRUPDIASEMMESGL" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="RANKSPANACTUALGEN" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="RANKSPANACTUALDIASEM" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="RANKSPANACTUALDIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="RANKSPANACTUALGLGEN" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="RANKSPANACTUALGLDIASEM" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="RANKSPANACTUALGLDIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="RANKSPANACTUALGLDIAANIO" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="RANKSPANACTUALDIAANIO" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="KEYRANK" Type="varchar2" MaxLength="20" Nullable="false" />
-          <Property Name="KEYRANKGRAL" Type="varchar2" MaxLength="20" Nullable="false" />
-        </EntityType>
         <EntityType Name="FLASHORDERED">
           <Key>
             <PropertyRef Name="ID" />
@@ -76,10 +53,19 @@
           <Property Name="ID" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="TOTAL" Type="number" Precision="38" Scale="0" Nullable="false" />
         </EntityType>
+        <EntityType Name="TOTALESDIAGROPTAB">
+          <Key>
+            <PropertyRef Name="FECHANUM" />
+            <PropertyRef Name="GROUPLETTER" />
+          </Key>
+          <Property Name="FECHANUM" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="GROUPLETTER" Type="char" MaxLength="1" Nullable="false" />
+          <Property Name="TOTAL" Type="number" Precision="38" Scale="0" Nullable="false" />
+        </EntityType>
         <EntityContainer Name="SistResultModelStoreContainer">
-          <EntitySet Name="ANDATAMINRANK" EntityType="Self.ANDATAMINRANK" Schema="USERRESULTTABLES" store:Type="Tables" />
           <EntitySet Name="FLASHORDERED" EntityType="Self.FLASHORDERED" Schema="USERRESULTTABLES" store:Type="Tables" />
           <EntitySet Name="TOTALESDIA" EntityType="Self.TOTALESDIA" Schema="USERRESULTTABLES" store:Type="Tables" />
+          <EntitySet Name="TOTALESDIAGROPTAB" EntityType="Self.TOTALESDIAGROPTAB" Schema="USERRESULTTABLES" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -88,7 +74,7 @@
         <EntityContainer Name="SisResultEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="FLASHORDERED" EntityType="SistResultModel.FLASHORDERED" />
           <EntitySet Name="TOTALESDIA" EntityType="SistResultModel.TOTALESDIA" />
-          <EntitySet Name="ANDATAMINRANK" EntityType="SistResultModel.ANDATAMINRANK" />
+          <EntitySet Name="TOTALESDIAGROPTAB" EntityType="SistResultModel.TOTALESDIAGROPTAB" />
         </EntityContainer>
         <EntityType Name="FLASHORDERED">
           <Key>
@@ -138,28 +124,14 @@
           <Property Name="ID" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="TOTAL" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
         </EntityType>
-        <EntityType Name="ANDATAMINRANK">
+        <EntityType Name="TOTALESDIAGROPTAB">
           <Key>
-            <PropertyRef Name="ID" />
+            <PropertyRef Name="FECHANUM" />
+            <PropertyRef Name="GROUPLETTER" />
           </Key>
-          <Property Name="ID" Nullable="false" Precision="38" Scale="0" Type="Decimal" />
-          <Property Name="FECHANUM" Nullable="false" Type="Int32" />
-          <Property Name="INFOAGRUPDIASEMMESTI" Nullable="false" Type="Int32" />
-          <Property Name="INFOAGRUPDIASEMMESGL" Nullable="false" Type="Int32" />
-          <Property Name="RANKSPANACTUALGEN" Nullable="false" Type="Int32" />
-          <Property Name="RANKSPANACTUALDIASEM" Nullable="false" Type="Int32" />
-          <Property Name="RANKSPANACTUALDIAMES" Nullable="false" Type="Int32" />
-          <Property Name="RANKSPANACTUALGLGEN" Nullable="false" Type="Int32" />
-          <Property Name="RANKSPANACTUALGLDIASEM" Nullable="false" Type="Int32" />
-          <Property Name="RANKSPANACTUALGLDIAMES" Nullable="false" Type="Int32" />
-          <Property Name="RANKSPANACTUALGLDIAANIO" Nullable="false" Type="Int32" />
-          <Property Name="RANKSPANACTUALDIAANIO" Nullable="false" Type="Int32" />
-          <Property Name="DIASEM" Type="Int32" Nullable="false" />
-          <Property Name="DIAMES" Type="Int32" Nullable="false" />
-          <Property Name="DIAANIO" Type="Int32" Nullable="false" />
-          <Property Name="DIFERENCIAG" Type="Int32" Nullable="true" />
-          <Property Name="KEYRANK" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="KEYRANKGRAL" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="FECHANUM" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="GROUPLETTER" Type="String" Nullable="false" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="TOTAL" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -217,27 +189,12 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="ANDATAMINRANK">
-            <EntityTypeMapping TypeName="SistResultModel.ANDATAMINRANK">
-              <MappingFragment StoreEntitySet="ANDATAMINRANK">
-                <ScalarProperty Name="KEYRANKGRAL" ColumnName="KEYRANKGRAL" />
-                <ScalarProperty Name="KEYRANK" ColumnName="KEYRANK" />
-                <ScalarProperty Name="DIFERENCIAG" ColumnName="DIFERENCIAG" />
-                <ScalarProperty Name="DIAANIO" ColumnName="DIAANIO" />
-                <ScalarProperty Name="DIAMES" ColumnName="DIAMES" />
-                <ScalarProperty Name="DIASEM" ColumnName="DIASEM" />
-                <ScalarProperty Name="RANKSPANACTUALDIAANIO" ColumnName="RANKSPANACTUALDIAANIO" />
-                <ScalarProperty Name="RANKSPANACTUALGLDIAANIO" ColumnName="RANKSPANACTUALGLDIAANIO" />
-                <ScalarProperty Name="RANKSPANACTUALGLDIAMES" ColumnName="RANKSPANACTUALGLDIAMES" />
-                <ScalarProperty Name="RANKSPANACTUALGLDIASEM" ColumnName="RANKSPANACTUALGLDIASEM" />
-                <ScalarProperty Name="RANKSPANACTUALGLGEN" ColumnName="RANKSPANACTUALGLGEN" />
-                <ScalarProperty Name="RANKSPANACTUALDIAMES" ColumnName="RANKSPANACTUALDIAMES" />
-                <ScalarProperty Name="RANKSPANACTUALDIASEM" ColumnName="RANKSPANACTUALDIASEM" />
-                <ScalarProperty Name="RANKSPANACTUALGEN" ColumnName="RANKSPANACTUALGEN" />
-                <ScalarProperty Name="INFOAGRUPDIASEMMESGL" ColumnName="INFOAGRUPDIASEMMESGL" />
-                <ScalarProperty Name="INFOAGRUPDIASEMMESTI" ColumnName="INFOAGRUPDIASEMMESTI" />
+          <EntitySetMapping Name="TOTALESDIAGROPTAB">
+            <EntityTypeMapping TypeName="SistResultModel.TOTALESDIAGROPTAB">
+              <MappingFragment StoreEntitySet="TOTALESDIAGROPTAB">
+                <ScalarProperty Name="TOTAL" ColumnName="TOTAL" />
+                <ScalarProperty Name="GROUPLETTER" ColumnName="GROUPLETTER" />
                 <ScalarProperty Name="FECHANUM" ColumnName="FECHANUM" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

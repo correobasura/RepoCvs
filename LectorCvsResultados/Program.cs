@@ -1,11 +1,14 @@
 ﻿using LectorCvsResultados.FlashOrdered;
 using LectorCvsResultados.UtilGeneral;
+using log4net;
+using log4net.Config;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace LectorCvsResultados
@@ -18,8 +21,9 @@ namespace LectorCvsResultados
         private static string rutaBaseSw = @"D:\OneDrive\SW\Template\Template.html";
         //private static string rutaWriteTemp = @"D:\OneDrive\SW\";
         private static string rutaWriteTemp = @"D:\OneDrive\FilesM\";
+        private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private const int VAL_TOTAL = 1000;
+        private const int VAL_TOTAL = 500;
 
         public static void AnalizarDatosListaDiaActual(string rutaBase, DateTime fecha, int maxTabindex = 0)
         {
@@ -366,7 +370,7 @@ namespace LectorCvsResultados
             //    u.SPANTIEMPOSEMHIST = AnDataUnGanador.ValidarSpanTiempo(tabindex, DIFERENCIAG, contexto, dt.ToString("yyyyMMdd"), 1);
             //    u.SPANTIEMPOMESHIST = AnDataUnGanador.ValidarSpanTiempo(tabindex, DIFERENCIAG, contexto, dt.ToString("yyyyMMdd"), 2);
             //    listTabindex.Add(tabindex);
-            //    listElementosAgregados.Add(u);
+            //    listElementosAgregados.Add(u);|
             //}
             //AnDataUnGanador.ValidarSpanDatosDiaAnterior(contexto, listTabindex, listElementosAgregados, diasemnum, DIAMESnum);
             //contexto.SaveChanges();
@@ -374,12 +378,15 @@ namespace LectorCvsResultados
 
         private static void Main(string[] args)
         {
+            XmlConfigurator.Configure();
             contexto = new SisResultEntities();
+            var logger = new UtilGeneral.CustomLogger();
+            contexto.Database.Log = s => logger.Log("EFApp", s);
             var laFechaNum = (from b in contexto.TOTALESDIA
                               select b.ID).Max();
 
             var laFecha = DateTime.ParseExact(laFechaNum.ToString(), "yyyyMMdd", CultureInfo.InvariantCulture);
-            var laFechaMax = DateTime.ParseExact(DateTime.Now.AddHours(3).ToString("yyyyMMdd"), "yyyyMMdd", CultureInfo.InvariantCulture);
+            var laFechaMax = DateTime.ParseExact(DateTime.Now.AddHours(3).AddMinutes(30).ToString("yyyyMMdd"), "yyyyMMdd", CultureInfo.InvariantCulture);
             Dictionary<DateTime, string> lstFechas = new Dictionary<DateTime, string>();
             string infoHtml;
             for (var i = laFecha; i <= laFechaMax; i = i.AddDays(1))
@@ -427,8 +434,7 @@ namespace LectorCvsResultados
             InsertarFORecientes();
             ////UtilValidate.TestValidateMinReg(contexto);
             List<AgrupadorInfoGeneralDTO> listaTemp;
-            List<AgrupadorInfoGeneralDTO> listaPos = new List<AgrupadorInfoGeneralDTO>();
-            List<AgrupadorInfoGeneralDTO> listaNeg = new List<AgrupadorInfoGeneralDTO>();
+            List<AgrupadorInfoGeneralDTO> listaData = new List<AgrupadorInfoGeneralDTO>();
             List<FLASHORDERED> listaHtmlTemp;
             List<FLASHORDERED> listaDia;
             int fecha;
@@ -437,8 +443,9 @@ namespace LectorCvsResultados
             //{
             //    dictTotalesDias.Add(i, new InfoAnalisisDTO());
             //}
-            //Dictionary<int, InfoAnalisisDTO> dictRanks = new Dictionary<int, InfoAnalisisDTO>();
-            //Dictionary<int, Dictionary<string, InfoAnalisisDTO>> dictRanksDias = new Dictionary<int, Dictionary<string, InfoAnalisisDTO>>();
+            Dictionary<int, InfoAnalisisDTO> dictRanks = new Dictionary<int, InfoAnalisisDTO>();
+            Dictionary<int, int> dictRanksAbs = new Dictionary<int, int>();
+            //Dictionary<int, Dictionary<int, InfoAnalisisDTO>> dictRanksDias = new Dictionary<int, Dictionary<int, InfoAnalisisDTO>>();
             //Dictionary<string, InfoAnalisisDTO> dictRanks = new Dictionary<string, InfoAnalisisDTO>();
             //for (int i = 0; i < 20; i++)
             //{
@@ -449,70 +456,77 @@ namespace LectorCvsResultados
             //for (int j = -50; j < -9; j++)
             //{
             //    dictGen.Add(j, new InfoAnalisisDTO());
-            var laFechaMin = DateTime.ParseExact("20181017", "yyyyMMdd", CultureInfo.InvariantCulture);
-            Dictionary<string, InfoAnalisisDTO> dictTemp = new Dictionary<string, InfoAnalisisDTO>();
-            int dayofweek = (int)laFechaMax.DayOfWeek == 0 ? 7 : (int)laFechaMax.DayOfWeek;
-            string strVar;
-            //for (int k = 5; k <= 5; k++)
+            //var laFechaMin = DateTime.ParseExact(laFechaMax.AddDays(-15).ToString("yyyyMMdd"), "yyyyMMdd", CultureInfo.InvariantCulture);
+            //Dictionary<string, InfoAnalisisDTO> dictTemp = new Dictionary<string, InfoAnalisisDTO>();
+            //int dayofweek = (int)laFechaMax.DayOfWeek == 0 ? 7 : (int)laFechaMax.DayOfWeek;
+            //string strVar;
+            ////var maxTemp = DateTime.ParseExact("20181107", "yyyyMMdd", CultureInfo.InvariantCulture);
+            //for (int k = -215; k >= -289; k -= 1)
             //{
-            //    dictRanksDias.Add(k, new Dictionary<string, InfoAnalisisDTO>());
-            for (var i = laFechaMin; i < laFechaMax; i = i.AddDays(1))
-            //for (var i = DateTime.Today; i <= DateTime.Today; i = i.AddDays(1))
-            {
-                //int dayofweekIn = (int)i.DayOfWeek == 0 ? 7 : (int)i.DayOfWeek;
-                //if (!dayofweek.Equals(dayofweekIn)) continue;
-                fecha = Convert.ToInt32(i.ToString("yyyyMMdd"));
-                dictTotalesDias.Add(fecha, new InfoAnalisisDTO());
+            //    dictRanks.Add(k, new InfoAnalisisDTO());
+            //    //for (var i = maxTemp; i >= laFechaMin; i = i.AddDays(-1))
+            //    for (var i = laFechaMin; i < laFechaMax; i = i.AddDays(1))
+            //    {
+            //        //int dayofweekIn = (int)i.DayOfWeek == 0 ? 7 : (int)i.DayOfWeek;
+            //        //if (!dayofweek.Equals(dayofweekIn)) continue;
+            //        fecha = Convert.ToInt32(i.ToString("yyyyMMdd"));
+            //        dictTotalesDias.Add(fecha, new InfoAnalisisDTO());
 
-                listaHtmlTemp = AnDataFlashOrdered.GetListaTemp(i, 1, contexto, VAL_TOTAL);
-                listaTemp = AnDataFlashOrdered.ValidarElementosDia(i, 1, contexto, listaHtmlTemp).Where(x=>x.Puntuacion>0).ToList();
-                listaDia = UtilGeneral.UtilHtml.LeerInfoHtml(i, 1);
-                foreach (var item in listaTemp)
-                {
-                    var data = (from x in listaDia where x.TABINDEX == item.Tabindex select x).FirstOrDefault();
-                    if (data == null) continue;
-                    strVar = string.Join("", item.ListData);
-                    if (!dictTemp.ContainsKey(strVar))
-                    {
-                        dictTemp.Add(strVar, new InfoAnalisisDTO());
-                    }
-                    if (data.DIFERENCIAG == 0)
-                    {
-                        dictTotalesDias[fecha].Negativos++;
-                        listaNeg.Add(item);
-                        dictTemp[strVar].Negativos++;
-                    }
-                    else
-                    {
-                        dictTotalesDias[fecha].Positivos++;
-                        listaPos.Add(item);
-                        dictTemp[strVar].Positivos++;
-                    }
-                }
-                //}
-            }
-            //    dictGen[j].Positivos = (from entry in dictTotalesDias select entry.Value.Positivos).Sum();
-            //    dictGen[j].Negativos = (from entry in dictTotalesDias select entry.Value.Negativos).Sum();
+            //        listaHtmlTemp = AnDataFlashOrdered.GetListaTemp(i, 1, contexto, VAL_TOTAL);
+            //        listaData = AnDataFlashOrdered.ValidarElementosDia(i, 1, contexto, listaHtmlTemp, k);
+            //        listaTemp = listaData.Where(x => x.Puntuacion > 0).ToList();
+            //        //listaTemp = AnDataFlashOrdered.ValidarElementosDia(i, 1, contexto, listaHtmlTemp, 0);
+            //        listaDia = UtilGeneral.UtilHtml.LeerInfoHtml(i, 1);
+            //        foreach (var item in listaTemp)
+            //        {
+            //            var data = (from x in listaDia where x.TABINDEX == item.Tabindex select x).FirstOrDefault();
+            //            if (data == null) continue;
+            //            strVar = string.Join("", item.ListData);
+            //            if (!dictTemp.ContainsKey(strVar))
+            //            {
+            //                dictTemp.Add(strVar, new InfoAnalisisDTO());
+            //            }
+            //            if (data.DIFERENCIAG == 0)
+            //            {
+            //                dictTotalesDias[fecha].Negativos++;
+            //                //listaNeg.Add(item);
+            //                dictTemp[strVar].Negativos++;
+            //            }
+            //            else
+            //            {
+            //                dictTotalesDias[fecha].Positivos++;
+            //                //listaPos.Add(item);
+            //                dictTemp[strVar].Positivos++;
+            //            }
+            //        }
+            //    }
+            //    dictRanks[k].Positivos = (from entry in dictTotalesDias select entry.Value.Positivos).Sum();
+            //    dictRanks[k].Negativos = (from entry in dictTotalesDias select entry.Value.Negativos).Sum();
+            //    int totalLecs = (from x in dictTotalesDias where x.Value.AvgPosVal.Equals(100) select x).ToList().Count;
+            //    dictRanksAbs.Add(k, totalLecs);
+            //    dictTotalesDias.Clear();
+            //}
+
             //}
             //dictGen = (from x in dictGen orderby x.Value.AvgPos descending, x.Value.AvgNeg, x.Value.Positivos descending select x).ToDictionary(x => x.Key, x => x.Value);
             //dictRanks = (from entry in dictRanks orderby entry.Value.AvgPos descending, entry.Value.Positivos descending, entry.Value.AvgNeg select entry).ToDictionary(x => x.Key, x => x.Value);
             var dataIn = "";
-            var laFechaActual = DateTime.Now.AddHours(3);
+            var laFechaActual = DateTime.Now.AddHours(3).AddMinutes(30);
             listaHtmlTemp = AnDataFlashOrdered.GetListaTemp(laFechaActual, 1, contexto, VAL_TOTAL);
-            listaTemp = AnDataFlashOrdered.ValidarElementosDia(laFechaActual, 1, contexto, listaHtmlTemp);
-            int dayofweek2 = (int)DateTime.Now.AddHours(3).DayOfWeek == 0 ? 7 : (int)DateTime.Now.AddHours(3).DayOfWeek;
+            listaTemp = AnDataFlashOrdered.ValidarElementosDia(laFechaActual, 1, contexto, listaHtmlTemp, 0);
+            int dayofweek2 = (int)DateTime.Now.AddHours(3).AddMinutes(30).DayOfWeek == 0 ? 7 : (int)DateTime.Now.AddHours(3).AddMinutes(30).DayOfWeek;
             List<AgrupadorInfoGeneralDTO> listaSelectedDos = (from x in listaTemp where x.Puntuacion > 0 select x).ToList();
 
             List<AgrupadorInfoGeneralDTO> listaSelected = new List<AgrupadorInfoGeneralDTO>();
-            foreach (var item in listaTemp)
-            {
-                strVar = string.Join("", item.ListData);
-                var dataInfo = (from x in dictTemp where x.Key.Equals(strVar) select x.Value).FirstOrDefault();
-                if (dataInfo != null && dataInfo.AvgPosVal >= 85)
-                {
-                    listaSelected.Add(item);
-                }
-            }
+            //foreach (var item in listaTemp)
+            //{
+            //    //strVar = string.Join("", item.ListData);
+            //    //var dataInfo = (from x in dictTemp where x.Key.Equals(strVar) select x.Value).FirstOrDefault();
+            //    if (dataInfo != null && dataInfo.AvgPosVal >= 85)
+            //    {
+            //        listaSelected.Add(item);
+            //    }
+            //}
             var final = "";
         }
 
@@ -536,12 +550,12 @@ namespace LectorCvsResultados
             List<FLASHORDERED> lista = new List<FLASHORDERED>();
             List<FLASHORDERED> listaSelected = new List<FLASHORDERED>();
             List<FLASHORDERED> listaInfoPercent = new List<FLASHORDERED>();
-            //var laFecha = DateTime.ParseExact("20080101", "yyyyMMdd", CultureInfo.InvariantCulture);
+            //var laFecha = DateTime.ParseExact("20181017", "yyyyMMdd", CultureInfo.InvariantCulture);
             //var laFechaMax = DateTime.ParseExact("20180426", "yyyyMMdd", CultureInfo.InvariantCulture);
             var laFechaNum = (from b in contexto.TOTALESDIA
                               select b.ID).Max();
             var laFecha = DateTime.ParseExact(laFechaNum.ToString(), "yyyyMMdd", CultureInfo.InvariantCulture).AddDays(1);
-            var laFechaMax = DateTime.ParseExact(DateTime.Now.AddHours(3).ToString("yyyyMMdd"), "yyyyMMdd", CultureInfo.InvariantCulture);
+            var laFechaMax = DateTime.ParseExact(DateTime.Now.AddHours(3).AddMinutes(30).ToString("yyyyMMdd"), "yyyyMMdd", CultureInfo.InvariantCulture);
             int idInicio = ConsultasClassFO.ConsultarMaxIdActual(contexto, ConstantesGenerales.TBL_FLASH);
             //int idPrueba = ConsultasClassFO.ConsultarMaxIdActual(contexto);
             //int idInicio = 1;
@@ -549,6 +563,8 @@ namespace LectorCvsResultados
             {
                 //lista.AddRange(UtilGeneral.UtilHtml.LeerInfoHtml(i, idInicio, 0));
                 listaSelected = UtilGeneral.UtilHtml.LeerInfoHtml(i, idInicio);
+                int value = (from x in listaSelected select x.TABINDEX).Max();
+
                 lista.AddRange(listaSelected);
                 idInicio = (int)(from x
                             in lista
@@ -558,10 +574,29 @@ namespace LectorCvsResultados
                 i = i.AddDays(1);
             }
             listaInfoPercent.AddRange(lista);
+
+            //TimeSpan start = TimeSpan.Parse("23:30"); // 10 PM
+            //TimeSpan end = TimeSpan.Parse("23:59");
+            //Dictionary<TimeSpan, int> dictTotales = new Dictionary<TimeSpan, int>();
+            //foreach (var item in lista)
+            //{
+            //    TimeSpan now = item.HoraTime.TimeOfDay;
+            //    if (now >= start && now <= end)
+            //    {
+            //        if (!dictTotales.ContainsKey(now))
+            //        {
+            //            dictTotales.Add(now, 0);
+            //        }
+            //        dictTotales[now]++;
+            //    }
+            //}
+            //var strop = "";
+
             AnDataFlashOrdered.InsertarElementosActuales(lista, contexto);
             //AnDataFlashOrdered.InsertarElementosPercent(listaInfoPercent, contexto, VAL_TOTAL);
 
-            AnDataRank.AddInfoRank(contexto, VAL_TOTAL, laFecha);
+            //AnDataRank.AddInfoRank(contexto, VAL_TOTAL, laFecha);
+            //AnDataBinaryInfo.AddInfoBinary(contexto, VAL_TOTAL, laFecha);
         }
 
         private static void ReiniciarDatosFlashOrdered()

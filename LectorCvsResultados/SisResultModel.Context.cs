@@ -36,7 +36,7 @@ public partial class SisResultEntities : DbContext
 
     public virtual DbSet<TOTALESDIA> TOTALESDIA { get; set; }
 
-    public virtual DbSet<ANDATAMINRANK> ANDATAMINRANK { get; set; }
+    public virtual DbSet<TOTALESDIAGROPTAB> TOTALESDIAGROPTAB { get; set; }
 
 }
 

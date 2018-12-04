@@ -291,11 +291,19 @@ namespace LectorCvsResultados
         public AgrupadorTotalTabIndexDTO AgrupadorPromMaxTabindexDiaMes { get; set; }
         public AgrupadorTotalTabIndexDTO AgrupadorPromMaxTabindexDiaAnio { get; set; }
         public AgrupadorTotalTabIndexDTO AgrupadorPromMaxTabindexMesNum { get; set; }
+        public AgrupadorTotalTabIndexDTO AgrupadorPromMaxTabindexDiaSemMesNum { get; set; }
+        public AgrupadorTotalTabIndexDTO AgrupadorPromMaxTabindexDiaMesMesNum { get; set; }
+
+
         public AgrupadorTotalTabIndexDTO AgrupadorPromMaxGroupTabGen { get; set; }
         public AgrupadorTotalTabIndexDTO AgrupadorPromMaxGroupTabDiaSem { get; set; }
         public AgrupadorTotalTabIndexDTO AgrupadorPromMaxGroupTabDiaMes { get; set; }
         public AgrupadorTotalTabIndexDTO AgrupadorPromMaxGroupTabDiaAnio { get; set; }
         public AgrupadorTotalTabIndexDTO AgrupadorPromMaxGroupTabMesNum { get; set; }
+        public AgrupadorTotalTabIndexDTO AgrupadorPromMaxGroupTabDiaSemMesNum { get; set; }
+        public AgrupadorTotalTabIndexDTO AgrupadorPromMaxGroupTabDiaMesMesNum { get; set; }
+
+
         public AgrupadorFechaNumValor AgrUltFechaNumSpanGen { get; set; }
         public AgrupadorFechaNumValor AgrUltFechaNumSpanDiaSem { get; set; }
         public AgrupadorFechaNumValor AgrUltFechaNumSpanDiaMes { get; set; }
@@ -347,6 +355,7 @@ namespace LectorCvsResultados
         public int MaxRankSpanActualDiaAnio { get; set; }
         public int MinSpanDiaAnio { get; set; }
         public List<int> ListData { get; set; }
+        public List<int> ListaInfoPivot { get; set; }
     }
 
     public class AgrupadorMaxTabIndex

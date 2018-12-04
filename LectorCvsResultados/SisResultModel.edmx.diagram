@@ -7,7 +7,7 @@
       <Diagram DiagramId="14c848ef82a94a7fb353a1577bb6756d" Name="Diagram1" ZoomLevel="73">
         <EntityTypeShape EntityType="SistResultModel.FLASHORDERED" Width="1.5" PointX="0.75" PointY="4.75" />
         <EntityTypeShape EntityType="SistResultModel.TOTALESDIA" Width="1.5" PointX="5.375" PointY="4.75" />
-        <EntityTypeShape EntityType="SistResultModel.ANDATAMINRANK" PointX="7.375" PointY="0.75" Width="1.5" />
+        <EntityTypeShape EntityType="SistResultModel.TOTALESDIAGROPTAB" Width="1.5" PointX="0.75" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

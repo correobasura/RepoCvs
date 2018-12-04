@@ -1,12 +1,19 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity.Infrastructure;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace LectorCvsResultados.FlashOrdered
 {
     public class ConsultasClassFO
     {
+        private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         /// <summary>
         /// Consulta el máximo id almacenado
         /// </summary>
@@ -31,6 +38,9 @@ namespace LectorCvsResultados.FlashOrdered
                 case ConstantesGenerales.TBL_MINRANK:
                     tbl = ConstantesModel.ANDATAMINRANK;
                     break;
+                case ConstantesGenerales.TBL_BININFO:
+                    tbl = ConstantesModel.ANDATABININFO;
+                    break;
             }
             string query = string.Format(ConstantesConsultaFO.QUERY_MAX_ID_ACTUAL, tbl);
             return contexto.Database.SqlQuery<int>(query).FirstOrDefault() + 1;
@@ -46,11 +56,12 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">caso para crear el query</param>
         /// <returns>Lista de elementos asociados</returns>
         public static List<AgrupadorFechaNumValor> ConsultarUltimoTimeSpan(SisResultEntities contexto, int tabIndex,
-            int fechaNum, int valor = 0, int caso = 0)
+            int fechaNum, int caso, params int[] valores)
         {
             string columna = GetColumnaTIHist(caso);
-            string filtro = GetFiltro(caso, valor);
+            string filtro = GetFiltro(caso, valores);
             string query = string.Format(ConstantesConsultaFO.QUERY_ULTIMOS_SPAN, tabIndex, fechaNum, columna, filtro);
+            //_log.Info(query);
             return contexto.Database.SqlQuery<AgrupadorFechaNumValor>(query).ToList();
         }
 
@@ -65,11 +76,12 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="diaAnio">diaanio para la consulta</param>
         /// <param name="caso">caso para crear el query</param>
         /// <returns>Elemento asociado</returns>
-        public static List<AgrupadorFechaNumValor> ConsultarUltimoTimeSpan(SisResultEntities contexto, int fechaNum, string strJoin, int valor = 0, int caso = 0)
+        public static List<AgrupadorFechaNumValor> ConsultarUltimoTimeSpan(SisResultEntities contexto, int fechaNum, string strJoin, int caso, params int[] valores )
         {
             string columna = GetColumnaGlTIHist(caso);
-            string filtro = GetFiltro(caso, valor);
+            string filtro = GetFiltro(caso, valores);
             string query = string.Format(ConstantesConsultaFO.QUERY_ULTIMOS_SPAN_TB_LETTER, fechaNum, strJoin, columna, filtro);
+            //_log.Info(query);
             return contexto.Database.SqlQuery<AgrupadorFechaNumValor>(query).ToList();
         }
 
@@ -92,6 +104,7 @@ namespace LectorCvsResultados.FlashOrdered
         public static int ConsultarMaxTabIndexLetterResultados(SisResultEntities contexto, string groupLetter)
         {
             string query = string.Format(ConstantesConsultaFO.QUERY_MAX_INDEX_RESULTADOS_GROUP_LETTER, groupLetter);
+            //_log.Info(query);
             return contexto.Database.SqlQuery<int>(query).Single();
         }
 
@@ -103,10 +116,11 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">caso para consultar y armar el query</param>
         /// <param name="valor">valor a concatenar</param>
         /// <returns>Valor máximo de la fecha</returns>
-        public static int ConsultarMaxFechaTabindex(SisResultEntities contexto, int maxTabIndex, int caso = 0, int valor = 0)
+        public static int ConsultarMaxFechaTabindex(SisResultEntities contexto, int maxTabIndex, int caso, params int[] valores)
         {
-            string filtro = GetFiltro(caso, valor);
+            string filtro = GetFiltro(caso, valores);
             string query = string.Format(ConstantesConsultaFO.QUERY_MAX_FECHA_TABINDEX, maxTabIndex, filtro);
+            //_log.Info(query);
             var data = contexto.Database.SqlQuery<AgrupadorFechaNumValor>(query).AsEnumerable().FirstOrDefault();
             if (data == null)
             {
@@ -124,6 +138,7 @@ namespace LectorCvsResultados.FlashOrdered
         public static List<AgrupadorTotalTabIndexDTO> ConsultarNextTabindexSeq(SisResultEntities contexto, decimal? tabIndex)
         {
             string query = string.Format(ConstantesConsultaFO.QUERY_NEXT_TABINDEX_SEQ, tabIndex);
+            //_log.Info(query);
             return contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query).ToList();
         }
 
@@ -137,6 +152,7 @@ namespace LectorCvsResultados.FlashOrdered
         public static List<AgrupadorTotalTabIndexDTO> ConsultarNextTabindexLetterSeq(SisResultEntities contexto, string srtJoin)
         {
             string query = string.Format(ConstantesConsultaFO.QUERY_NEXT_TABINDEXLETTER_SEQ, srtJoin);
+            //_log.Info(query);
             return contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query).ToList();
         }
 
@@ -150,6 +166,7 @@ namespace LectorCvsResultados.FlashOrdered
         public static List<AgrupadorTotalTabIndexDTO> ConsultarNextTabCompSeq(SisResultEntities contexto, List<int> lstCompt)
         {
             string query = string.Format(ConstantesConsultaFO.QUERY_NEXT_TABINDEX_COMP_SEQ, string.Join(",", lstCompt));
+            //_log.Info(query);
             return contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query).ToList();
         }
 
@@ -161,10 +178,11 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="valor">valor a concatenar en el query</param>
         /// <param name="queryBody">cadena con el contenido de la consulta</param>
         /// <returns>Lista de objetos con la información</returns>
-        public static List<AgrupadorMaxFechasTGDTO> ConsultarMaxFechasTabGroup(SisResultEntities contexto, string queryBody, int caso = 0, int valor = 0)
+        public static List<AgrupadorMaxFechasTGDTO> ConsultarMaxFechasTabGroup(SisResultEntities contexto, string queryBody, int caso, params int[] valores)
         {
-            string filtro = GetFiltro(caso, valor);
-            string query = string.Format(ConstantesConsultaFO.QUERY_MAXFECHAS_TABANDGROUPLETTER, queryBody, string.Format(filtro, valor));
+            string filtro = GetFiltro(caso, valores);
+            string query = string.Format(ConstantesConsultaFO.QUERY_MAXFECHAS_TABANDGROUPLETTER, queryBody, string.Format(filtro, valores));
+            //_log.Info(query);
             return contexto.Database.SqlQuery<AgrupadorMaxFechasTGDTO>(query).ToList();
         }
 
@@ -178,10 +196,11 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">caso para adicionar filtro a la consulta</param>
         /// <param name="valor">Valor para el filtro</param>
         /// <returns></returns>
-        public static List<AgrupadorTotalTabIndexDTO> ConsultarPromResultadosMaxTabindex(int maxListIndex, string fechaFormat, SisResultEntities contexto, int caso = 0, int valor = 0)
+        public static List<AgrupadorTotalTabIndexDTO> ConsultarPromResultadosMaxTabindex(int maxListIndex, string fechaFormat, SisResultEntities contexto, int caso, params int[] valores)
         {
-            string filtro = GetFiltro(caso, valor);
+            string filtro = GetFiltro(caso, valores);
             string query = string.Format(ConstantesConsultaFO.QUERY_PROM_RESULTS_INTO_TOTALTABINDEX, fechaFormat, maxListIndex, filtro);
+            //_log.Info(query);
             DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
             return data.AsEnumerable().ToList();
         }
@@ -195,10 +214,11 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">caso para evaluar la columna</param>
         /// <param name="valor">Valor a asignar</param>
         /// <returns>Lista de datos obtenida</returns>
-        public static List<AgrupadorTotalTabIndexDTO> ConsultarPromResultadosGroupTab(string queryBody, string fechaFormat, SisResultEntities contexto, int caso = 0, int valor = 0)
+        public static List<AgrupadorTotalTabIndexDTO> ConsultarPromResultadosGroupTab(string queryBody, string fechaFormat, SisResultEntities contexto, int caso, params int[] valores)
         {
-            string filtro = GetFiltro(caso, valor);
+            string filtro = GetFiltro(caso, valores);
             string query = string.Format(ConstantesConsultaFO.QUERY_PROM_RESULTS_INTO_TOTALTABINDEX_GROUPANDTAB, fechaFormat, queryBody, filtro);
+            //_log.Info(query);
             DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
             return data.AsEnumerable().ToList();
         }
@@ -213,6 +233,7 @@ namespace LectorCvsResultados.FlashOrdered
         public static List<AgrupadorMaxTabIndex> ConsultarMaxSeqTabindex(int maxListIndex, string fechaFormat, SisResultEntities contexto)
         {
             string query = string.Format(ConstantesConsultaFO.QUERY_MAX_TABINDEXSEQ_GEN, maxListIndex, fechaFormat);
+            //_log.Info(query);
             DbRawSqlQuery<AgrupadorMaxTabIndex> data = contexto.Database.SqlQuery<AgrupadorMaxTabIndex>(query);
             return data.AsEnumerable().ToList();
         }
@@ -227,6 +248,7 @@ namespace LectorCvsResultados.FlashOrdered
         public static List<AgrupadorMaxTabIndex> ConsultarMaxSeqTabindexGl(string fechaFormat, SisResultEntities contexto, string queryBody)
         {
             string query = string.Format(ConstantesConsultaFO.QUERY_MAX_TABINDEXSEQ_GL, fechaFormat, queryBody);
+            //_log.Info(query);
             DbRawSqlQuery<AgrupadorMaxTabIndex> data = contexto.Database.SqlQuery<AgrupadorMaxTabIndex>(query);
             return data.AsEnumerable().ToList();
         }
@@ -240,11 +262,12 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">caso para adicionar el filtro</param>
         /// <param name="valor">valor a adicionar al filtro</param>
         /// <returns></returns>
-        public static List<AgrupadorFechaNumValor> ConsultarMaxFechaAndSpanTabindex(SisResultEntities contexto, int maxTabindex, string fechaFormat, int caso = 0, int valor = 0)
+        public static List<AgrupadorFechaNumValor> ConsultarMaxFechaAndSpanTabindex(SisResultEntities contexto, int maxTabindex, string fechaFormat, int caso, params int[] valores)
         {
-            string filtro = GetFiltro(caso, valor);
+            string filtro = GetFiltro(caso, valores);
             string columna = GetColumnaTIHist(caso);
             string query = string.Format(ConstantesConsultaFO.QUERY_MAX_FECHANUMTABINDEX, maxTabindex, fechaFormat, filtro, columna);
+            //_log.Info(query);
             DbRawSqlQuery<AgrupadorFechaNumValor> data = contexto.Database.SqlQuery<AgrupadorFechaNumValor>(query);
             return data.AsEnumerable().ToList();
         }
@@ -258,11 +281,12 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">Caso para adicionar el filtro</param>
         /// <param name="valor">Valor para adicionar al filtro</param>
         /// <returns>Lista de elementos encontrados</returns>
-        public static List<AgrupadorFechaNumValor> ConsultarMaxFechaTabindexAndSpanGl(SisResultEntities contexto, string fechaFormat, string queryBody, int caso = 0, int valor = 0)
+        public static List<AgrupadorFechaNumValor> ConsultarMaxFechaTabindexAndSpanGl(SisResultEntities contexto, string fechaFormat, string queryBody, int caso, params int[] valores)
         {
-            string filtro = GetFiltro(caso, valor);
+            string filtro = GetFiltro(caso, valores);
             string columna = GetColumnaGlTIHist(caso);
             string query = string.Format(ConstantesConsultaFO.QUERY_MAX_FECHANUMTABINDEX_GL, fechaFormat, queryBody, filtro, columna);
+            //_log.Info(query);
             DbRawSqlQuery<AgrupadorFechaNumValor> data = contexto.Database.SqlQuery<AgrupadorFechaNumValor>(query);
             return data.AsEnumerable().ToList();
         }
@@ -275,11 +299,12 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">Caso para evaluar</param>
         /// <param name="valor">Valor a asignar al filtro</param>
         /// <returns>Listado de elementos</returns>
-        public static List<AgrupadorConteosTimeSpanDTO> ConsultarRanksTabindex(SisResultEntities contexto, string queryBody, int caso = 0, int valor = 0)
+        public static List<AgrupadorConteosTimeSpanDTO> ConsultarRanksTabindex(SisResultEntities contexto, string queryBody, int caso, params int[] valores)
         {
             string columna = GetColumnaTIAct(caso);
-            string filtro = GetFiltro(caso, valor);
+            string filtro = GetFiltro(caso, valores);
             string query = string.Format(ConstantesConsultaFO.QUERY_RANK_SPANS_BY_TABINDEX, columna, queryBody, filtro);
+            //_log.Info(query);
             DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
             return data.AsEnumerable().ToList();
         }
@@ -292,33 +317,40 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">Caso para evaluar</param>
         /// <param name="valor">Valor a asignar al filtro</param>
         /// <returns>Listado de elementos</returns>
-        public static List<AgrupadorConteosTimeSpanDTO> ConsultarRanksGlTabindex(SisResultEntities contexto, string queryBody, int caso = 0, int valor = 0)
+        public static List<AgrupadorConteosTimeSpanDTO> ConsultarRanksGlTabindex(SisResultEntities contexto, string queryBody, int caso, params int[] valores)
         {
             string columna = GetColumnaGlTIAct(caso);
-            string filtro = GetFiltro(caso, valor);
+            string filtro = GetFiltro(caso, valores);
             string query = string.Format(ConstantesConsultaFO.QUERY_RANK_SPANS_BY_GL_TABINDEX, columna, queryBody, filtro);
+            //_log.Info(query);
             DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
             return data.AsEnumerable().ToList();
         }
 
-        private static string GetFiltro(int caso = 0, int valor = 0)
+        private static string GetFiltro(int caso, params int[] valores)
         {
             string filtro;
             switch (caso)
             {
                 case ConstantesGenerales.CASO_DIASEM:
-                    filtro = string.Format("AND " + ConstantesModel.DIASEM + " = {0} ", valor);
+                    filtro = string.Format("AND " + ConstantesModel.DIASEM + " = {0} ", valores[0]);
                     break;
 
                 case ConstantesGenerales.CASO_DIAMES:
-                    filtro = string.Format("AND " + ConstantesModel.DIAMES + " = {0} ", valor);
+                    filtro = string.Format("AND " + ConstantesModel.DIAMES + " = {0} ", valores[0]);
                     break;
 
                 case ConstantesGenerales.CASO_DIAANIO:
-                    filtro = string.Format("AND " + ConstantesModel.DIAANIO + " = {0} ", valor);
+                    filtro = string.Format("AND " + ConstantesModel.DIAANIO + " = {0} ", valores[0]);
                     break;
                 case ConstantesGenerales.CASO_MESNUM:
-                    filtro = string.Format("AND " + ConstantesModel.MESNUM + " = {0} ", valor);
+                    filtro = string.Format("AND " + ConstantesModel.MESNUM + " = {0} ", valores[0]);
+                    break;
+                case ConstantesGenerales.CASO_DIASEM_MESNUM:
+                    filtro = string.Format("AND " + ConstantesModel.DIASEM + " = {0} AND " + ConstantesModel.MESNUM + " = {1} ", valores[0], valores[1]);
+                    break;
+                case ConstantesGenerales.CASO_DIAMES_MESNUM:
+                    filtro = string.Format("AND " + ConstantesModel.DIAMES + " = {0} AND " + ConstantesModel.MESNUM + " = {1} ", valores[0], valores[1]);
                     break;
                 default:
                     filtro = "";
@@ -447,10 +479,11 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="caso">Caso para evaluar</param>
         /// <param name="valor">Valor a asignar al filtro</param>
         /// <returns>Listado de elementos</returns>
-        public static List<AgrupadorConteosTimeSpanDTO> ConsultarPercent(SisResultEntities contexto, string fechanum, int valor, int tipoOrden, int caso, string fechaMin = "")
+        public static List<AgrupadorConteosTimeSpanDTO> ConsultarPercent(SisResultEntities contexto, string fechanum, int tipoOrden, int caso, string fechaMin = "", params int[] valores)
         {
-            string filtro = GetFiltro(caso, valor);
+            string filtro = GetFiltro(caso, valores);
             string query = string.Format(ConstantesConsultaFO.QUERY_RANK_PERCENT, fechanum, filtro, tipoOrden, fechaMin);
+            //_log.Info(query);
             DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
             return data.AsEnumerable().ToList();
         }
@@ -458,6 +491,7 @@ namespace LectorCvsResultados.FlashOrdered
         public static List<AgrupadorConteosTimeSpanDTO> ConsultarProbSelectedInfo(SisResultEntities contexto, string spanCol, string rankCol, string fechaMax, string fechaMin="")
         {
             string query = string.Format(ConstantesConsultaFO.QUERY_COUNT_PROB_SELINF, fechaMin, spanCol, rankCol, fechaMax);
+            //_log.Info(query);
             DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
             return data.AsEnumerable().ToList();
         }
@@ -479,6 +513,7 @@ namespace LectorCvsResultados.FlashOrdered
         internal static List<AgrupadorTotalTabIndexDTO> ConsultarAgrupadorDiaMesDia(SisResultEntities contexto, string fechaformat, int dayofweek, int day, int maxTabindex)
         {
             string query = string.Format(ConstantesConsultaFO.QUERY_COUNT_PROB_DIADIAMES, dayofweek, fechaformat, maxTabindex);
+            //_log.Info(query);
             DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
             return data.AsEnumerable().ToList();
         }
@@ -486,15 +521,61 @@ namespace LectorCvsResultados.FlashOrdered
         internal static List<AgrupadorTotalTabIndexDTO> ConsultarAgrupadorDiaMesDiaGl(SisResultEntities contexto, string fechaformat, int dayofweek, int day, string queryBody)
         {
             string query = string.Format(ConstantesConsultaFO.QUERY_COUNT_PROB_DIADIAMES_GL, dayofweek, fechaformat, queryBody);
+            //_log.Info(query);
             DbRawSqlQuery<AgrupadorTotalTabIndexDTO> data = contexto.Database.SqlQuery<AgrupadorTotalTabIndexDTO>(query);
             return data.AsEnumerable().ToList();
         }
 
-        public static List<AgrupadorConteosTimeSpanDTO> ConsultarProbRankInfo(SisResultEntities contexto, int casoCol, int casoRange, string fechaMax, int valor)
+        public static List<AgrupadorConteosTimeSpanDTO> ConsultarProbRankInfo(SisResultEntities contexto, int casoCol, int casoRange, string fechaMax, int valor, string fechaFormatMin)
         {
             string col = GetColumnaRank(casoCol);
-            string filtro = GetFiltro(casoRange, valor);
+            string filtro = GetFiltro(casoRange, valor)+ (fechaFormatMin != "" ? "AND fechanum >= " + fechaFormatMin+" ":"");
             string query = string.Format(ConstantesConsultaFO.QUERY_COUNT_PROB_RANK, fechaMax, filtro, col);
+            //_log.Info(query);
+            DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
+            return data.AsEnumerable().ToList();
+        }
+
+        internal static void ConsultarValoresPivotTab(SisResultEntities contexto, int maxTabindex)
+        {
+            string query = string.Format(ConstantesConsultaFO.QUERY_DIAS_BY_TABINDEX, maxTabindex);
+            DbRawSqlQuery<int> data = contexto.Database.SqlQuery<int>(query);
+            List<int> lstDias = data.AsEnumerable().ToList();
+            query = string.Format(ConstantesConsultaFO.QUERY_PIVOT_COUNT_RESULTS, maxTabindex, string.Join(",", lstDias));
+            _log.Info(query);
+
+            using (System.Data.IDbCommand command = contexto.Database.Connection.CreateCommand())
+            {
+                try
+                {
+                    contexto.Database.Connection.Open();
+                    command.CommandText = query;
+                    command.CommandTimeout = command.Connection.ConnectionTimeout;
+
+                    using (System.Data.IDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            List<int> lstFlags = new List<int>();
+                            int tabindex = reader.GetInt32(0);
+                            for (int i = 1; i < reader.FieldCount; i++)
+                            {
+                                lstFlags.Add(reader.GetInt32(i));
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    contexto.Database.Connection.Close();
+                    command.Parameters.Clear();
+                }
+            }
+            
+        }
+
+        internal static List<AgrupadorConteosTimeSpanDTO> ConsultarValoresProbGroupTabTotal(SisResultEntities contexto, string query)
+        {
             DbRawSqlQuery<AgrupadorConteosTimeSpanDTO> data = contexto.Database.SqlQuery<AgrupadorConteosTimeSpanDTO>(query);
             return data.AsEnumerable().ToList();
         }

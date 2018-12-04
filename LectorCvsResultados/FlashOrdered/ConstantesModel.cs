@@ -64,5 +64,6 @@
         public const string ANDATAMINRANK = "andataminrank";
         public const string KEYRANK = "keyrank";
         public const string KEYRANKGRAL = "keyrankgral";
+        public const string ANDATABININFO = "andatabininfo";
     }
 }

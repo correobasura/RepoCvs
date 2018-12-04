@@ -58,7 +58,7 @@
                     + "FROM userresulttablesfs "
                     + "WHERE diferenciag != 0 "
                     + "AND fechanum < {0} "
-                    + "AND tabindex < = {1} "
+                    + "AND tabindex <= {1} "
                     + "GROUP BY tabindex "
                     + "ORDER BY 1 DESC, 2";
 
@@ -67,7 +67,7 @@
                     + "FROM userresulttablesfs "
                     + "WHERE diferenciag != 0 "
                     + "AND fechanum < {0} "
-                    + "AND tabindex < = {1} "
+                    + "AND tabindex <= {1} "
                     + "AND diasemnum = {2} "
                     + "GROUP BY tabindex "
                     + "ORDER BY 1 DESC, 2";
@@ -78,7 +78,7 @@
                     + "FROM userresulttablesfs "
                     + "WHERE diferenciag != 0 "
                     + "AND fechanum < {0} "
-                    + "AND tabindex < = {1} "
+                    + "AND tabindex <= {1} "
                     + "AND diasemnum = {2} "
                     + "GROUP BY tabindex "
                     + "UNION ALL "
@@ -86,7 +86,7 @@
                     + "FROM userresulttablesfs "
                     + "WHERE diferenciag != 0 "
                     + "AND fechanum < {0} "
-                    + "AND tabindex < = {1} "
+                    + "AND tabindex <= {1} "
                     + "AND diamesnum = {3} "
                     + "GROUP BY tabindex ) a "
                     + "GROUP BY a.tabindex "
@@ -166,5 +166,17 @@
             + "GROUP BY ULTIMOTIMESPAN) b "
             + "WHERE a.timespan = b.timespan "
             + "ORDER BY 1 DESC";
+
+        public const string QUERY_COUNT_GRP_TAB_TOTAL =
+        "SELECT COUNT(CASE WHEN diferenciag = 0 THEN 1 END)/COUNT(1) AS PROB, "
++ "COUNT(CASE WHEN diferenciag = 0 THEN 1 END) AS CERO, "
++ "COUNT(1) AS TOTAL, groupletter, tabindexletter "
++ "FROM flashordered "
++ "WHERE fechanum IN ("
++ "SELECT fechanum "
++ "FROM totalesdiagroptab "
++ "WHERE groupletter = {0} AND total = {1}) "
++ "AND groupletter = {0} "
++ "GROUP BY groupletter, tabindexletter";
     }
 }
