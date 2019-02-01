@@ -462,4 +462,14 @@ namespace LectorCvsResultados
             this.Value = new InfoAnalisisDTO();
         }
     }
+
+    public class AgrupadorInfoQuery2
+    {
+        public int Ghome { get; set; }
+        public int Gaway { get; set; }
+        public int Totalg { get; set; }
+        public int Tabindex { get; set; }
+        public int Tabindexletter { get; set; }
+        public string Groupletter { get; set; }
+    }
 }

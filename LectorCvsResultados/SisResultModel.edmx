@@ -29,15 +29,6 @@
           <Property Name="GAWAY" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="TOTALG" Type="number" Precision="38" Scale="0" Nullable="false" />
         </EntityType>
-        <EntityType Name="ANDATAGENINFOTEMP">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="GHOME" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="GAWAY" Type="number" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="TOTALG" Type="number" Precision="38" Scale="0" Nullable="false" />
-        </EntityType>
         <EntityType Name="ANDATAINFOPOSRANK">
           <Key>
             <PropertyRef Name="ID" />
@@ -168,7 +159,6 @@
         <EntityContainer Name="SistResultModelStoreContainer">
           <EntitySet Name="ANDATABININFO" EntityType="Self.ANDATABININFO" Schema="USERRESULTTABLES" store:Type="Tables" />
           <EntitySet Name="ANDATAGENINFO" EntityType="Self.ANDATAGENINFO" Schema="USERRESULTTABLES" store:Type="Tables" />
-          <EntitySet Name="ANDATAGENINFOTEMP" EntityType="Self.ANDATAGENINFOTEMP" Schema="USERRESULTTABLES" store:Type="Tables" />
           <EntitySet Name="ANDATAINFOPOSRANK" EntityType="Self.ANDATAINFOPOSRANK" Schema="USERRESULTTABLES" store:Type="Tables" />
           <EntitySet Name="FLASHORDERED" EntityType="Self.FLASHORDERED" Schema="USERRESULTTABLES" store:Type="Tables" />
           <EntitySet Name="TOTALESDIA" EntityType="Self.TOTALESDIA" Schema="USERRESULTTABLES" store:Type="Tables" />
@@ -201,7 +191,6 @@
           <EntitySet Name="ANDATABININFO" EntityType="SistResultModel.ANDATABININFO" />
           <EntitySet Name="ANDATAINFOPOSRANK" EntityType="SistResultModel.ANDATAINFOPOSRANK" />
           <EntitySet Name="ANDATAGENINFO" EntityType="SistResultModel.ANDATAGENINFO" />
-          <EntitySet Name="ANDATAGENINFOTEMP" EntityType="SistResultModel.ANDATAGENINFOTEMP" />
           <AssociationSet Name="SYS_C0011909" Association="SistResultModel.SYS_C0011909">
             <End Role="ANDATAGENINFO" EntitySet="ANDATAGENINFO" />
             <End Role="FLASHORDERED" EntitySet="FLASHORDERED" />
@@ -329,15 +318,6 @@
           <NavigationProperty Name="FLASHORDERED1" Relationship="SistResultModel.SYS_C0011930" FromRole="ANDATAGENINFO" ToRole="FLASHORDERED" />
           <NavigationProperty Name="FLASHORDERED2" Relationship="SistResultModel.SYS_C0011931" FromRole="ANDATAGENINFO" ToRole="FLASHORDERED" />
           <NavigationProperty Name="FLASHORDERED3" Relationship="SistResultModel.SYS_C0011951" FromRole="ANDATAGENINFO" ToRole="FLASHORDERED" />
-        </EntityType>
-        <EntityType Name="ANDATAGENINFOTEMP">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="GHOME" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="GAWAY" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
-          <Property Name="TOTALG" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
         </EntityType>
         <Association Name="SYS_C0011909">
           <End Type="SistResultModel.ANDATAGENINFO" Role="ANDATAGENINFO" Multiplicity="0..1" />
@@ -494,16 +474,6 @@
           <EntitySetMapping Name="ANDATAGENINFO">
             <EntityTypeMapping TypeName="SistResultModel.ANDATAGENINFO">
               <MappingFragment StoreEntitySet="ANDATAGENINFO">
-                <ScalarProperty Name="TOTALG" ColumnName="TOTALG" />
-                <ScalarProperty Name="GAWAY" ColumnName="GAWAY" />
-                <ScalarProperty Name="GHOME" ColumnName="GHOME" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ANDATAGENINFOTEMP">
-            <EntityTypeMapping TypeName="SistResultModel.ANDATAGENINFOTEMP">
-              <MappingFragment StoreEntitySet="ANDATAGENINFOTEMP">
                 <ScalarProperty Name="TOTALG" ColumnName="TOTALG" />
                 <ScalarProperty Name="GAWAY" ColumnName="GAWAY" />
                 <ScalarProperty Name="GHOME" ColumnName="GHOME" />

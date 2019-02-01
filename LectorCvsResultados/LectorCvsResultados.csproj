@@ -80,6 +80,12 @@
     <Compile Include="ANDATABININFO.cs">
       <DependentUpon>SisResultModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ANDATAGENINFO.cs">
+      <DependentUpon>SisResultModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ANDATAGENINFOTEMP.cs">
+      <DependentUpon>SisResultModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="ANDATAINFOPOSRANK.cs">
       <DependentUpon>SisResultModel.tt</DependentUpon>
     </Compile>

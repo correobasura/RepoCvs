@@ -44,8 +44,6 @@ public partial class SisResultEntities : DbContext
 
     public virtual DbSet<ANDATAGENINFO> ANDATAGENINFO { get; set; }
 
-    public virtual DbSet<ANDATAGENINFOTEMP> ANDATAGENINFOTEMP { get; set; }
-
 }
 
 }

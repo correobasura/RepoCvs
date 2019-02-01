@@ -327,5 +327,71 @@
             + "AND f.groupletter = t.groupletter "
             + "AND t.groupletter = '{0}' "
             + "GROUP BY f.groupletter, f.tabindexletter";
+
+
+        public const string QUERY_INFO_GM_GROUPLETTER_TOTALD =
+            " SELECT a.ghome AS ghome, a.gaway AS gaway, a.totalg AS totalg, a.groupletter AS groupletter, a.tabindexletter as tabindexletter"
+            + " FROM"
+            + " (SELECT f.fechanum,"
+            + " ghome,"
+            + " gaway,"
+            + " totalg,"
+            + " f.groupletter,"
+            + " f.tabindexletter,"
+            + " rank() over (partition BY f.groupletter, f.tabindexletter order by f.fechanum DESC) AS rank"
+            + " FROM flashordered f"
+            + " INNER JOIN totalesdiagroptab t"
+            + " ON t.fechanum = f.fechanum"
+            + " AND t.groupletter = f.groupletter"
+            + " AND f.tabindexletter <= t.total"
+            + " WHERE {0} {1}"
+            + " ) a"
+            + " WHERE a.rank = 1";
+
+        public const string QUERY_INFO_GM_GROUPLETTER =
+            " SELECT a.ghome AS ghome, a.gaway AS gaway, a.totalg AS totalg, a.groupletter AS groupletter, a.tabindexletter as tabindexletter"
+            + " FROM"
+            + " (SELECT f.fechanum,"
+            + " ghome,"
+            + " gaway,"
+            + " totalg,"
+            + " f.groupletter,"
+            + " f.tabindexletter,"
+            + " rank() over (partition BY f.groupletter, f.tabindexletter order by f.fechanum DESC) AS rank"
+            + " FROM flashordered f"
+            + " WHERE {0} {1}"
+            + " ) a"
+            + " WHERE a.rank = 1";
+
+        public const string QUERY_INFO_GM_TABINDEX_TOTALD =
+            " SELECT a.ghome AS ghome, a.gaway AS gaway, a.totalg AS totalg, a.Tabindex AS Tabindex"
+            + " FROM"
+            + " (SELECT f.fechanum,"
+            + " ghome,"
+            + " gaway,"
+            + " totalg,"
+            + " f.tabindex,"
+            + " rank() over (partition BY f.tabindex order by f.fechanum DESC) AS rank"
+            + " FROM flashordered f"
+            + " INNER JOIN totalesdia t"
+            + " ON t.id = f.fechanum"
+            + " AND f.tabindex <= t.total"
+            + " AND t.total = {0} {1}"
+            + " ) a"
+            + " WHERE a.rank = 1";
+
+        public const string QUERY_INFO_GM_TABINDEX =
+            " SELECT a.ghome AS ghome, a.gaway AS gaway, a.totalg AS totalg, a.Tabindex AS Tabindex"
+            +" FROM"
+            +" (SELECT f.fechanum,"
+            +" ghome,"
+            +" gaway,"
+            +" totalg,"
+            +" f.tabindex,"
+            +" rank() over (partition BY f.tabindex order by f.fechanum DESC) AS rank"
+            +" FROM flashordered f"
+            +" WHERE f.tabindex <= {0} {1}"
+            +" ) a"
+            +" WHERE a.rank = 1";
     }
 }

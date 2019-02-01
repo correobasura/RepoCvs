@@ -362,6 +362,7 @@ namespace LectorCvsResultados.FlashOrdered
         {
             TOTALESDIA td;
             string strJoin;
+            string strJoinTiGl;
             int maxTabindex;
             List<AgrupadorInfoQuery> listaDiaHist;
             List<AgrupadorInfoQuery> listaDiaSemHist;
@@ -380,6 +381,16 @@ namespace LectorCvsResultados.FlashOrdered
             List<int> listaFechaNum = (from x in lista orderby x.FECHANUM select x.FECHANUM).Distinct().ToList();
             int idInicio = ConsultasClassFO.ConsultarMaxIdActual(contexto, ConstantesGenerales.TBL_FLASH);
             List<FLASHORDERED> listaPersist;
+            List<AgrupadorInfoQuery2> lstTabindex;
+            List<AgrupadorInfoQuery2> lstTabindexEqDia;
+            List<AgrupadorInfoQuery2> lstGropuLetter;
+            List<AgrupadorInfoQuery2> lstGropuLetterEqDia;
+            List<ANDATAGENINFO> lstResults = contexto.ANDATAGENINFO.ToList();
+            ANDATAGENINFO infoRef1;
+            ANDATAGENINFO infoRef2;
+            ANDATAGENINFO infoRef3;
+            ANDATAGENINFO infoRef4;
+            AgrupadorInfoQuery2 infoQueryRef;
             foreach (var fechaNum in listaFechaNum)
             {
                 listaPersist = lista.Where(x => x.FECHANUM == fechaNum).ToList();
@@ -391,6 +402,12 @@ namespace LectorCvsResultados.FlashOrdered
                 contexto.TOTALESDIAGROPTAB.AddRange(GetValuesGroupTabTotales(listaPersist, fechaNum));
                 listaPersist = listaPersist.Where(x => x.Estado.Equals("FP")).OrderBy(x => x.TABINDEX).ToList();
                 strJoin = UtilHtml.ObtenerJoinElementos(listaPersist);
+                strJoinTiGl = strJoin.Replace("tabindexletter", "total").Replace("<=", "=").Replace("groupletter", "t.groupletter");
+
+                lstTabindex = ConsultasClassFO.ConsultarValoresReferencia(contexto, string.Format(ConstantesConsultaFO.QUERY_INFO_GM_TABINDEX, maxTabindex, ""));
+                lstTabindexEqDia = ConsultasClassFO.ConsultarValoresReferencia(contexto, string.Format(ConstantesConsultaFO.QUERY_INFO_GM_TABINDEX_TOTALD, maxTabindex, ""));
+                lstGropuLetter = ConsultasClassFO.ConsultarValoresReferencia(contexto, string.Format(ConstantesConsultaFO.QUERY_INFO_GM_GROUPLETTER, strJoin, ""));
+                lstGropuLetterEqDia = ConsultasClassFO.ConsultarValoresReferencia(contexto, string.Format(ConstantesConsultaFO.QUERY_INFO_GM_GROUPLETTER_TOTALD, strJoinTiGl, ""));
 
                 elementTemp = listaPersist.FirstOrDefault();
                 listaDiaHist = ConsultasClassFO.ConsultarUltimoTimeSpan(contexto, maxTabindex, fechaNum, ConstantesGenerales.CASO_DEFAULT);
@@ -420,6 +437,26 @@ namespace LectorCvsResultados.FlashOrdered
                     obj.SPANTIGLSEMHIST = ValidarSpanTiempo(obj.TABINDEXLETTER, obj.DIFERENCIAG, (from x in listaDiaGlSemHist where x.TabIndexLetter.Equals(obj.TABINDEXLETTER) && x.GroupLetter.Equals(obj.GROUPLETTER) select x).FirstOrDefault());
                     obj.SPANTIGLMESHIST = ValidarSpanTiempo(obj.TABINDEXLETTER, obj.DIFERENCIAG, (from x in listaDiaGlMesHist where x.TabIndexLetter.Equals(obj.TABINDEXLETTER) && x.GroupLetter.Equals(obj.GROUPLETTER) select x).FirstOrDefault());
                     obj.SPANTIGLANIHIST = ValidarSpanTiempo(obj.TABINDEXLETTER, obj.DIFERENCIAG, (from x in listaDiaGlAnioHist where x.TabIndexLetter.Equals(obj.TABINDEXLETTER) && x.GroupLetter.Equals(obj.GROUPLETTER) select x).FirstOrDefault());
+
+                    infoQueryRef = (from x in lstTabindex where x.Tabindex == obj.TABINDEX select x).FirstOrDefault();
+                    infoRef1 = (from x in lstResults where x.GHOME == infoQueryRef.Ghome && x.GAWAY == infoQueryRef.Gaway && x.TOTALG == infoQueryRef.Totalg select x).FirstOrDefault();
+
+                    infoQueryRef = (from x in lstTabindexEqDia where x.Tabindex == obj.TABINDEX select x).FirstOrDefault();
+                    infoRef2 = (from x in lstResults where x.GHOME == infoQueryRef.Ghome && x.GAWAY == infoQueryRef.Gaway && x.TOTALG == infoQueryRef.Totalg select x).FirstOrDefault();
+
+                    infoQueryRef = (from x in lstGropuLetter where x.Tabindexletter == obj.TABINDEXLETTER && x.Groupletter.Equals(obj.GROUPLETTER) select x).FirstOrDefault();
+                    infoRef3 = (from x in lstResults where x.GHOME == infoQueryRef.Ghome && x.GAWAY == infoQueryRef.Gaway && x.TOTALG == infoQueryRef.Totalg select x).FirstOrDefault();
+
+                    infoQueryRef = (from x in lstGropuLetterEqDia where x.Tabindexletter == obj.TABINDEXLETTER && x.Groupletter.Equals(obj.GROUPLETTER) select x).FirstOrDefault();
+                    infoRef4 = (from x in lstResults where x.GHOME == infoQueryRef.Ghome && x.GAWAY == infoQueryRef.Gaway && x.TOTALG == infoQueryRef.Totalg select x).FirstOrDefault();
+                    if (infoRef1 == null || infoRef2 == null || infoRef3 == null || infoRef4 == null)
+                    {
+                        throw new Exception();
+                    }
+                    obj.ANDATAGENINFO = infoRef1;
+                    obj.ANDATAGENINFO1 = infoRef3;
+                    obj.ANDATAGENINFO2 = infoRef2;
+                    obj.ANDATAGENINFO3 = infoRef4;
                 }
                 contexto.FLASHORDERED.AddRange(listaPersist);
                 listTabindex = (from x in listaPersist select x.TABINDEX).ToList();
@@ -1475,7 +1512,7 @@ namespace LectorCvsResultados.FlashOrdered
 
         private static int AddInfoMinSpanListData(int rankActual)
         {
-            if (rankActual> 0)
+            if (rankActual > 0)
             {
                 return 1;
             }
@@ -1489,7 +1526,7 @@ namespace LectorCvsResultados.FlashOrdered
             List<AgrupadorInfoQuery> lstAgrupadores, int caso)
         {
             AgrupadorInfoQuery infoUltFecha;
-            if(caso == 1)
+            if (caso == 1)
             {
                 infoUltFecha = (from x in lstAgrupadores where x.TabIndex.Equals(aigDTO.Tabindex) select x).FirstOrDefault();
                 if (infoUltFecha != null)
@@ -1513,7 +1550,7 @@ namespace LectorCvsResultados.FlashOrdered
                     infoUltFecha = new AgrupadorInfoQuery();
                 }
             }
-            
+
             return infoUltFecha;
         }
 

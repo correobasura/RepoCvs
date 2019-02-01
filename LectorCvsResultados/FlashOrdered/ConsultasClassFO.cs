@@ -599,5 +599,11 @@ namespace LectorCvsResultados.FlashOrdered
             DbRawSqlQuery<InfoAnalisisDTO4> data = contexto.Database.SqlQuery<InfoAnalisisDTO4>(query);
             return data.AsEnumerable().ToList();
         }
+
+        public static List<AgrupadorInfoQuery2> ConsultarValoresReferencia(SisResultEntities contexto, string query)
+        {
+            DbRawSqlQuery<AgrupadorInfoQuery2> data = contexto.Database.SqlQuery<AgrupadorInfoQuery2>(query);
+            return data.AsEnumerable().ToList();
+        }
     }
 }
