@@ -5,6 +5,57 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="SistResultModel.Store" Provider="Oracle.ManagedDataAccess.Client" ProviderManifestToken="11.2" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ANDATABININFO">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="FECHANUM" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="DIASEM" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="DIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="DIAANIO" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="DIFERENCIAG" Type="number" Precision="38" Scale="0" />
+          <Property Name="KEYRANKGRAL" Type="varchar2" MaxLength="50" Nullable="false" />
+          <Property Name="TABINDEX" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="TABINDEXLETTER" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="GROUPLETTER" Type="char" MaxLength="1" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ANDATAGENINFO">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="GHOME" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="GAWAY" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="TOTALG" Type="number" Precision="38" Scale="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ANDATAGENINFOTEMP">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="GHOME" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="GAWAY" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="TOTALG" Type="number" Precision="38" Scale="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ANDATAINFOPOSRANK">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="DIFERENCIAG" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="DIASEM" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="DIAMES" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="DIAANIO" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="FECHANUM" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="HISTACUM" Type="number" Precision="38" Scale="0" />
+          <Property Name="TIPO" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="TABINDEX" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="INDEXRANK" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="GROUPLETTER" Type="char" MaxLength="1" Nullable="false" />
+          <Property Name="TABINDEXLETTER" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="MESNUM" Type="number" Precision="38" Scale="0" />
+        </EntityType>
         <EntityType Name="FLASHORDERED">
           <Key>
             <PropertyRef Name="ID" />
@@ -45,6 +96,10 @@
           <Property Name="TABINDEXSEQ" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="TABINDEXLETTERSEQ" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="TABINDEXCOMPETSEQ" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="IDGENINFO" Type="number" Precision="38" Scale="0" />
+          <Property Name="IDGENINFOGL" Type="number" Precision="38" Scale="0" />
+          <Property Name="IDGENINFOSTI" Type="number" Precision="38" Scale="0" />
+          <Property Name="IDGENINFOEQGLFECHA" Type="number" Precision="38" Scale="0" />
         </EntityType>
         <EntityType Name="TOTALESDIA">
           <Key>
@@ -62,10 +117,78 @@
           <Property Name="GROUPLETTER" Type="char" MaxLength="1" Nullable="false" />
           <Property Name="TOTAL" Type="number" Precision="38" Scale="0" Nullable="false" />
         </EntityType>
+        <Association Name="SYS_C0011909">
+          <End Role="ANDATAGENINFO" Type="Self.ANDATAGENINFO" Multiplicity="0..1" />
+          <End Role="FLASHORDERED" Type="Self.FLASHORDERED" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ANDATAGENINFO">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="FLASHORDERED">
+              <PropertyRef Name="IDGENINFO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SYS_C0011930">
+          <End Role="ANDATAGENINFO" Type="Self.ANDATAGENINFO" Multiplicity="0..1" />
+          <End Role="FLASHORDERED" Type="Self.FLASHORDERED" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ANDATAGENINFO">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="FLASHORDERED">
+              <PropertyRef Name="IDGENINFOGL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SYS_C0011931">
+          <End Role="ANDATAGENINFO" Type="Self.ANDATAGENINFO" Multiplicity="0..1" />
+          <End Role="FLASHORDERED" Type="Self.FLASHORDERED" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ANDATAGENINFO">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="FLASHORDERED">
+              <PropertyRef Name="IDGENINFOSTI" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SYS_C0011951">
+          <End Role="ANDATAGENINFO" Type="Self.ANDATAGENINFO" Multiplicity="0..1" />
+          <End Role="FLASHORDERED" Type="Self.FLASHORDERED" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ANDATAGENINFO">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="FLASHORDERED">
+              <PropertyRef Name="IDGENINFOEQGLFECHA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="SistResultModelStoreContainer">
+          <EntitySet Name="ANDATABININFO" EntityType="Self.ANDATABININFO" Schema="USERRESULTTABLES" store:Type="Tables" />
+          <EntitySet Name="ANDATAGENINFO" EntityType="Self.ANDATAGENINFO" Schema="USERRESULTTABLES" store:Type="Tables" />
+          <EntitySet Name="ANDATAGENINFOTEMP" EntityType="Self.ANDATAGENINFOTEMP" Schema="USERRESULTTABLES" store:Type="Tables" />
+          <EntitySet Name="ANDATAINFOPOSRANK" EntityType="Self.ANDATAINFOPOSRANK" Schema="USERRESULTTABLES" store:Type="Tables" />
           <EntitySet Name="FLASHORDERED" EntityType="Self.FLASHORDERED" Schema="USERRESULTTABLES" store:Type="Tables" />
           <EntitySet Name="TOTALESDIA" EntityType="Self.TOTALESDIA" Schema="USERRESULTTABLES" store:Type="Tables" />
           <EntitySet Name="TOTALESDIAGROPTAB" EntityType="Self.TOTALESDIAGROPTAB" Schema="USERRESULTTABLES" store:Type="Tables" />
+          <AssociationSet Name="SYS_C0011909" Association="Self.SYS_C0011909">
+            <End Role="ANDATAGENINFO" EntitySet="ANDATAGENINFO" />
+            <End Role="FLASHORDERED" EntitySet="FLASHORDERED" />
+          </AssociationSet>
+          <AssociationSet Name="SYS_C0011930" Association="Self.SYS_C0011930">
+            <End Role="ANDATAGENINFO" EntitySet="ANDATAGENINFO" />
+            <End Role="FLASHORDERED" EntitySet="FLASHORDERED" />
+          </AssociationSet>
+          <AssociationSet Name="SYS_C0011931" Association="Self.SYS_C0011931">
+            <End Role="ANDATAGENINFO" EntitySet="ANDATAGENINFO" />
+            <End Role="FLASHORDERED" EntitySet="FLASHORDERED" />
+          </AssociationSet>
+          <AssociationSet Name="SYS_C0011951" Association="Self.SYS_C0011951">
+            <End Role="ANDATAGENINFO" EntitySet="ANDATAGENINFO" />
+            <End Role="FLASHORDERED" EntitySet="FLASHORDERED" />
+          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -75,6 +198,26 @@
           <EntitySet Name="FLASHORDERED" EntityType="SistResultModel.FLASHORDERED" />
           <EntitySet Name="TOTALESDIA" EntityType="SistResultModel.TOTALESDIA" />
           <EntitySet Name="TOTALESDIAGROPTAB" EntityType="SistResultModel.TOTALESDIAGROPTAB" />
+          <EntitySet Name="ANDATABININFO" EntityType="SistResultModel.ANDATABININFO" />
+          <EntitySet Name="ANDATAINFOPOSRANK" EntityType="SistResultModel.ANDATAINFOPOSRANK" />
+          <EntitySet Name="ANDATAGENINFO" EntityType="SistResultModel.ANDATAGENINFO" />
+          <EntitySet Name="ANDATAGENINFOTEMP" EntityType="SistResultModel.ANDATAGENINFOTEMP" />
+          <AssociationSet Name="SYS_C0011909" Association="SistResultModel.SYS_C0011909">
+            <End Role="ANDATAGENINFO" EntitySet="ANDATAGENINFO" />
+            <End Role="FLASHORDERED" EntitySet="FLASHORDERED" />
+          </AssociationSet>
+          <AssociationSet Name="SYS_C0011930" Association="SistResultModel.SYS_C0011930">
+            <End Role="ANDATAGENINFO" EntitySet="ANDATAGENINFO" />
+            <End Role="FLASHORDERED" EntitySet="FLASHORDERED" />
+          </AssociationSet>
+          <AssociationSet Name="SYS_C0011931" Association="SistResultModel.SYS_C0011931">
+            <End Role="ANDATAGENINFO" EntitySet="ANDATAGENINFO" />
+            <End Role="FLASHORDERED" EntitySet="FLASHORDERED" />
+          </AssociationSet>
+          <AssociationSet Name="SYS_C0011951" Association="SistResultModel.SYS_C0011951">
+            <End Role="ANDATAGENINFO" EntitySet="ANDATAGENINFO" />
+            <End Role="FLASHORDERED" EntitySet="FLASHORDERED" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="FLASHORDERED">
           <Key>
@@ -116,6 +259,14 @@
           <Property Name="IDCOMPETITION" Type="Int32" Nullable="false" />
           <Property Name="TABINDEXCOMPETITION" Type="Int32" Nullable="false" />
           <Property Name="TABINDEXCOMPETSEQ" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="IDGENINFO" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="IDGENINFOGL" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="IDGENINFOSTI" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="IDGENINFOEQGLFECHA" Type="Decimal" Precision="38" Scale="0" />
+          <NavigationProperty Name="ANDATAGENINFO" Relationship="SistResultModel.SYS_C0011909" FromRole="FLASHORDERED" ToRole="ANDATAGENINFO" />
+          <NavigationProperty Name="ANDATAGENINFO1" Relationship="SistResultModel.SYS_C0011930" FromRole="FLASHORDERED" ToRole="ANDATAGENINFO" />
+          <NavigationProperty Name="ANDATAGENINFO2" Relationship="SistResultModel.SYS_C0011931" FromRole="FLASHORDERED" ToRole="ANDATAGENINFO" />
+          <NavigationProperty Name="ANDATAGENINFO3" Relationship="SistResultModel.SYS_C0011951" FromRole="FLASHORDERED" ToRole="ANDATAGENINFO" />
         </EntityType>
         <EntityType Name="TOTALESDIA">
           <Key>
@@ -133,6 +284,109 @@
           <Property Name="GROUPLETTER" Type="String" Nullable="false" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="TOTAL" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
         </EntityType>
+        <EntityType Name="ANDATABININFO">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="FECHANUM" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="DIASEM" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="DIAMES" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="DIAANIO" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="DIFERENCIAG" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="KEYRANKGRAL" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TABINDEX" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="TABINDEXLETTER" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="GROUPLETTER" Type="String" Nullable="false" MaxLength="1" FixedLength="true" Unicode="false" />
+        </EntityType>
+        <EntityType Name="ANDATAINFOPOSRANK">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="DIFERENCIAG" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="DIASEM" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="DIAMES" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="DIAANIO" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="FECHANUM" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="HISTACUM" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="TIPO" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="TABINDEX" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="INDEXRANK" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="GROUPLETTER" Type="String" Nullable="false" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="TABINDEXLETTER" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="MESNUM" Type="Decimal" Precision="38" Scale="0" />
+        </EntityType>
+        <EntityType Name="ANDATAGENINFO">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="GHOME" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="GAWAY" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="TOTALG" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <NavigationProperty Name="FLASHORDERED" Relationship="SistResultModel.SYS_C0011909" FromRole="ANDATAGENINFO" ToRole="FLASHORDERED" />
+          <NavigationProperty Name="FLASHORDERED1" Relationship="SistResultModel.SYS_C0011930" FromRole="ANDATAGENINFO" ToRole="FLASHORDERED" />
+          <NavigationProperty Name="FLASHORDERED2" Relationship="SistResultModel.SYS_C0011931" FromRole="ANDATAGENINFO" ToRole="FLASHORDERED" />
+          <NavigationProperty Name="FLASHORDERED3" Relationship="SistResultModel.SYS_C0011951" FromRole="ANDATAGENINFO" ToRole="FLASHORDERED" />
+        </EntityType>
+        <EntityType Name="ANDATAGENINFOTEMP">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="GHOME" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="GAWAY" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="TOTALG" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+        </EntityType>
+        <Association Name="SYS_C0011909">
+          <End Type="SistResultModel.ANDATAGENINFO" Role="ANDATAGENINFO" Multiplicity="0..1" />
+          <End Type="SistResultModel.FLASHORDERED" Role="FLASHORDERED" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ANDATAGENINFO">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="FLASHORDERED">
+              <PropertyRef Name="IDGENINFO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SYS_C0011930">
+          <End Type="SistResultModel.ANDATAGENINFO" Role="ANDATAGENINFO" Multiplicity="0..1" />
+          <End Type="SistResultModel.FLASHORDERED" Role="FLASHORDERED" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ANDATAGENINFO">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="FLASHORDERED">
+              <PropertyRef Name="IDGENINFOGL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SYS_C0011931">
+          <End Type="SistResultModel.ANDATAGENINFO" Role="ANDATAGENINFO" Multiplicity="0..1" />
+          <End Type="SistResultModel.FLASHORDERED" Role="FLASHORDERED" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ANDATAGENINFO">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="FLASHORDERED">
+              <PropertyRef Name="IDGENINFOSTI" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SYS_C0011951">
+          <End Type="SistResultModel.ANDATAGENINFO" Role="ANDATAGENINFO" Multiplicity="0..1" />
+          <End Type="SistResultModel.FLASHORDERED" Role="FLASHORDERED" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ANDATAGENINFO">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="FLASHORDERED">
+              <PropertyRef Name="IDGENINFOEQGLFECHA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -142,6 +396,10 @@
           <EntitySetMapping Name="FLASHORDERED">
             <EntityTypeMapping TypeName="SistResultModel.FLASHORDERED">
               <MappingFragment StoreEntitySet="FLASHORDERED">
+                <ScalarProperty Name="IDGENINFOEQGLFECHA" ColumnName="IDGENINFOEQGLFECHA" />
+                <ScalarProperty Name="IDGENINFOSTI" ColumnName="IDGENINFOSTI" />
+                <ScalarProperty Name="IDGENINFOGL" ColumnName="IDGENINFOGL" />
+                <ScalarProperty Name="IDGENINFO" ColumnName="IDGENINFO" />
                 <ScalarProperty Name="TABINDEXCOMPETSEQ" ColumnName="TABINDEXCOMPETSEQ" />
                 <ScalarProperty Name="TABINDEXCOMPETITION" ColumnName="TABINDEXCOMPETITION" />
                 <ScalarProperty Name="IDCOMPETITION" ColumnName="IDCOMPETITION" />
@@ -195,6 +453,61 @@
                 <ScalarProperty Name="TOTAL" ColumnName="TOTAL" />
                 <ScalarProperty Name="GROUPLETTER" ColumnName="GROUPLETTER" />
                 <ScalarProperty Name="FECHANUM" ColumnName="FECHANUM" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ANDATABININFO">
+            <EntityTypeMapping TypeName="SistResultModel.ANDATABININFO">
+              <MappingFragment StoreEntitySet="ANDATABININFO">
+                <ScalarProperty Name="GROUPLETTER" ColumnName="GROUPLETTER" />
+                <ScalarProperty Name="TABINDEXLETTER" ColumnName="TABINDEXLETTER" />
+                <ScalarProperty Name="TABINDEX" ColumnName="TABINDEX" />
+                <ScalarProperty Name="KEYRANKGRAL" ColumnName="KEYRANKGRAL" />
+                <ScalarProperty Name="DIFERENCIAG" ColumnName="DIFERENCIAG" />
+                <ScalarProperty Name="DIAANIO" ColumnName="DIAANIO" />
+                <ScalarProperty Name="DIAMES" ColumnName="DIAMES" />
+                <ScalarProperty Name="DIASEM" ColumnName="DIASEM" />
+                <ScalarProperty Name="FECHANUM" ColumnName="FECHANUM" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ANDATAINFOPOSRANK">
+            <EntityTypeMapping TypeName="SistResultModel.ANDATAINFOPOSRANK">
+              <MappingFragment StoreEntitySet="ANDATAINFOPOSRANK">
+                <ScalarProperty Name="MESNUM" ColumnName="MESNUM" />
+                <ScalarProperty Name="TABINDEXLETTER" ColumnName="TABINDEXLETTER" />
+                <ScalarProperty Name="GROUPLETTER" ColumnName="GROUPLETTER" />
+                <ScalarProperty Name="INDEXRANK" ColumnName="INDEXRANK" />
+                <ScalarProperty Name="TABINDEX" ColumnName="TABINDEX" />
+                <ScalarProperty Name="TIPO" ColumnName="TIPO" />
+                <ScalarProperty Name="HISTACUM" ColumnName="HISTACUM" />
+                <ScalarProperty Name="FECHANUM" ColumnName="FECHANUM" />
+                <ScalarProperty Name="DIAANIO" ColumnName="DIAANIO" />
+                <ScalarProperty Name="DIAMES" ColumnName="DIAMES" />
+                <ScalarProperty Name="DIASEM" ColumnName="DIASEM" />
+                <ScalarProperty Name="DIFERENCIAG" ColumnName="DIFERENCIAG" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ANDATAGENINFO">
+            <EntityTypeMapping TypeName="SistResultModel.ANDATAGENINFO">
+              <MappingFragment StoreEntitySet="ANDATAGENINFO">
+                <ScalarProperty Name="TOTALG" ColumnName="TOTALG" />
+                <ScalarProperty Name="GAWAY" ColumnName="GAWAY" />
+                <ScalarProperty Name="GHOME" ColumnName="GHOME" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ANDATAGENINFOTEMP">
+            <EntityTypeMapping TypeName="SistResultModel.ANDATAGENINFOTEMP">
+              <MappingFragment StoreEntitySet="ANDATAGENINFOTEMP">
+                <ScalarProperty Name="TOTALG" ColumnName="TOTALG" />
+                <ScalarProperty Name="GAWAY" ColumnName="GAWAY" />
+                <ScalarProperty Name="GHOME" ColumnName="GHOME" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

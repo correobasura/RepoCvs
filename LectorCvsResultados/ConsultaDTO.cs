@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace LectorCvsResultados
 {
@@ -35,7 +36,7 @@ namespace LectorCvsResultados
         }
     }
 
-    public class AgrupadorConteosTimeSpanDTO
+    public class AgrupadorInfoQuery
     {
         public int DiaSemNum { get; set; }
         public int Fechanum { get; set; }
@@ -50,34 +51,7 @@ namespace LectorCvsResultados
         public int TotalGen { get; set; }
         public int TotalDif { get; set; }
         public string Key { get; set; }
-    }
-
-    public class AgrupadorFechaNumValor
-    {
-        public int FechaNum
-        {
-            get; set;
-        }
-
-        public int Tabindex
-        {
-            get; set;
-        }
-
-        public int TabindexLetter
-        {
-            get; set;
-        }
-
-        public int Spantiempo
-        {
-            get; set;
-        }
-
-        public string GroupLetter
-        {
-            get; set;
-        }
+        public int ValueDiff { get; set; }
     }
 
     public class AgrupadorTabIndexDiferenciaDTO
@@ -282,6 +256,22 @@ namespace LectorCvsResultados
         public AgrupadorInfoGeneralDTO()
         {
             ListData = new List<int>();
+            //AgrUltFechaNumSpanGen = new AgrupadorInfoQuery();
+            //AgrUltFechaNumSpanGen.ValueDiff = 2;
+            //AgrUltFechaNumSpanDiaSem = new AgrupadorInfoQuery();
+            //AgrUltFechaNumSpanDiaSem.ValueDiff = 2;
+            //AgrUltFechaNumSpanDiaMes = new AgrupadorInfoQuery();
+            //AgrUltFechaNumSpanDiaMes.ValueDiff = 2;
+            //AgrUltFechaNumSpanDiaAnio = new AgrupadorInfoQuery();
+            //AgrUltFechaNumSpanDiaAnio.ValueDiff = 2;
+            //AgrUltFechaNumSpanMesNum = new AgrupadorInfoQuery();
+            //AgrUltFechaNumSpanMesNum.ValueDiff = 2;
+            //AgrUltFechaNumSpanDiaSemMesNum = new AgrupadorInfoQuery();
+            //AgrUltFechaNumSpanDiaSemMesNum.ValueDiff = 2;
+            //AgrUltFechaNumSpanDiaMesMesNum = new AgrupadorInfoQuery();
+            //AgrUltFechaNumSpanDiaMesMesNum.ValueDiff = 2;
+            DicContadoresGen = new Dictionary<int, int>();
+            DicContadoresDiaSem = new Dictionary<int, int>();
         }
         public int Tabindexletter { get; set; }
         public string GroupLetter { get; set; }
@@ -304,20 +294,23 @@ namespace LectorCvsResultados
         public AgrupadorTotalTabIndexDTO AgrupadorPromMaxGroupTabDiaMesMesNum { get; set; }
 
 
-        public AgrupadorFechaNumValor AgrUltFechaNumSpanGen { get; set; }
-        public AgrupadorFechaNumValor AgrUltFechaNumSpanDiaSem { get; set; }
-        public AgrupadorFechaNumValor AgrUltFechaNumSpanDiaMes { get; set; }
-        public AgrupadorFechaNumValor AgrUltFechaNumSpanDiaAnio { get; set; }
-        public AgrupadorFechaNumValor AgrUltFechaNumSpanGlGen { get; set; }
-        public AgrupadorFechaNumValor AgrUltFechaNumSpanGlDiaSem { get; set; }
-        public AgrupadorFechaNumValor AgrUltFechaNumSpanGlDiaMes { get; set; }
-        public AgrupadorFechaNumValor AgrUltFechaNumSpanGlDiaAnio { get; set; }
-        public List<AgrupadorConteosTimeSpanDTO> ListRankSpansGen { get; set; }
-        public List<AgrupadorConteosTimeSpanDTO> ListRankSpansDiaSem { get; set; }
-        public List<AgrupadorConteosTimeSpanDTO> ListRankSpansDiaMes { get; set; }
-        public List<AgrupadorConteosTimeSpanDTO> ListRankSpansGlGen { get; set; }
-        public List<AgrupadorConteosTimeSpanDTO> ListRankSpansGlDiaSem { get; set; }
-        public List<AgrupadorConteosTimeSpanDTO> ListRankSpansGlDiaMes { get; set; }
+        public AgrupadorInfoQuery AgrUltFechaNumSpanGen { get; set; }
+        public AgrupadorInfoQuery AgrUltFechaNumSpanDiaSem { get; set; }
+        public AgrupadorInfoQuery AgrUltFechaNumSpanDiaMes { get; set; }
+        public AgrupadorInfoQuery AgrUltFechaNumSpanDiaAnio { get; set; }
+        public AgrupadorInfoQuery AgrUltFechaNumSpanMesNum { get; set; }
+        public AgrupadorInfoQuery AgrUltFechaNumSpanDiaSemMesNum { get; set; }
+        public AgrupadorInfoQuery AgrUltFechaNumSpanDiaMesMesNum { get; set; }
+        public AgrupadorInfoQuery AgrUltFechaNumSpanGlGen { get; set; }
+        public AgrupadorInfoQuery AgrUltFechaNumSpanGlDiaSem { get; set; }
+        public AgrupadorInfoQuery AgrUltFechaNumSpanGlDiaMes { get; set; }
+        public AgrupadorInfoQuery AgrUltFechaNumSpanGlDiaAnio { get; set; }
+        public List<AgrupadorInfoQuery> ListRankSpansGen { get; set; }
+        public List<AgrupadorInfoQuery> ListRankSpansDiaSem { get; set; }
+        public List<AgrupadorInfoQuery> ListRankSpansDiaMes { get; set; }
+        public List<AgrupadorInfoQuery> ListRankSpansGlGen { get; set; }
+        public List<AgrupadorInfoQuery> ListRankSpansGlDiaSem { get; set; }
+        public List<AgrupadorInfoQuery> ListRankSpansGlDiaMes { get; set; }
         public int RankSpanActualGen { get; set; }
         public int RankSpanActualDiaSem { get; set; }
         public int RankSpanActualDiaMes { get; set; }
@@ -344,18 +337,27 @@ namespace LectorCvsResultados
         public int Percent { get; set; }
         public int PosTemp { get; set; }
         public int TipoOrden { get; set; }
-        public List<AgrupadorConteosTimeSpanDTO> ListRankSpansGlDiaAnio { get; set; }
+        public List<AgrupadorInfoQuery> ListRankSpansGlDiaAnio { get; set; }
         public int RankSpanActualGlDiaAnio { get; set; }
         public int MaxRankSpanActualGlDiaAnio { get; set; }
         public int MinSpanGlDiaAnio { get; set; }
         public int MaxRankSpanActualDiaMes { get; set; }
         public int MinSpanTiDiaMes { get; set; }
-        public List<AgrupadorConteosTimeSpanDTO> ListRankSpansDiaAnio { get; set; }
+        public List<AgrupadorInfoQuery> ListRankSpansDiaAnio { get; set; }
         public int RankSpanActualDiaAnio { get; set; }
         public int MaxRankSpanActualDiaAnio { get; set; }
         public int MinSpanDiaAnio { get; set; }
         public List<int> ListData { get; set; }
         public List<int> ListaInfoPivot { get; set; }
+        public AgrupadorInfoQuery BinInfoGral { get; set; }
+        public AgrupadorInfoQuery BinInfoTabindex { get; set; }
+        public AgrupadorInfoQuery BinInfoGrLet { get; set; }
+        public bool Indicador { get; set; }
+        public List<AgrupadorInfoQuery> ListDataSpans { get; set; }
+        public Dictionary<int, int> DicContadoresGen { get; set;}
+        public Dictionary<int, int> DicContadoresDiaSem { get; set; }
+        public int ValRefGen { get; set; }
+        public int ValRefGlGen { get; set; }
     }
 
     public class AgrupadorMaxTabIndex
@@ -383,9 +385,81 @@ namespace LectorCvsResultados
         public double AvgPos { get { return Positivos + Negativos != 0 ? (Positivos * 100000) / (Positivos + Negativos) : 0; } }
         public double AvgNeg { get { return Positivos + Negativos != 0 ? (Negativos * 100000) / (Positivos + Negativos) : 0; } }
         public double AvgPosVal { get { return Positivos + Negativos != 0 ? Positivos * 100 / (Positivos + Negativos) : 0; } }
+        public int EqPositivos { get; set; }
+        public int EqNegativos { get; set; }
+        public double EqAvgPos { get { return EqPositivos + EqNegativos != 0 ? (EqPositivos * 100000) / (EqPositivos + EqNegativos) : 0; } }
+        public double EqAvgNeg { get { return EqPositivos + EqNegativos != 0 ? (EqNegativos * 100000) / (EqPositivos + EqNegativos) : 0; } }
+        public double EqAvgPosVal { get { return EqPositivos + EqNegativos != 0 ? EqPositivos * 100 / (EqPositivos + EqNegativos) : 0; } }
+        public override string ToString()
+        {
+            return Positivos + ";" + Negativos + ";" + AvgPos + ";" + AvgNeg + "--" + EqPositivos + ";" + EqNegativos + ";" + EqAvgPos + ";" + EqAvgNeg; ;
+        }
+    }
+
+    public class InfoReviewDTO
+    {
+        public int MaxTabindex { get; set; }
+        public List<FLASHORDERED> LstResults { get; set; }
+        public int Positivos { get; set; }
+        public int Negativos { get; set; }
+        public double AvgPos { get { return Positivos + Negativos != 0 ? (Positivos * 100000) / (Positivos + Negativos) : 0; } }
+        public double AvgNeg { get { return Positivos + Negativos != 0 ? (Negativos * 100000) / (Positivos + Negativos) : 0; } }
+        public double AvgPosVal { get { return Positivos + Negativos != 0 ? Positivos * 100 / (Positivos + Negativos) : 0; } }
         public override string ToString()
         {
             return Positivos + ";" + Negativos + ";" + AvgPos + ";" + AvgNeg;
+        }
+    }
+
+    public class InfoAnalisisDTO2
+    {
+        public int Id { get; set; }
+        public int P { get; set; }
+        public int N { get; set; }
+        public double AP { get { return P + N != 0 ? (P * 100000) / (P + N) : 0; } }
+        public double AN { get { return P + N != 0 ? (N * 100000) / (P + N) : 0; } }
+        public double APVal { get { return P + N != 0 ? P * 100 / (P + N) : 0; } }
+        public int EqP { get; set; }
+        public int EqN { get; set; }
+        public double EqAP { get { return EqP + EqN != 0 ? (EqP * 100000) / (EqP + EqN) : 0; } }
+        public double EqAN { get { return EqP + EqN != 0 ? (EqN * 100000) / (EqP + EqN) : 0; } }
+        public double EqAPVal { get { return EqP + EqN != 0 ? EqP * 100 / (EqP + EqN) : 0; } }
+        public override string ToString()
+        {
+            return "{\"Id\":\""+Id+"\",\"P\":\""+P+"\",\"N\":\""+N+ "\",\"EqP\":\""+ EqP+ "\",\"EqN\":\""+EqN+"\"}";
+        }
+    }
+
+    public class InfoAnalisisDTO3
+    {
+        public int Id { get; set; }
+        public List<InfoAnalisisDTO2> Lst { get; set; }
+        public override string ToString()
+        {
+            return "{\"Id\":\"" + Id + "\",\"lst\":["+ string.Join(",", Lst) +"]}";
+        }
+    }
+
+    public class InfoAnalisisDTO4
+    {
+        public int Total { get; set; }
+        public int Tipo { get; set; }
+        public int IndexRank { get; set; }
+        public double Prob { get; set; }
+        public int Rank { get; set; }
+    }
+
+    public class InfoAnalisisDTO5
+    {
+        public int Tipo { get; set; }
+        public InfoAnalisisDTO Value { get; set; }
+        public int Fechanum { get; set; }
+
+        public InfoAnalisisDTO5(int tipo, int fechanum)
+        {
+            this.Tipo = tipo;
+            this.Fechanum = fechanum;
+            this.Value = new InfoAnalisisDTO();
         }
     }
 }

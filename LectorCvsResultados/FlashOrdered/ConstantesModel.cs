@@ -3,6 +3,7 @@
     public class ConstantesModel
     {
         public const string FLASHORDERED = "flashordered";
+        public const string TOTALESDIA = "totalesdia";
 
         public const string ID = "id";
         public const string TABINDEX = "tabindex";
@@ -65,5 +66,7 @@
         public const string KEYRANK = "keyrank";
         public const string KEYRANKGRAL = "keyrankgral";
         public const string ANDATABININFO = "andatabininfo";
+        public const string ANDATAINFOPOSRANK = "andatainfoposrank";
+        public const string TOTAL = "total";
     }
 }

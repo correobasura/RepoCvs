@@ -3,6 +3,7 @@ using LectorCvsResultados.UtilGeneral;
 using log4net;
 using log4net.Config;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LectorCvsResultados
 {
@@ -17,13 +19,9 @@ namespace LectorCvsResultados
     {
         private static SisResultEntities contexto;
         private static DateTime minFecha = DateTime.ParseExact("20170202", "yyyyMMdd", CultureInfo.InvariantCulture);
-        private static string rutaBase = @"D:\OneDrive\Estimaciones\FS\";
-        private static string rutaBaseSw = @"D:\OneDrive\SW\Template\Template.html";
-        //private static string rutaWriteTemp = @"D:\OneDrive\SW\";
-        private static string rutaWriteTemp = @"D:\OneDrive\FilesM\";
         private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-        private const int VAL_TOTAL = 500;
+        //private static string key = "";
+        //private static List<InfoAnalisisDTO3> lista = new List<InfoAnalisisDTO3>();
 
         public static void AnalizarDatosListaDiaActual(string rutaBase, DateTime fecha, int maxTabindex = 0)
         {
@@ -170,8 +168,8 @@ namespace LectorCvsResultados
             {
                 for (int i = 1; i <= 7; i++)
                 {
-                    string rutaActual = rutaBase + "\\" + item + i + ".csv";
-                    string rutaConsolidado = rutaBase + "\\Consolidados\\" + item + i + ".csv";
+                    string rutaActual = ConstantesGenerales.rutaBase + "\\" + item + i + ".csv";
+                    string rutaConsolidado = ConstantesGenerales.rutaBase + "\\Consolidados\\" + item + i + ".csv";
                     IEnumerable<string> linesActual = File.ReadAllLines(rutaActual);
                     IEnumerable<string> linesConsolidado = File.ReadAllLines(rutaConsolidado);
                     List<AgrupadorConsolidadoDTO> listaConsolidada = new List<AgrupadorConsolidadoDTO>();
@@ -211,7 +209,7 @@ namespace LectorCvsResultados
                         .ThenByDescending(x => x.MaxValue)
                         .AsEnumerable().ToList();
                     string rutaFinal = "\\Consolidados\\" + item + i;
-                    EscribirDatosArchivo(listaConsolidada, rutaFinal, rutaBase);
+                    UtilFilesIO.EscribirDatosArchivo(listaConsolidada, rutaFinal, ConstantesGenerales.rutaBase);
                 }
             }
         }
@@ -224,58 +222,6 @@ namespace LectorCvsResultados
             ////53 % encontrado en consolidado
             //int percent = ts.Days * AnDataUnGanador.RetornarPercent(dayofweek) / 100;
             //AnDataUnGanador.AnalizarDatosDia(dt, contexto, percent);
-        }
-
-        public static void EscribirDatosArchivo(List<AgrupadorConsolidadoDTO> listaSeleccionados, string cad, string rutabase)
-        {
-            string fic = rutabase + cad + ".csv";
-            StreamWriter sw = new StreamWriter(fic);
-            var i = 0;
-            foreach (var item in listaSeleccionados)
-            {
-                sw.WriteLine(item.ToString());
-                i++;
-            }
-            sw.Close();
-        }
-
-        public static void EscribirDatosArchivo(Dictionary<int, AnalizedTabIndexDTO> dict, string cad, string rutabase)
-        {
-            //var data = CalcularNumeros();
-            string fic = rutabase + cad + ".csv";
-            StreamWriter sw = new StreamWriter(fic);
-            foreach (var item in dict)
-            {
-                sw.WriteLine(item.Value.ToString());
-            }
-            sw.WriteLine("\n");
-            //foreach (var item in data)
-            //{
-            //    sw.WriteLine(item);
-            //}
-            sw.Close();
-        }
-
-        public static void EscribirDatosArchivo(List<AnalisisDatosDTO> listaSeleccionados, string cad, string rutabase)
-        {
-            string fic = rutabase + cad + ".csv";
-            StreamWriter sw = new StreamWriter(fic);
-            foreach (var item in listaSeleccionados)
-            {
-                sw.WriteLine(item.ToString());
-            }
-            sw.Close();
-        }
-
-        public static void EscribirDatosArchivo(Dictionary<int, AgrupadorTimeSpanDTO> dict, string cad, string rutabase)
-        {
-            string fic = rutabase + cad + ".csv";
-            StreamWriter sw = new StreamWriter(fic);
-            foreach (var item in dict)
-            {
-                sw.WriteLine(item.Key + ";" + item.Value.ToString());
-            }
-            sw.Close();
         }
 
         private static void IngresarDatosAllReload()
@@ -391,9 +337,9 @@ namespace LectorCvsResultados
             string infoHtml;
             for (var i = laFecha; i <= laFechaMax; i = i.AddDays(1))
             {
-                string path = rutaWriteTemp + i.ToString("yyyy") + "\\" + i.ToString("MM") + "\\" + i.ToString("dd") + ".html";
-                string pathT = rutaWriteTemp + i.ToString("yyyy") + "\\" + i.ToString("MM") + "\\" + i.ToString("dd") + "T.html";
-                string pathF = rutaWriteTemp + i.ToString("yyyy") + "\\" + i.ToString("MM") + "\\" + i.ToString("dd") + "F.html";
+                string path = ConstantesGenerales.rutaWriteTemp + i.ToString("yyyy") + "\\" + i.ToString("MM") + "\\" + i.ToString("dd") + ".html";
+                string pathT = ConstantesGenerales.rutaWriteTemp + i.ToString("yyyy") + "\\" + i.ToString("MM") + "\\" + i.ToString("dd") + "T.html";
+                string pathF = ConstantesGenerales.rutaWriteTemp + i.ToString("yyyy") + "\\" + i.ToString("MM") + "\\" + i.ToString("dd") + "F.html";
                 if (i.Equals(laFechaMax))
                 {
                     if (!File.Exists(pathT))
@@ -428,122 +374,263 @@ namespace LectorCvsResultados
             foreach (var i in lstFechas)
             {
                 esActual = "T".Equals(i.Value);
-                infoHtml = UtilHtml.GetAsyncM(i.Key, rutaBaseSw, esActual);
-                EscribirArchivoHtml(infoHtml, i.Key, i.Value);
+                infoHtml = UtilHtml.GetAsyncM(i.Key, ConstantesGenerales.rutaBaseSw, esActual);
+                UtilFilesIO.EscribirArchivoHtml(infoHtml, i.Key, i.Value, ConstantesGenerales.rutaWriteTemp);
             }
             InsertarFORecientes();
-            ////UtilValidate.TestValidateMinReg(contexto);
-            List<AgrupadorInfoGeneralDTO> listaTemp;
-            List<AgrupadorInfoGeneralDTO> listaData = new List<AgrupadorInfoGeneralDTO>();
-            List<FLASHORDERED> listaHtmlTemp;
-            List<FLASHORDERED> listaDia;
-            int fecha;
-            Dictionary<int, InfoAnalisisDTO> dictTotalesDias = new Dictionary<int, InfoAnalisisDTO>();
-            //for (int i = 0; i<=8; i++)
-            //{
-            //    dictTotalesDias.Add(i, new InfoAnalisisDTO());
-            //}
-            Dictionary<int, InfoAnalisisDTO> dictRanks = new Dictionary<int, InfoAnalisisDTO>();
-            Dictionary<int, int> dictRanksAbs = new Dictionary<int, int>();
-            //Dictionary<int, Dictionary<int, InfoAnalisisDTO>> dictRanksDias = new Dictionary<int, Dictionary<int, InfoAnalisisDTO>>();
-            //Dictionary<string, InfoAnalisisDTO> dictRanks = new Dictionary<string, InfoAnalisisDTO>();
-            //for (int i = 0; i < 20; i++)
-            //{
-            //    dictRanks.Add(i, new InfoAnalisisDTO());
-            //}
-            Dictionary<int, InfoAnalisisDTO> dictGen = new Dictionary<int, InfoAnalisisDTO>();
-            //for (double j = 0.80; j < 0.95; j = j + 0.01)
-            //for (int j = -50; j < -9; j++)
-            //{
-            //    dictGen.Add(j, new InfoAnalisisDTO());
-            //var laFechaMin = DateTime.ParseExact(laFechaMax.AddDays(-15).ToString("yyyyMMdd"), "yyyyMMdd", CultureInfo.InvariantCulture);
-            //Dictionary<string, InfoAnalisisDTO> dictTemp = new Dictionary<string, InfoAnalisisDTO>();
-            //int dayofweek = (int)laFechaMax.DayOfWeek == 0 ? 7 : (int)laFechaMax.DayOfWeek;
-            //string strVar;
-            ////var maxTemp = DateTime.ParseExact("20181107", "yyyyMMdd", CultureInfo.InvariantCulture);
-            //for (int k = -215; k >= -289; k -= 1)
-            //{
-            //    dictRanks.Add(k, new InfoAnalisisDTO());
-            //    //for (var i = maxTemp; i >= laFechaMin; i = i.AddDays(-1))
-            //    for (var i = laFechaMin; i < laFechaMax; i = i.AddDays(1))
-            //    {
-            //        //int dayofweekIn = (int)i.DayOfWeek == 0 ? 7 : (int)i.DayOfWeek;
-            //        //if (!dayofweek.Equals(dayofweekIn)) continue;
-            //        fecha = Convert.ToInt32(i.ToString("yyyyMMdd"));
-            //        dictTotalesDias.Add(fecha, new InfoAnalisisDTO());
 
-            //        listaHtmlTemp = AnDataFlashOrdered.GetListaTemp(i, 1, contexto, VAL_TOTAL);
-            //        listaData = AnDataFlashOrdered.ValidarElementosDia(i, 1, contexto, listaHtmlTemp, k);
-            //        listaTemp = listaData.Where(x => x.Puntuacion > 0).ToList();
-            //        //listaTemp = AnDataFlashOrdered.ValidarElementosDia(i, 1, contexto, listaHtmlTemp, 0);
-            //        listaDia = UtilGeneral.UtilHtml.LeerInfoHtml(i, 1);
-            //        foreach (var item in listaTemp)
+            List<AgrupadorInfoGeneralDTO> listaTemp;
+            List<FLASHORDERED> listaDia;
+            List<FLASHORDERED> listaHtmlTemp;
+            string fecha;
+            int dayofweek;
+            string keyFile;
+            string keyInfo;
+            List<AgrupadorInfoQuery> listProbRanks;
+            Dictionary<int, InfoAnalisisDTO> dictTotales = new Dictionary<int, InfoAnalisisDTO>();
+            Dictionary<int, InfoAnalisisDTO> dictTotalesFin;
+            Dictionary<int, Dictionary<int, InfoAnalisisDTO>> dictGen = new Dictionary<int, Dictionary<int, InfoAnalisisDTO>>();
+
+
+            Dictionary<int, InfoAnalisisDTO> dicTAnalisis;
+            Dictionary<int, int> dicTSelected = new Dictionary<int, int>();
+            Dictionary<int, int> dictTotalesInfo = new Dictionary<int, int>();
+            List<int> listaDias;
+            List<FLASHORDERED> listaDatos;
+            List<FLASHORDERED> dataLstDia;
+            List<FLASHORDERED> dataActual;
+            List<int> listaTempSelected;
+            int maxTabIndexDia;
+            int fechaNum;
+            //for (var i = laFechaMax.AddDays(-45); i < laFechaMax.AddDays(-15); i = i.AddDays(1))
+            //{
+            //    fechaNum = Convert.ToInt32(i.ToString("yyyyMMdd"));
+            //    dictTotales.Add(fechaNum, new InfoAnalisisDTO());
+            //    listaHtmlTemp = UtilGeneral.UtilHtml.LeerInfoHtmlTempActual(i, 1);
+            //    maxTabIndexDia = (from x in listaHtmlTemp select x.TABINDEX).Max();
+            //    listaDias = contexto.TOTALESDIA.Where(x => x.TOTAL == maxTabIndexDia && x.ID < fechaNum).Select(x => (int)x.ID).ToList();
+            //    dictTotalesInfo.Add(fechaNum, listaDias.Count);
+            //    if (listaDias.Count <= 2) continue;
+            //    dicTSelected.Clear();
+            //    listaDatos = contexto.FLASHORDERED.Where(x => listaDias.Contains(x.FECHANUM)).ToList();
+            //    dictGen.Clear();
+            //    for (int j = 1; j < listaDias.Count - 1; j++)
+            //    {
+            //        dataLstDia = (from x in listaDatos where x.FECHANUM == listaDias.ElementAt(j) select x).ToList();
+            //        dataActual = (from x in listaDatos where x.FECHANUM == listaDias.ElementAt(j - 1) select x).ToList();
+            //        foreach (var itemHist in dataActual)
             //        {
-            //            var data = (from x in listaDia where x.TABINDEX == item.Tabindex select x).FirstOrDefault();
-            //            if (data == null) continue;
-            //            strVar = string.Join("", item.ListData);
-            //            if (!dictTemp.ContainsKey(strVar))
+            //            if (!dictGen.ContainsKey(itemHist.TABINDEX))
             //            {
-            //                dictTemp.Add(strVar, new InfoAnalisisDTO());
-            //            }
-            //            if (data.DIFERENCIAG == 0)
-            //            {
-            //                dictTotalesDias[fecha].Negativos++;
-            //                //listaNeg.Add(item);
-            //                dictTemp[strVar].Negativos++;
+            //                dicTAnalisis = new Dictionary<int, InfoAnalisisDTO>();
+            //                dictGen.Add(itemHist.TABINDEX, dicTAnalisis);
             //            }
             //            else
             //            {
-            //                dictTotalesDias[fecha].Positivos++;
-            //                //listaPos.Add(item);
-            //                dictTemp[strVar].Positivos++;
+            //                dicTAnalisis = dictGen[itemHist.TABINDEX];
+            //            }
+            //            foreach (var itemActual in dataLstDia)
+            //            {
+            //                if (!dicTAnalisis.ContainsKey(itemActual.TABINDEX))
+            //                {
+            //                    dicTAnalisis.Add(itemActual.TABINDEX, new InfoAnalisisDTO());
+            //                }
+            //                if (itemHist.DIFERENCIAG == 0)
+            //                {
+            //                    if (itemActual.DIFERENCIAG == 0)
+            //                    {
+            //                        dicTAnalisis[itemActual.TABINDEX].EqNegativos++;
+            //                    }
+            //                    else
+            //                    {
+            //                        dicTAnalisis[itemActual.TABINDEX].EqPositivos++;
+            //                    }
+            //                }
+            //                else
+            //                {
+            //                    if (itemActual.DIFERENCIAG == 0)
+            //                    {
+            //                        dicTAnalisis[itemActual.TABINDEX].Negativos++;
+            //                    }
+            //                    else
+            //                    {
+            //                        dicTAnalisis[itemActual.TABINDEX].Positivos++;
+            //                    }
+            //                }
             //            }
             //        }
             //    }
-            //    dictRanks[k].Positivos = (from entry in dictTotalesDias select entry.Value.Positivos).Sum();
-            //    dictRanks[k].Negativos = (from entry in dictTotalesDias select entry.Value.Negativos).Sum();
-            //    int totalLecs = (from x in dictTotalesDias where x.Value.AvgPosVal.Equals(100) select x).ToList().Count;
-            //    dictRanksAbs.Add(k, totalLecs);
-            //    dictTotalesDias.Clear();
-            //}
-
-            //}
-            //dictGen = (from x in dictGen orderby x.Value.AvgPos descending, x.Value.AvgNeg, x.Value.Positivos descending select x).ToDictionary(x => x.Key, x => x.Value);
-            //dictRanks = (from entry in dictRanks orderby entry.Value.AvgPos descending, entry.Value.Positivos descending, entry.Value.AvgNeg select entry).ToDictionary(x => x.Key, x => x.Value);
-            var dataIn = "";
-            var laFechaActual = DateTime.Now.AddHours(3).AddMinutes(30);
-            listaHtmlTemp = AnDataFlashOrdered.GetListaTemp(laFechaActual, 1, contexto, VAL_TOTAL);
-            listaTemp = AnDataFlashOrdered.ValidarElementosDia(laFechaActual, 1, contexto, listaHtmlTemp, 0);
-            int dayofweek2 = (int)DateTime.Now.AddHours(3).AddMinutes(30).DayOfWeek == 0 ? 7 : (int)DateTime.Now.AddHours(3).AddMinutes(30).DayOfWeek;
-            List<AgrupadorInfoGeneralDTO> listaSelectedDos = (from x in listaTemp where x.Puntuacion > 0 select x).ToList();
-
-            List<AgrupadorInfoGeneralDTO> listaSelected = new List<AgrupadorInfoGeneralDTO>();
-            //foreach (var item in listaTemp)
-            //{
-            //    //strVar = string.Join("", item.ListData);
-            //    //var dataInfo = (from x in dictTemp where x.Key.Equals(strVar) select x.Value).FirstOrDefault();
-            //    if (dataInfo != null && dataInfo.AvgPosVal >= 85)
+            //    dataActual = (from x in listaDatos where x.FECHANUM == listaDias.ElementAt(listaDias.Count - 1) select x).ToList();
+            //    foreach (var item in dataActual)
             //    {
-            //        listaSelected.Add(item);
+            //        dicTAnalisis = dictGen[item.TABINDEX];
+            //        if(item.DIFERENCIAG == 0)
+            //        {
+            //            listaTempSelected = (from x in dicTAnalisis where x.Value.EqAvgPos >= 90000 select x.Key).ToList();
+            //        }
+            //        else
+            //        {
+            //            listaTempSelected = (from x in dicTAnalisis where x.Value.AvgPos >= 90000 select x.Key).ToList();
+            //        }
+            //        foreach (var itemSelected in listaTempSelected)
+            //        {
+            //            if (!dicTSelected.ContainsKey(itemSelected))
+            //            {
+            //                dicTSelected.Add(itemSelected, 0);
+            //            }
+            //            dicTSelected[itemSelected]++;
+            //        }
             //    }
+            //    dicTSelected = (from x in dicTSelected orderby x.Value select x).ToDictionary(x => x.Key, x => x.Value);
+            //    int counter = 0;
+            //    listaDia = UtilGeneral.UtilHtml.LeerInfoHtml(i, 1);
+            //    foreach (var item in dicTSelected)
+            //    {
+            //        var data = (from x in listaDia where x.TABINDEX == item.Key select x).FirstOrDefault();
+            //        if(data != null)
+            //        {
+            //            if(data.DIFERENCIAG == 0)
+            //            {
+            //                dictTotales[fechaNum].Negativos++;
+            //            }
+            //            else
+            //            {
+            //                dictTotales[fechaNum].Positivos++;
+            //            }
+            //            counter++;
+            //            if (counter > 0) break;
+            //        }
+            //    }
+
+
+
+            //    var stop = "";
             //}
+
             var final = "";
         }
 
 
 
-        public static void EscribirArchivoHtml(string data, DateTime fecha, string pathConcat)
+
+        private static List<InfoAnalisisDTO3> ReviewInfo(DateTime laFechaMax, int fromDays,
+            Dictionary<DateTime, InfoReviewDTO> dictInfo)
         {
-            string path = rutaWriteTemp + fecha.ToString("yyyy") + "\\" + fecha.ToString("MM") + "\\";
-            if (!Directory.Exists(path))
+            List<InfoAnalisisDTO3> infoList = new List<InfoAnalisisDTO3>();
+            Dictionary<int, InfoAnalisisDTO> dictTotalesDias = new Dictionary<int, InfoAnalisisDTO>();
+            Dictionary<int, Dictionary<int, InfoAnalisisDTO>> dictTotalesTabindex = new Dictionary<int, Dictionary<int, InfoAnalisisDTO>>();
+
+            var laFecha = DateTime.ParseExact(laFechaMax.AddDays(-fromDays).ToString("yyyyMMdd"), "yyyyMMdd", CultureInfo.InvariantCulture);
+            for (var j = laFecha; j < laFechaMax.AddDays(-2); j = j.AddDays(1))
             {
-                Directory.CreateDirectory(path);
+                var infoResultsSig = dictInfo[j.AddDays(1)].LstResults;
+                var infoResultsHist = dictInfo[j].LstResults;
+                foreach (var item in infoResultsHist)
+                {
+                    if (!dictTotalesTabindex.ContainsKey(item.TABINDEX))
+                    {
+                        dictTotalesDias = new Dictionary<int, InfoAnalisisDTO>();
+                        dictTotalesTabindex.Add(item.TABINDEX, dictTotalesDias);
+                    }
+                    else
+                    {
+                        dictTotalesDias = dictTotalesTabindex[item.TABINDEX];
+                    }
+                    foreach (var itemSig in infoResultsSig)
+                    {
+                        if (!dictTotalesDias.ContainsKey(itemSig.TABINDEX))
+                        {
+                            dictTotalesDias.Add(itemSig.TABINDEX, new InfoAnalisisDTO());
+                        }
+                        if (item.DIFERENCIAG == 0)
+                        {
+                            if (itemSig.DIFERENCIAG == 0)
+                            {
+                                dictTotalesDias[itemSig.TABINDEX].EqNegativos++;
+                            }
+                            else
+                            {
+                                dictTotalesDias[itemSig.TABINDEX].EqPositivos++;
+                            }
+                        }
+                        else
+                        {
+                            if (itemSig.DIFERENCIAG == 0)
+                            {
+                                dictTotalesDias[itemSig.TABINDEX].Negativos++;
+                            }
+                            else
+                            {
+                                dictTotalesDias[itemSig.TABINDEX].Positivos++;
+                            }
+                        }
+                    }
+                }
             }
-            path += fecha.ToString("dd") + pathConcat + ".html";
-            StreamWriter sw = new StreamWriter(path);
-            sw.WriteLine(data);
-            sw.Close();
+            foreach (var item in dictTotalesTabindex)
+            {
+                var data = new InfoAnalisisDTO3();
+                data.Id = item.Key;
+                data.Lst = new List<InfoAnalisisDTO2>();
+                foreach (var itemValue in item.Value)
+                {
+                    var dataItemList = new InfoAnalisisDTO2();
+                    dataItemList.Id = itemValue.Key;
+                    dataItemList.P = itemValue.Value.Positivos;
+                    dataItemList.N = itemValue.Value.Negativos;
+                    dataItemList.EqP = itemValue.Value.EqPositivos;
+                    dataItemList.EqN = itemValue.Value.EqNegativos;
+                    data.Lst.Add(dataItemList);
+                }
+                infoList.Add(data);
+            }
+            return infoList;
         }
+
+        private static Dictionary<int, InfoAnalisisDTO2> GetInfoByProb(DateTime laFechaMax, int minProb, List<InfoAnalisisDTO3> dictTotalesTabindex)
+        {
+            Dictionary<int, InfoAnalisisDTO2> dictTotalesDias = new Dictionary<int, InfoAnalisisDTO2>();
+            Dictionary<int, List<InfoAnalisisDTO2>> dictTotalesTabindexSel = new Dictionary<int, List<InfoAnalisisDTO2>>();
+            List<FLASHORDERED> listaHtmlTemp = UtilGeneral.UtilHtml.LeerInfoHtmlTempActual(laFechaMax, 1);
+            List<FLASHORDERED> listaHist = UtilGeneral.UtilHtml.LeerInfoHtml(laFechaMax.AddDays(-1));
+            int maxTabindexTemp = (from x in listaHtmlTemp select x.TABINDEX).Max();
+            int maxTabindexHist = (from x in listaHist select x.TABINDEX).Max();
+            listaHist = listaHist.Where(x => x.Estado.Equals("FP")).ToList();
+            foreach (var itemHist in listaHist)
+            {
+                var data = (from x in dictTotalesTabindex where x.Id.Equals(itemHist.TABINDEX) select x.Lst).FirstOrDefault();
+                if (itemHist.DIFERENCIAG == 0)
+                {
+                    var dataCollectionSelected = (from x in data
+                                                  where x.Id <= maxTabindexTemp && x.EqAP >= minProb
+                                                  orderby x.EqAP descending, x.EqP descending, x.EqN
+                                                  select x).ToList();
+                    dictTotalesTabindexSel.Add(itemHist.TABINDEX, dataCollectionSelected);
+                }
+                else
+                {
+                    var dataCollectionSelected = (from x in data
+                                                  where x.Id <= maxTabindexTemp && x.P >= minProb
+                                                  orderby x.P descending, x.EqP descending, x.N
+                                                  select x).ToList();
+                    dictTotalesTabindexSel.Add(itemHist.TABINDEX, dataCollectionSelected);
+                }
+
+            }
+            dictTotalesDias.Clear();
+            foreach (var item in dictTotalesTabindexSel)
+            {
+                foreach (var itemValue in item.Value)
+                {
+                    if (!dictTotalesDias.ContainsKey(itemValue.Id))
+                    {
+                        dictTotalesDias.Add(itemValue.Id, itemValue);
+                    }
+                }
+            }
+            return dictTotalesDias;
+        }
+
 
         private static void InsertarFORecientes()
         {
@@ -556,19 +643,15 @@ namespace LectorCvsResultados
                               select b.ID).Max();
             var laFecha = DateTime.ParseExact(laFechaNum.ToString(), "yyyyMMdd", CultureInfo.InvariantCulture).AddDays(1);
             var laFechaMax = DateTime.ParseExact(DateTime.Now.AddHours(3).AddMinutes(30).ToString("yyyyMMdd"), "yyyyMMdd", CultureInfo.InvariantCulture);
-            int idInicio = ConsultasClassFO.ConsultarMaxIdActual(contexto, ConstantesGenerales.TBL_FLASH);
             //int idPrueba = ConsultasClassFO.ConsultarMaxIdActual(contexto);
             //int idInicio = 1;
             for (var i = laFecha; i < laFechaMax;)
             {
                 //lista.AddRange(UtilGeneral.UtilHtml.LeerInfoHtml(i, idInicio, 0));
-                listaSelected = UtilGeneral.UtilHtml.LeerInfoHtml(i, idInicio);
+                listaSelected = UtilGeneral.UtilHtml.LeerInfoHtml(i);
                 int value = (from x in listaSelected select x.TABINDEX).Max();
 
                 lista.AddRange(listaSelected);
-                idInicio = (int)(from x
-                            in lista
-                                 select x.ID).Max() + 1;
                 //idPrueba = idPrueba + lista.Count + 1;
                 //AnDataSelectedInfo.GuardarElementosSelectedInfo(contexto, i, VAL_TOTAL, listaSelected);
                 i = i.AddDays(1);
@@ -593,10 +676,11 @@ namespace LectorCvsResultados
             //var strop = "";
 
             AnDataFlashOrdered.InsertarElementosActuales(lista, contexto);
+            AnDataInfoPosRank.AddInfoPosRank(contexto, laFecha, laFechaMax);
             //AnDataFlashOrdered.InsertarElementosPercent(listaInfoPercent, contexto, VAL_TOTAL);
 
             //AnDataRank.AddInfoRank(contexto, VAL_TOTAL, laFecha);
-            //AnDataBinaryInfo.AddInfoBinary(contexto, VAL_TOTAL, laFecha);
+            AnDataBinaryInfo.AddInfoBinary(contexto, laFecha);
         }
 
         private static void ReiniciarDatosFlashOrdered()
@@ -821,28 +905,13 @@ namespace LectorCvsResultados
         //    EscribirArchivoCsv(lista, pathWriteFile, pathWrite);
         //}
 
-        public static void EscribirArchivoCsv(List<FLASHORDERED> lista, string pathWriteFile, string pathWrite)
-        {
-            if (!Directory.Exists(pathWrite))
-            {
-                Directory.CreateDirectory(pathWrite);
-            }
-            StreamWriter sw = new StreamWriter(pathWriteFile);
-            foreach (var item in lista)
-            {
-                var json = JsonConvert.SerializeObject(item);
-                sw.WriteLine(json);
-            }
-            sw.Close();
-        }
-
         private static void AnalizarTabindexResultados(string filename)
         {
             StreamReader fileReader;
             DateTime dt = DateTime.ParseExact(filename, "yyyyMMdd", CultureInfo.InvariantCulture);
-            string rutaFileTemp = rutaBase + dt.ToString("yyyyMM") + "\\" + filename + "T.csv";
-            string rutaFileFinal = rutaBase + dt.ToString("yyyyMM") + "\\" + filename + "F.csv";
-            string rutaFinal = rutaBase + dt.ToString("yyyyMM") + "\\" + filename + ".csv";
+            string rutaFileTemp = ConstantesGenerales.rutaBase + dt.ToString("yyyyMM") + "\\" + filename + "T.csv";
+            string rutaFileFinal = ConstantesGenerales.rutaBase + dt.ToString("yyyyMM") + "\\" + filename + "F.csv";
+            string rutaFinal = ConstantesGenerales.rutaBase + dt.ToString("yyyyMM") + "\\" + filename + ".csv";
             IEnumerable<string> lines = File.ReadAllLines(rutaFileFinal);
             List<string> linesFinal = new List<string>();
             fileReader = new StreamReader(rutaFileTemp);

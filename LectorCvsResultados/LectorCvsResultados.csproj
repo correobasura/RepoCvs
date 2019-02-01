@@ -77,6 +77,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ANDATABININFO.cs">
+      <DependentUpon>SisResultModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ANDATAINFOPOSRANK.cs">
+      <DependentUpon>SisResultModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="AnDataMayorUno.cs" />
     <Compile Include="AnDataUnGanador.cs" />
     <Compile Include="ConstantesConsulta.cs" />
@@ -86,6 +92,7 @@
       <DependentUpon>SisResultModel.tt</DependentUpon>
     </Compile>
     <Compile Include="FlashOrdered\AnDataBinaryInfo.cs" />
+    <Compile Include="FlashOrdered\AnDataInfoPosRank.cs" />
     <Compile Include="FlashOrdered\AnDataSelectedInfo.cs" />
     <Compile Include="FlashOrdered\AnDataFlashOrdered.cs" />
     <Compile Include="FlashOrdered\AnDataRank.cs" />

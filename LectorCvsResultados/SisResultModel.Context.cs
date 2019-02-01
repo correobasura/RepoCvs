@@ -38,6 +38,14 @@ public partial class SisResultEntities : DbContext
 
     public virtual DbSet<TOTALESDIAGROPTAB> TOTALESDIAGROPTAB { get; set; }
 
+    public virtual DbSet<ANDATABININFO> ANDATABININFO { get; set; }
+
+    public virtual DbSet<ANDATAINFOPOSRANK> ANDATAINFOPOSRANK { get; set; }
+
+    public virtual DbSet<ANDATAGENINFO> ANDATAGENINFO { get; set; }
+
+    public virtual DbSet<ANDATAGENINFOTEMP> ANDATAGENINFOTEMP { get; set; }
+
 }
 
 }

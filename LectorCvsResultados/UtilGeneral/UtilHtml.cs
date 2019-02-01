@@ -200,7 +200,7 @@ namespace LectorCvsResultados.UtilGeneral
         }
 
         public static List<FLASHORDERED> LeerInfoHtml(
-            DateTime fecha, decimal idInicio, int caso = 1)
+            DateTime fecha, int caso = 1)
         {
             List<FLASHORDERED> listaHtmlFinal = new List<FLASHORDERED>();
             string fechaMes = fecha.ToString("MM");
@@ -276,7 +276,6 @@ namespace LectorCvsResultados.UtilGeneral
                 item.DIAMES = diaMes;
                 item.DIAANIO = diaAnio;
                 item.FECHA = fecha;
-                item.ID = idInicio++;
                 item.FECHANUM = fechaNum;
                 item.MESNUM = fecha.Month;
             }

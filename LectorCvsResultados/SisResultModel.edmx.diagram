@@ -8,6 +8,14 @@
         <EntityTypeShape EntityType="SistResultModel.FLASHORDERED" Width="1.5" PointX="0.75" PointY="4.75" />
         <EntityTypeShape EntityType="SistResultModel.TOTALESDIA" Width="1.5" PointX="5.375" PointY="4.75" />
         <EntityTypeShape EntityType="SistResultModel.TOTALESDIAGROPTAB" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SistResultModel.ANDATABININFO" Width="1.5" PointX="3.375" PointY="0.75" />
+        <EntityTypeShape EntityType="SistResultModel.ANDATAINFOPOSRANK" Width="1.5" PointX="7.375" PointY="0.75" />
+        <EntityTypeShape EntityType="SistResultModel.ANDATAGENINFO" Width="1.5" PointX="0.75" PointY="15.25" />
+        <EntityTypeShape EntityType="SistResultModel.ANDATAGENINFOTEMP" Width="1.5" PointX="3.375" PointY="7.75" />
+        <AssociationConnector Association="SistResultModel.SYS_C0011909" />
+        <AssociationConnector Association="SistResultModel.SYS_C0011930" />
+        <AssociationConnector Association="SistResultModel.SYS_C0011931" />
+        <AssociationConnector Association="SistResultModel.SYS_C0011951" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

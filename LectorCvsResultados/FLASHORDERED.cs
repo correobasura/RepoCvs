@@ -12,83 +12,83 @@
 namespace LectorCvsResultados
 {
 
-    using System;
+using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations.Schema;
-    public partial class FLASHORDERED
-    {
+public partial class FLASHORDERED
+{
 
-        public decimal ID { get; set; }
+    public decimal ID { get; set; }
 
-        public int TABINDEX { get; set; }
+    public int TABINDEX { get; set; }
 
-        public string RESULT { get; set; }
+    public string RESULT { get; set; }
 
-        public int GHOME { get; set; }
+    public int GHOME { get; set; }
 
-        public int GAWAY { get; set; }
+    public int GAWAY { get; set; }
 
-        public int DIFERENCIAG { get; set; }
+    public int DIFERENCIAG { get; set; }
 
-        public int TOTALG { get; set; }
+    public int TOTALG { get; set; }
 
-        public string GROUPLETTER { get; set; }
+    public string GROUPLETTER { get; set; }
 
-        public int TABINDEXLETTER { get; set; }
+    public int TABINDEXLETTER { get; set; }
 
-        public int DIASEM { get; set; }
+    public int DIASEM { get; set; }
 
-        public int DIAMES { get; set; }
+    public int DIAMES { get; set; }
 
-        public int DIAANIO { get; set; }
+    public int DIAANIO { get; set; }
 
-        public Nullable<int> SPANTIDIAACT { get; set; }
+    public Nullable<int> SPANTIDIAACT { get; set; }
 
-        public int SPANTIDIAHIST { get; set; }
+    public int SPANTIDIAHIST { get; set; }
 
-        public Nullable<int> SPANTISEMACT { get; set; }
+    public Nullable<int> SPANTISEMACT { get; set; }
 
-        public int SPANTISEMHIST { get; set; }
+    public int SPANTISEMHIST { get; set; }
 
-        public Nullable<int> SPANTIMESACT { get; set; }
+    public Nullable<int> SPANTIMESACT { get; set; }
 
-        public int SPANTIMESHIST { get; set; }
+    public int SPANTIMESHIST { get; set; }
 
-        public Nullable<int> SPANTIANIACT { get; set; }
+    public Nullable<int> SPANTIANIACT { get; set; }
 
-        public int SPANTIANIHIST { get; set; }
+    public int SPANTIANIHIST { get; set; }
 
-        public Nullable<int> SPANTIGLDIAACT { get; set; }
+    public Nullable<int> SPANTIGLDIAACT { get; set; }
 
-        public int SPANTIGLDIAHIST { get; set; }
+    public int SPANTIGLDIAHIST { get; set; }
 
-        public Nullable<int> SPANTIGLSEMACT { get; set; }
+    public Nullable<int> SPANTIGLSEMACT { get; set; }
 
-        public int SPANTIGLSEMHIST { get; set; }
+    public int SPANTIGLSEMHIST { get; set; }
 
-        public Nullable<int> SPANTIGLMESACT { get; set; }
+    public Nullable<int> SPANTIGLMESACT { get; set; }
 
-        public int SPANTIGLMESHIST { get; set; }
+    public int SPANTIGLMESHIST { get; set; }
 
-        public Nullable<int> SPANTIGLANIACT { get; set; }
+    public Nullable<int> SPANTIGLANIACT { get; set; }
 
-        public int SPANTIGLANIHIST { get; set; }
+    public int SPANTIGLANIHIST { get; set; }
 
-        public System.DateTime FECHA { get; set; }
+    public System.DateTime FECHA { get; set; }
 
-        public int FECHANUM { get; set; }
+    public int FECHANUM { get; set; }
 
-        public int TABINDEXSEQ { get; set; }
+    public int TABINDEXSEQ { get; set; }
 
-        public int TABINDEXLETTERSEQ { get; set; }
+    public int TABINDEXLETTERSEQ { get; set; }
 
-        public int MESNUM { get; set; }
+    public int MESNUM { get; set; }
 
-        public int IDCOMPETITION { get; set; }
+    public int IDCOMPETITION { get; set; }
 
-        public int TABINDEXCOMPETITION { get; set; }
+    public int TABINDEXCOMPETITION { get; set; }
 
-        public decimal TABINDEXCOMPETSEQ { get; set; }
+    public decimal TABINDEXCOMPETSEQ { get; set; }
 
         [NotMapped]
         public string Hora { get; set; }
@@ -107,7 +107,23 @@ namespace LectorCvsResultados
         {
             return TABINDEX + ";" + RESULT + ";" + GHOME + ";" + GAWAY + ";" + DIFERENCIAG + ";" + TOTALG + ";" + GROUPLETTER + ";" + TABINDEXLETTER + ";" + DIASEM + ";" + DIAMES + ";" + DIAANIO + ";" + SPANTIDIAACT + ";" + SPANTIDIAHIST + ";" + SPANTISEMACT + ";" + SPANTISEMHIST + ";" + SPANTIMESACT + ";" + SPANTIMESHIST + ";" + SPANTIANIACT + ";" + SPANTIANIHIST + ";" + SPANTIGLDIAACT + ";" + SPANTIGLDIAHIST + ";" + SPANTIGLSEMACT + ";" + SPANTIGLSEMHIST + ";" + SPANTIGLMESACT + ";" + SPANTIGLMESHIST + ";" + SPANTIGLANIACT + ";" + SPANTIGLANIHIST + ";" + FECHA + ";" + FECHANUM + ";" + TABINDEXSEQ + ";" + TABINDEXLETTERSEQ + ";" + Hora + ";" + Estado + ";" + Home + ";" + Away + ";" + Half + ";" + intChar;
         }
+    public Nullable<decimal> IDGENINFO { get; set; }
 
-    }
+    public Nullable<decimal> IDGENINFOGL { get; set; }
+
+    public Nullable<decimal> IDGENINFOSTI { get; set; }
+
+    public Nullable<decimal> IDGENINFOEQGLFECHA { get; set; }
+
+
+
+    public virtual ANDATAGENINFO ANDATAGENINFO { get; set; }
+
+    public virtual ANDATAGENINFO ANDATAGENINFO1 { get; set; }
+
+    public virtual ANDATAGENINFO ANDATAGENINFO2 { get; set; }
+
+    public virtual ANDATAGENINFO ANDATAGENINFO3 { get; set; }
+}
 
 }

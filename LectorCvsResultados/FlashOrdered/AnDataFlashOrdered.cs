@@ -363,14 +363,14 @@ namespace LectorCvsResultados.FlashOrdered
             TOTALESDIA td;
             string strJoin;
             int maxTabindex;
-            List<AgrupadorFechaNumValor> listaDiaHist;
-            List<AgrupadorFechaNumValor> listaDiaSemHist;
-            List<AgrupadorFechaNumValor> listaDiaMesHist;
-            List<AgrupadorFechaNumValor> listaDiaAnioHist;
-            List<AgrupadorFechaNumValor> listaDiaGlHist;
-            List<AgrupadorFechaNumValor> listaDiaGlSemHist;
-            List<AgrupadorFechaNumValor> listaDiaGlMesHist;
-            List<AgrupadorFechaNumValor> listaDiaGlAnioHist;
+            List<AgrupadorInfoQuery> listaDiaHist;
+            List<AgrupadorInfoQuery> listaDiaSemHist;
+            List<AgrupadorInfoQuery> listaDiaMesHist;
+            List<AgrupadorInfoQuery> listaDiaAnioHist;
+            List<AgrupadorInfoQuery> listaDiaGlHist;
+            List<AgrupadorInfoQuery> listaDiaGlSemHist;
+            List<AgrupadorInfoQuery> listaDiaGlMesHist;
+            List<AgrupadorInfoQuery> listaDiaGlAnioHist;
             List<AgrupadorTotalTabIndexDTO> lstTabindexMax;
             List<AgrupadorTotalTabIndexDTO> lstTabindexMaxGroup;
             List<AgrupadorTotalTabIndexDTO> lstTabindexMaxComp;
@@ -378,17 +378,18 @@ namespace LectorCvsResultados.FlashOrdered
             List<int> listIdsCompetition;
             FLASHORDERED elementTemp;
             List<int> listaFechaNum = (from x in lista orderby x.FECHANUM select x.FECHANUM).Distinct().ToList();
+            int idInicio = ConsultasClassFO.ConsultarMaxIdActual(contexto, ConstantesGenerales.TBL_FLASH);
             List<FLASHORDERED> listaPersist;
             foreach (var fechaNum in listaFechaNum)
             {
-                listaPersist = lista.Where(x => x.FECHANUM == fechaNum).OrderBy(x => x.ID).ToList();
+                listaPersist = lista.Where(x => x.FECHANUM == fechaNum).ToList();
                 td = new TOTALESDIA();
                 td.ID = fechaNum;
                 maxTabindex = (from x in listaPersist select x.TABINDEX).Max();
                 td.TOTAL = maxTabindex;
                 contexto.TOTALESDIA.Add(td);
                 contexto.TOTALESDIAGROPTAB.AddRange(GetValuesGroupTabTotales(listaPersist, fechaNum));
-                listaPersist = listaPersist.Where(x => x.Estado.Equals("FP")).ToList();
+                listaPersist = listaPersist.Where(x => x.Estado.Equals("FP")).OrderBy(x => x.TABINDEX).ToList();
                 strJoin = UtilHtml.ObtenerJoinElementos(listaPersist);
 
                 elementTemp = listaPersist.FirstOrDefault();
@@ -407,19 +408,18 @@ namespace LectorCvsResultados.FlashOrdered
 
                 foreach (var obj in listaPersist)
                 {
-                    //obj.TABINDEXSEQ = ConsultasClassFO.ConsultarNextTabindexSeq(contexto, obj.TABINDEX);
-                    //obj.TABINDEXLETTERSEQ = ConsultasClassFO.ConsultarNextTabindexLetterSeq(contexto, obj.GROUPLETTER, obj.TABINDEXLETTER);
+                    obj.ID = idInicio++;
                     obj.TABINDEXSEQ = (from x in lstTabindexMax where x.Tabindex.Equals(obj.TABINDEX) select x.Apariciones).FirstOrDefault() + 1;
                     obj.TABINDEXLETTERSEQ = (from x in lstTabindexMaxGroup where x.Tabindex.Equals(obj.TABINDEXLETTER) && x.GroupLetter.Equals(obj.GROUPLETTER) select x.Apariciones).FirstOrDefault() + 1;
                     obj.TABINDEXCOMPETSEQ = (from x in lstTabindexMaxComp where x.Lineindex.Equals(obj.IDCOMPETITION) && x.Tabindex.Equals(obj.TABINDEXCOMPETITION) select x.Apariciones).FirstOrDefault() + 1;
-                    obj.SPANTIDIAHIST = ValidarSpanTiempo(obj.TABINDEX, obj.DIFERENCIAG, (from x in listaDiaHist where x.Tabindex.Equals(obj.TABINDEX) select x).FirstOrDefault());
-                    obj.SPANTISEMHIST = ValidarSpanTiempo(obj.TABINDEX, obj.DIFERENCIAG, (from x in listaDiaSemHist where x.Tabindex.Equals(obj.TABINDEX) select x).FirstOrDefault());
-                    obj.SPANTIMESHIST = ValidarSpanTiempo(obj.TABINDEX, obj.DIFERENCIAG, (from x in listaDiaMesHist where x.Tabindex.Equals(obj.TABINDEX) select x).FirstOrDefault());
-                    obj.SPANTIANIHIST = ValidarSpanTiempo(obj.TABINDEX, obj.DIFERENCIAG, (from x in listaDiaAnioHist where x.Tabindex.Equals(obj.TABINDEX) select x).FirstOrDefault());
-                    obj.SPANTIGLDIAHIST = ValidarSpanTiempo(obj.TABINDEXLETTER, obj.DIFERENCIAG, (from x in listaDiaGlHist where x.TabindexLetter.Equals(obj.TABINDEXLETTER) && x.GroupLetter.Equals(obj.GROUPLETTER) select x).FirstOrDefault());
-                    obj.SPANTIGLSEMHIST = ValidarSpanTiempo(obj.TABINDEXLETTER, obj.DIFERENCIAG, (from x in listaDiaGlSemHist where x.TabindexLetter.Equals(obj.TABINDEXLETTER) && x.GroupLetter.Equals(obj.GROUPLETTER) select x).FirstOrDefault());
-                    obj.SPANTIGLMESHIST = ValidarSpanTiempo(obj.TABINDEXLETTER, obj.DIFERENCIAG, (from x in listaDiaGlMesHist where x.TabindexLetter.Equals(obj.TABINDEXLETTER) && x.GroupLetter.Equals(obj.GROUPLETTER) select x).FirstOrDefault());
-                    obj.SPANTIGLANIHIST = ValidarSpanTiempo(obj.TABINDEXLETTER, obj.DIFERENCIAG, (from x in listaDiaGlAnioHist where x.TabindexLetter.Equals(obj.TABINDEXLETTER) && x.GroupLetter.Equals(obj.GROUPLETTER) select x).FirstOrDefault());
+                    obj.SPANTIDIAHIST = ValidarSpanTiempo(obj.TABINDEX, obj.DIFERENCIAG, (from x in listaDiaHist where x.TabIndex.Equals(obj.TABINDEX) select x).FirstOrDefault());
+                    obj.SPANTISEMHIST = ValidarSpanTiempo(obj.TABINDEX, obj.DIFERENCIAG, (from x in listaDiaSemHist where x.TabIndex.Equals(obj.TABINDEX) select x).FirstOrDefault());
+                    obj.SPANTIMESHIST = ValidarSpanTiempo(obj.TABINDEX, obj.DIFERENCIAG, (from x in listaDiaMesHist where x.TabIndex.Equals(obj.TABINDEX) select x).FirstOrDefault());
+                    obj.SPANTIANIHIST = ValidarSpanTiempo(obj.TABINDEX, obj.DIFERENCIAG, (from x in listaDiaAnioHist where x.TabIndex.Equals(obj.TABINDEX) select x).FirstOrDefault());
+                    obj.SPANTIGLDIAHIST = ValidarSpanTiempo(obj.TABINDEXLETTER, obj.DIFERENCIAG, (from x in listaDiaGlHist where x.TabIndexLetter.Equals(obj.TABINDEXLETTER) && x.GroupLetter.Equals(obj.GROUPLETTER) select x).FirstOrDefault());
+                    obj.SPANTIGLSEMHIST = ValidarSpanTiempo(obj.TABINDEXLETTER, obj.DIFERENCIAG, (from x in listaDiaGlSemHist where x.TabIndexLetter.Equals(obj.TABINDEXLETTER) && x.GroupLetter.Equals(obj.GROUPLETTER) select x).FirstOrDefault());
+                    obj.SPANTIGLMESHIST = ValidarSpanTiempo(obj.TABINDEXLETTER, obj.DIFERENCIAG, (from x in listaDiaGlMesHist where x.TabIndexLetter.Equals(obj.TABINDEXLETTER) && x.GroupLetter.Equals(obj.GROUPLETTER) select x).FirstOrDefault());
+                    obj.SPANTIGLANIHIST = ValidarSpanTiempo(obj.TABINDEXLETTER, obj.DIFERENCIAG, (from x in listaDiaGlAnioHist where x.TabIndexLetter.Equals(obj.TABINDEXLETTER) && x.GroupLetter.Equals(obj.GROUPLETTER) select x).FirstOrDefault());
                 }
                 contexto.FLASHORDERED.AddRange(listaPersist);
                 listTabindex = (from x in listaPersist select x.TABINDEX).ToList();
@@ -459,10 +459,10 @@ namespace LectorCvsResultados.FlashOrdered
         /// <param name="diaMes">Dia mes</param>
         /// <param name="diaAnio">Dia anio</param>
         /// <returns>Valor para asignar al span</returns>
-        private static int ValidarSpanTiempo(int tabindex, int diferenciaG, AgrupadorFechaNumValor a)
+        private static int ValidarSpanTiempo(int tabindex, int diferenciaG, AgrupadorInfoQuery a)
         {
             int valorSpan = 0;
-            AgrupadorFechaNumValor ultimoSpan = a != null ? a : new AgrupadorFechaNumValor();
+            AgrupadorInfoQuery ultimoSpan = a != null ? a : new AgrupadorInfoQuery();
             if (diferenciaG == 0)
             {
                 valorSpan = ultimoSpan.Spantiempo >= 0 ? -1 : --ultimoSpan.Spantiempo;
@@ -933,21 +933,23 @@ namespace LectorCvsResultados.FlashOrdered
         }
 
         public static List<AgrupadorInfoGeneralDTO> ValidarElementosDia(DateTime fecha, int caso,
-            SisResultEntities contexto, List<FLASHORDERED> listaHtmlTemp, int minDias)
+            SisResultEntities contexto, List<FLASHORDERED> listaHtmlTemp)
         {
-            string strJoin = UtilHtml.ObtenerJoinElementos(listaHtmlTemp);
             int maxTabindex = (from x in listaHtmlTemp select x.TABINDEX).Max();
             string fechaFormat = fecha.ToString("yyyyMMdd");
+            string queryBodyGroup = string.Join(" OR ", ObtenerJoinElementos(listaHtmlTemp, fechaFormat));
+            listaHtmlTemp = GetListaTempMinVal(fecha, contexto, ConstantesGenerales.VAL_TOTAL, listaHtmlTemp);
+            string strJoin = UtilHtml.ObtenerJoinElementos(listaHtmlTemp);
             int dayofweek = (int)fecha.DayOfWeek == 0 ? 7 : (int)fecha.DayOfWeek;
             //List<AgrupadorInfoGeneralDTO> listaInfo = new List<AgrupadorInfoGeneralDTO>();
             List<AgrupadorInfoGeneralDTO> listaInfo = GetListaInfoAsignn(fecha, caso, contexto, listaHtmlTemp,
-                dayofweek, fechaFormat, maxTabindex, strJoin);
+                dayofweek, fechaFormat, maxTabindex, strJoin, queryBodyGroup);
             //IncrementInfoPointsPercent(fecha, contexto, listaHtmlTemp, listaInfo, fechaFormat, dayofweek, maxTabindex, strJoin);
             //ViewInfoRank(fecha, contexto, listaInfo, fechaFormat, dayofweek, maxTabindex, strJoin, minDias);
             //ConsultarProbSelectedInfo
 
             //string fechaMinformat = "fechanum > " + fecha.AddDays(valor).ToString("yyyyMMdd") + " AND";
-            //List<AgrupadorConteosTimeSpanDTO> listSelectedInfo
+            //List<AgrupadorInfoQuery> listSelectedInfo
             //    = ConsultasClassFO.ConsultarProbSelectedInfo(contexto,
             //    ConstantesModel.SPANGLGEN, ConstantesModel.RANKSPANGLGEN, fechaFormat);
             //foreach (var aigDTO in listaInfo)
@@ -984,11 +986,11 @@ namespace LectorCvsResultados.FlashOrdered
             , int minDias)
         {
             var laFechaMin = fecha.AddDays(minDias);//Para Diasem
-            //List<AgrupadorConteosTimeSpanDTO> listaRankGralDiaSem = ConsultasClassFO.ConsultarProbRankInfo(contexto, ConstantesGenerales.KEY_RANK_GRAL, ConstantesGenerales.CASO_DIASEM, fechaFormat, dayofweek, "");
+            //List<AgrupadorInfoQuery> listaRankGralDiaSem = ConsultasClassFO.ConsultarProbRankInfo(contexto, ConstantesGenerales.KEY_RANK_GRAL, ConstantesGenerales.CASO_DIASEM, fechaFormat, dayofweek, "");
             ////var laFechaMin = fecha.AddDays(minDias);
             //////laFechaMin = fecha.AddDays(-28);
-            //List<AgrupadorConteosTimeSpanDTO> listaRankGralMes = ConsultasClassFO.ConsultarProbRankInfo(contexto, ConstantesGenerales.KEY_RANK_GRAL, ConstantesGenerales.CASO_DIAMES, fechaFormat, fecha.Day, "");
-            List<AgrupadorConteosTimeSpanDTO> listaInfoBin = ConsultasClassFO.ConsultarProbRankInfo(contexto, ConstantesGenerales.KEY_RANK_GRAL, 0, fechaFormat, fecha.Day, laFechaMin.ToString("yyyyMMdd"));
+            //List<AgrupadorInfoQuery> listaRankGralMes = ConsultasClassFO.ConsultarProbRankInfo(contexto, ConstantesGenerales.KEY_RANK_GRAL, ConstantesGenerales.CASO_DIAMES, fechaFormat, fecha.Day, "");
+            List<AgrupadorInfoQuery> listaInfoBin = ConsultasClassFO.ConsultarProbRankInfo(contexto, ConstantesGenerales.KEY_RANK_GRAL, 0, fechaFormat, fecha.Day, laFechaMin.ToString("yyyyMMdd"));
             foreach (var item in listaInfo)
             {
                 string key = string.Join("", item.ListData);
@@ -1010,7 +1012,7 @@ namespace LectorCvsResultados.FlashOrdered
             }
         }
 
-        private static void IncrementSelectedInfo(double valor, List<AgrupadorInfoGeneralDTO> listaInfo, List<AgrupadorConteosTimeSpanDTO> listSelectedInfo)
+        private static void IncrementSelectedInfo(double valor, List<AgrupadorInfoGeneralDTO> listaInfo, List<AgrupadorInfoQuery> listSelectedInfo)
         {
             foreach (var aigDTO in listaInfo)
             {
@@ -1135,9 +1137,21 @@ namespace LectorCvsResultados.FlashOrdered
             //}
         }
 
+        public static List<string> ObtenerJoinElementos(List<FLASHORDERED> listaHtmlTemp, string fechaFormat)
+        {
+            string info = "(f.groupletter = '{0}' AND f.tabindexletter <= {1} AND f.fechanum = (SELECT MAX(fechanum) from totalesdiagroptab t WHERE t.fechanum < {2} AND t.groupletter = f.groupletter AND t.total = {1}))";
+            List<string> lstAndInfo = new List<string>();
+            List<string> lstGroups = (from x in listaHtmlTemp select x.GROUPLETTER).Distinct().ToList();
+            foreach (var item in lstGroups)
+            {
+                lstAndInfo.Add(string.Format(info, item, (from x in listaHtmlTemp where x.GROUPLETTER.Equals(item) select x.TABINDEXLETTER).Max(), fechaFormat));
+            }
+            return lstAndInfo;
+        }
+
         public static List<AgrupadorInfoGeneralDTO> GetListaInfoAsignn(DateTime fecha, int caso,
             SisResultEntities contexto, List<FLASHORDERED> listaHtmlTemp, int dayofweek, string fechaFormat,
-            int maxTabindex, string strJoin)
+            int maxTabindex, string strJoin, string queryBodyGroupLetter)
         {
             List<AgrupadorInfoGeneralDTO> listaInfo = new List<AgrupadorInfoGeneralDTO>();
 
@@ -1147,8 +1161,8 @@ namespace LectorCvsResultados.FlashOrdered
             //List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexDiaMes = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto, ConstantesGenerales.CASO_DIAMES, fecha.Day);
             //List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexDiaAnio = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto, ConstantesGenerales.CASO_DIAANIO, fecha.DayOfYear);
             //List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexMesNum = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto, ConstantesGenerales.CASO_MESNUM, fecha.Month);
-            //List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexDiaSemMesNum = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto, ConstantesGenerales.CASO_DIASEM_MESNUM, dayofweek, fecha.Month);
-            //List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexDiaMesMesNum = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto, ConstantesGenerales.CASO_DIAMES_MESNUM, fecha.Day, fecha.Month);
+            ////List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexDiaSemMesNum = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto, ConstantesGenerales.CASO_DIASEM_MESNUM, dayofweek, fecha.Month);
+            ////List<AgrupadorTotalTabIndexDTO> listaPromMaxTabindexDiaMesMesNum = ConsultasClassFO.ConsultarPromResultadosMaxTabindex(maxTabindex, fechaFormat, contexto, ConstantesGenerales.CASO_DIAMES_MESNUM, fecha.Day, fecha.Month);
 
             //List<AgrupadorTotalTabIndexDTO> listaPromMaxGroupTabGen = ConsultasClassFO.ConsultarPromResultadosGroupTab(strJoin, fechaFormat, contexto, ConstantesGenerales.CASO_DEFAULT);
             //List<AgrupadorTotalTabIndexDTO> listaPromMaxGroupTabDiaSem = ConsultasClassFO.ConsultarPromResultadosGroupTab(strJoin, fechaFormat, contexto, ConstantesGenerales.CASO_DIASEM, dayofweek);
@@ -1159,26 +1173,49 @@ namespace LectorCvsResultados.FlashOrdered
             //List<AgrupadorTotalTabIndexDTO> listaPromMaxGroupTabDiaMesMesNum = ConsultasClassFO.ConsultarPromResultadosGroupTab(strJoin, fechaFormat, contexto, ConstantesGenerales.CASO_DIAMES_MESNUM, fecha.Day, fecha.Month);
 
             ////Obtener las fechas máximas de los tabindex
-            //List<AgrupadorFechaNumValor> listaFechasMaxTabindexGen = ConsultasClassFO.ConsultarMaxFechaAndSpanTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DEFAULT);
-            //List<AgrupadorFechaNumValor> listaFechasMaxTabindexDiaSem = ConsultasClassFO.ConsultarMaxFechaAndSpanTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DIASEM, dayofweek);
-            //List<AgrupadorFechaNumValor> listaFechasMaxTabindexDiaMes = ConsultasClassFO.ConsultarMaxFechaAndSpanTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DIAMES, fecha.Day);
-            //List<AgrupadorFechaNumValor> listaFechasMaxTabindexDiaAnio = ConsultasClassFO.ConsultarMaxFechaAndSpanTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DIAANIO, fecha.DayOfYear);
-            //List<AgrupadorFechaNumValor> listaFechasMaxTabindexGLGen = ConsultasClassFO.ConsultarMaxFechaTabindexAndSpanGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DEFAULT);
-            //List<AgrupadorFechaNumValor> listaFechasMaxTabindexGLDiaSem = ConsultasClassFO.ConsultarMaxFechaTabindexAndSpanGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIASEM, dayofweek);
-            //List<AgrupadorFechaNumValor> listaFechasMaxTabindexGLDiaMes = ConsultasClassFO.ConsultarMaxFechaTabindexAndSpanGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIAMES, fecha.Day);
-            //List<AgrupadorFechaNumValor> listaFechasMaxTabindexGLDiaAnio = ConsultasClassFO.ConsultarMaxFechaTabindexAndSpanGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIAANIO, fecha.DayOfYear);
+            List<AgrupadorInfoQuery> listaFechasMaxTabindexGen = ConsultasClassFO.ConsultarMaxFechaAndSpanTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DEFAULT);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexDiaSem = ConsultasClassFO.ConsultarMaxFechaAndSpanTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DIASEM, dayofweek);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexDiaMes = ConsultasClassFO.ConsultarMaxFechaAndSpanTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DIAMES, fecha.Day);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexDiaAnio = ConsultasClassFO.ConsultarMaxFechaAndSpanTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DIAANIO, fecha.DayOfYear);
+            List<AgrupadorInfoQuery> listaFechasMaxTabindexGLGen = ConsultasClassFO.ConsultarMaxFechaTabindexAndSpanGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DEFAULT);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexGLDiaSem = ConsultasClassFO.ConsultarMaxFechaTabindexAndSpanGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIASEM, dayofweek);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexGLDiaMes = ConsultasClassFO.ConsultarMaxFechaTabindexAndSpanGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIAMES, fecha.Day);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexGLDiaAnio = ConsultasClassFO.ConsultarMaxFechaTabindexAndSpanGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIAANIO, fecha.DayOfYear);
 
-            //string strJoinTabindex = "(" + ConstantesModel.FECHANUM + " < {0} AND " + ConstantesModel.TABINDEX + " = {1})";
-            //string strJoinTabindexGl = "(" + ConstantesModel.FECHANUM + " < {0} AND " + ConstantesModel.GROUPLETTER + " = '{1}' AND " + ConstantesModel.TABINDEXLETTER + " = {2})";
-            //List<string> listStrJoinTabindex = new List<string>();
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexGLGen = ConsultasClassFO.ConsultarMaxFechaTabindexAndSpanGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DEFAULT);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexGLDiaSem = ConsultasClassFO.ConsultarMaxFechaTabindexAndSpanGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIASEM, dayofweek);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexGLDiaMes = ConsultasClassFO.ConsultarMaxFechaTabindexAndSpanGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIAMES, fecha.Day);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexGLDiaAnio = ConsultasClassFO.ConsultarMaxFechaTabindexAndSpanGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIAANIO, fecha.DayOfYear);
+
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexGen = ConsultasClassFO.ConsultarMaxFechaAndValueDiffTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DEFAULT);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexDiaSem = ConsultasClassFO.ConsultarMaxFechaAndValueDiffTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DIASEM, dayofweek);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexDiaMes = ConsultasClassFO.ConsultarMaxFechaAndValueDiffTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DIAMES, fecha.Day);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexDiaAnio = ConsultasClassFO.ConsultarMaxFechaAndValueDiffTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DIAANIO, fecha.DayOfYear);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexMesNum = ConsultasClassFO.ConsultarMaxFechaAndValueDiffTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_MESNUM, fecha.Month);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexDiaSemMesNum = ConsultasClassFO.ConsultarMaxFechaAndValueDiffTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DIASEM_MESNUM, dayofweek, fecha.Month);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexDiaMesMesNum = ConsultasClassFO.ConsultarMaxFechaAndValueDiffTabindex(contexto, maxTabindex, fechaFormat, ConstantesGenerales.CASO_DIAMES_MESNUM, fecha.Day, fecha.Month);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexTotalTab = ConsultasClassFO.ConsultarMaxFechaAndValueDiffTabindexTotalesDia(contexto, maxTabindex, fechaFormat);
+
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexGlGen = ConsultasClassFO.ConsultarMaxFechaAndValueDiffTabGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DEFAULT);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexGlDiaSem = ConsultasClassFO.ConsultarMaxFechaAndValueDiffTabGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIASEM, dayofweek);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexGlDiaMes = ConsultasClassFO.ConsultarMaxFechaAndValueDiffTabGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIAMES, fecha.Day);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexGlDiaAnio = ConsultasClassFO.ConsultarMaxFechaAndValueDiffTabGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIAANIO, fecha.DayOfYear);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexGlMesNum = ConsultasClassFO.ConsultarMaxFechaAndValueDiffTabGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_MESNUM, fecha.Month);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexGlDiaSemMesNum = ConsultasClassFO.ConsultarMaxFechaAndValueDiffTabGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIASEM_MESNUM, dayofweek, fecha.Month);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexGlDiaMesMesNum = ConsultasClassFO.ConsultarMaxFechaAndValueDiffTabGl(contexto, fechaFormat, strJoin, ConstantesGenerales.CASO_DIAMES_MESNUM, fecha.Day, fecha.Month);
+            //List<AgrupadorInfoQuery> listaFechasMaxTabindexGlTotalTab = ConsultasClassFO.ConsultarMaxFechaAndValueDiffTabGlTotalesDia(contexto, queryBodyGroupLetter);
+
+            string strJoinTabindex = "(" + ConstantesModel.FECHANUM + " < {0} AND " + ConstantesModel.TABINDEX + " = {1})";
+            string strJoinTabindexGl = "(" + ConstantesModel.FECHANUM + " < {0} AND " + ConstantesModel.GROUPLETTER + " = '{1}' AND " + ConstantesModel.TABINDEXLETTER + " = {2})";
+            List<string> listStrJoinTabindex = new List<string>();
             //List<string> listStrJoinTabindexDiaSem = new List<string>();
             //List<string> listStrJoinTabindexDiaMes = new List<string>();
             //List<string> listStrJoinTabindexDiaAnio = new List<string>();
-            //List<string> listStrJoinGlTabindex = new List<string>();
+            List<string> listStrJoinGlTabindex = new List<string>();
             //List<string> listStrJoinGlTabindexDiaSem = new List<string>();
             //List<string> listStrJoinGlTabindexDiaMes = new List<string>();
             //List<string> listStrJoinGlTabindexDiaAnio = new List<string>();
-            //double minProb = 0.85;
+            double minProb = 0.85;
 
             foreach (var item in listaHtmlTemp)
             {
@@ -1221,155 +1258,218 @@ namespace LectorCvsResultados.FlashOrdered
                 //aigDTO.ListData.Add(CompareValues(aigDTO.AgrupadorPromMaxGroupTabMesNum, minProb));
                 //aigDTO.ListData.Add(CompareValues(aigDTO.AgrupadorPromMaxGroupTabDiaSemMesNum, minProb));
                 //aigDTO.ListData.Add(CompareValues(aigDTO.AgrupadorPromMaxGroupTabDiaMesMesNum, minProb));
-                
-                //aigDTO.AgrUltFechaNumSpanGen = AddInfoString(strJoinTabindex, listStrJoinTabindex, aigDTO, listaFechasMaxTabindexGen, 1);
+
+                aigDTO.AgrUltFechaNumSpanGen = AddInfoString(strJoinTabindex, listStrJoinTabindex, aigDTO, listaFechasMaxTabindexGen, 1);
                 //aigDTO.AgrUltFechaNumSpanDiaSem = AddInfoString(strJoinTabindex, listStrJoinTabindexDiaSem, aigDTO, listaFechasMaxTabindexDiaSem, 1);
                 //aigDTO.AgrUltFechaNumSpanDiaMes = AddInfoString(strJoinTabindex, listStrJoinTabindexDiaMes, aigDTO, listaFechasMaxTabindexDiaMes, 1);
                 //aigDTO.AgrUltFechaNumSpanDiaAnio = AddInfoString(strJoinTabindex, listStrJoinTabindexDiaAnio, aigDTO, listaFechasMaxTabindexDiaAnio, 1);
-                //aigDTO.AgrUltFechaNumSpanGlGen = AddInfoString(strJoinTabindexGl, listStrJoinGlTabindex, aigDTO, listaFechasMaxTabindexGLGen, 2);
+                aigDTO.AgrUltFechaNumSpanGlGen = AddInfoString(strJoinTabindexGl, listStrJoinGlTabindex, aigDTO, listaFechasMaxTabindexGLGen, 2);
                 //aigDTO.AgrUltFechaNumSpanGlDiaSem = AddInfoString(strJoinTabindexGl, listStrJoinGlTabindexDiaSem, aigDTO, listaFechasMaxTabindexGLDiaSem, 2);
                 //aigDTO.AgrUltFechaNumSpanGlDiaMes = AddInfoString(strJoinTabindexGl, listStrJoinGlTabindexDiaMes, aigDTO, listaFechasMaxTabindexGLDiaMes, 2);
                 //aigDTO.AgrUltFechaNumSpanGlDiaAnio = AddInfoString(strJoinTabindexGl, listStrJoinGlTabindexDiaAnio, aigDTO, listaFechasMaxTabindexGLDiaAnio, 2);
 
+                //aigDTO.ListData.Add((from x in listaFechasMaxTabindexGen where x.TabIndex.Equals(aigDTO.Tabindex) select x.ValueDiff).FirstOrDefault());
+                //aigDTO.ListData.Add((from x in listaFechasMaxTabindexDiaSem where x.TabIndex.Equals(aigDTO.Tabindex) select x.ValueDiff).FirstOrDefault());
+                //aigDTO.ListData.Add((from x in listaFechasMaxTabindexDiaMes where x.TabIndex.Equals(aigDTO.Tabindex) select x.ValueDiff).FirstOrDefault());
+                //aigDTO.ListData.Add((from x in listaFechasMaxTabindexDiaAnio where x.TabIndex.Equals(aigDTO.Tabindex) select x.ValueDiff).FirstOrDefault());
+                //aigDTO.ListData.Add((from x in listaFechasMaxTabindexMesNum where x.TabIndex.Equals(aigDTO.Tabindex) select x.ValueDiff).FirstOrDefault());
+                //aigDTO.ListData.Add((from x in listaFechasMaxTabindexDiaSemMesNum where x.TabIndex.Equals(aigDTO.Tabindex) select x.ValueDiff).FirstOrDefault());
+                //aigDTO.ListData.Add((from x in listaFechasMaxTabindexDiaMesMesNum where x.TabIndex.Equals(aigDTO.Tabindex) select x.ValueDiff).FirstOrDefault());
+                //aigDTO.ListData.Add((from x in listaFechasMaxTabindexTotalTab where x.TabIndex.Equals(aigDTO.Tabindex) select x.ValueDiff).FirstOrDefault());
+
+                //aigDTO.ListData.Add((from x in listaFechasMaxTabindexGlGen where x.TabIndexLetter.Equals(aigDTO.Tabindexletter) && x.GroupLetter.Equals(aigDTO.GroupLetter) select x.ValueDiff).FirstOrDefault());
+                //aigDTO.ListData.Add((from x in listaFechasMaxTabindexGlDiaSem where x.TabIndexLetter.Equals(aigDTO.Tabindexletter) && x.GroupLetter.Equals(aigDTO.GroupLetter) select x.ValueDiff).FirstOrDefault());
+                //aigDTO.ListData.Add((from x in listaFechasMaxTabindexGlDiaMes where x.TabIndexLetter.Equals(aigDTO.Tabindexletter) && x.GroupLetter.Equals(aigDTO.GroupLetter) select x.ValueDiff).FirstOrDefault());
+                //aigDTO.ListData.Add((from x in listaFechasMaxTabindexGlDiaAnio where x.TabIndexLetter.Equals(aigDTO.Tabindexletter) && x.GroupLetter.Equals(aigDTO.GroupLetter) select x.ValueDiff).FirstOrDefault());
+                //aigDTO.ListData.Add((from x in listaFechasMaxTabindexGlMesNum where x.TabIndexLetter.Equals(aigDTO.Tabindexletter) && x.GroupLetter.Equals(aigDTO.GroupLetter) select x.ValueDiff).FirstOrDefault());
+                //aigDTO.ListData.Add((from x in listaFechasMaxTabindexGlDiaSemMesNum where x.TabIndexLetter.Equals(aigDTO.Tabindexletter) && x.GroupLetter.Equals(aigDTO.GroupLetter) select x.ValueDiff).FirstOrDefault());
+                //aigDTO.ListData.Add((from x in listaFechasMaxTabindexGlDiaMesMesNum where x.TabIndexLetter.Equals(aigDTO.Tabindexletter) && x.GroupLetter.Equals(aigDTO.GroupLetter) select x.ValueDiff).FirstOrDefault());
+                //aigDTO.ListData.Add((from x in listaFechasMaxTabindexGlTotalTab where x.TabIndexLetter.Equals(aigDTO.Tabindexletter) && x.GroupLetter.Equals(aigDTO.GroupLetter) select x.ValueDiff).FirstOrDefault());
+
                 listaInfo.Add(aigDTO);
             }
 
-            //string strTabindexJoinTabIndexMaxFechas = string.Join(" OR ", listStrJoinTabindex);
+            string strTabindexJoinTabIndexMaxFechas = string.Join(" OR ", listStrJoinTabindex);
             //string strTabindexJoinTabIndexMaxFechasDiaSem = string.Join(" OR ", listStrJoinTabindexDiaSem);
             //string strTabindexJoinTabIndexMaxFechasDiaMes = string.Join(" OR ", listStrJoinTabindexDiaMes);
             //string strTabindexJoinTabIndexMaxFechasDiaAnio = string.Join(" OR ", listStrJoinTabindexDiaAnio);
-            //string strTabindexJoinTabIndexGlMaxFechas = string.Join(" OR ", listStrJoinGlTabindex);
+            string strTabindexJoinTabIndexGlMaxFechas = string.Join(" OR ", listStrJoinGlTabindex);
             //string strTabindexJoinTabIndexGlMaxFechasDiaSem = string.Join(" OR ", listStrJoinGlTabindexDiaSem);
             //string strTabindexJoinTabIndexGlMaxFechasDiaMes = string.Join(" OR ", listStrJoinGlTabindexDiaMes);
             //string strTabindexJoinTabIndexGlMaxFechasDiaAnio = string.Join(" OR ", listStrJoinGlTabindexDiaAnio);
 
             ////Consulta de los rank
-            //List<AgrupadorConteosTimeSpanDTO> listaRanksGen = ConsultasClassFO.ConsultarRanksTabindex(contexto, strTabindexJoinTabIndexMaxFechas, ConstantesGenerales.CASO_DEFAULT);
-            //List<AgrupadorConteosTimeSpanDTO> listaRanksDiaSem = ConsultasClassFO.ConsultarRanksTabindex(contexto, strTabindexJoinTabIndexMaxFechasDiaSem, ConstantesGenerales.CASO_DIASEM, dayofweek);
-            //List<AgrupadorConteosTimeSpanDTO> listaRanksDiaMes = ConsultasClassFO.ConsultarRanksTabindex(contexto, strTabindexJoinTabIndexMaxFechasDiaMes, ConstantesGenerales.CASO_DIAMES, dayofweek);
-            //List<AgrupadorConteosTimeSpanDTO> listaRanksDiaAnio = ConsultasClassFO.ConsultarRanksTabindex(contexto, strTabindexJoinTabIndexMaxFechasDiaAnio, ConstantesGenerales.CASO_DIAANIO, fecha.DayOfYear);
-            //List<AgrupadorConteosTimeSpanDTO> listaRanksGlGen = ConsultasClassFO.ConsultarValoresPivotTab(contexto, strTabindexJoinTabIndexGlMaxFechas, ConstantesGenerales.CASO_DEFAULT);
-            //List<AgrupadorConteosTimeSpanDTO> listaRanksGlDiaSem = ConsultasClassFO.ConsultarValoresPivotTab(contexto, strTabindexJoinTabIndexGlMaxFechasDiaSem, ConstantesGenerales.CASO_DIASEM, dayofweek);
-            //List<AgrupadorConteosTimeSpanDTO> listaRanksGlDiaMes = ConsultasClassFO.ConsultarValoresPivotTab(contexto, strTabindexJoinTabIndexGlMaxFechasDiaMes, ConstantesGenerales.CASO_DIAMES, fecha.Day);
-            //List<AgrupadorConteosTimeSpanDTO> listaRanksGlDiaAnio = ConsultasClassFO.ConsultarValoresPivotTab(contexto, strTabindexJoinTabIndexGlMaxFechasDiaAnio, ConstantesGenerales.CASO_DIAANIO, fecha.DayOfYear);
+            List<AgrupadorInfoQuery> listaRanksGen = ConsultasClassFO.ConsultarRanksTabindex(contexto, strTabindexJoinTabIndexMaxFechas, ConstantesGenerales.CASO_DEFAULT);
+            //List<AgrupadorInfoQuery> listaRanksDiaSem = ConsultasClassFO.ConsultarRanksTabindex(contexto, strTabindexJoinTabIndexMaxFechasDiaSem, ConstantesGenerales.CASO_DIASEM, dayofweek);
+            //List<AgrupadorInfoQuery> listaRanksDiaMes = ConsultasClassFO.ConsultarRanksTabindex(contexto, strTabindexJoinTabIndexMaxFechasDiaMes, ConstantesGenerales.CASO_DIAMES, dayofweek);
+            //List<AgrupadorInfoQuery> listaRanksDiaAnio = ConsultasClassFO.ConsultarRanksTabindex(contexto, strTabindexJoinTabIndexMaxFechasDiaAnio, ConstantesGenerales.CASO_DIAANIO, fecha.DayOfYear);
+            List<AgrupadorInfoQuery> listaRanksGlGen = ConsultasClassFO.ConsultarRanksGlTabindex(contexto, strTabindexJoinTabIndexGlMaxFechas, ConstantesGenerales.CASO_DEFAULT);
+            //List<AgrupadorInfoQuery> listaRanksGlDiaSem = ConsultasClassFO.ConsultarValoresPivotTab(contexto, strTabindexJoinTabIndexGlMaxFechasDiaSem, ConstantesGenerales.CASO_DIASEM, dayofweek);
+            //List<AgrupadorInfoQuery> listaRanksGlDiaMes = ConsultasClassFO.ConsultarValoresPivotTab(contexto, strTabindexJoinTabIndexGlMaxFechasDiaMes, ConstantesGenerales.CASO_DIAMES, fecha.Day);
+            //List<AgrupadorInfoQuery> listaRanksGlDiaAnio = ConsultasClassFO.ConsultarValoresPivotTab(contexto, strTabindexJoinTabIndexGlMaxFechasDiaAnio, ConstantesGenerales.CASO_DIAANIO, fecha.DayOfYear);
+            foreach (var item in listaInfo)
+            {
+                //    item.DicContadoresGen = new Dictionary<int, int>();
+                //    item.DicContadoresDiaSem = new Dictionary<int, int>();
+                //item.ListDataSpans = (from x in listaRanksGen where x.TabIndex.Equals(item.Tabindex) orderby x.Fechanum descending select x).ToList();
+                item.ListDataSpans = (from x in listaRanksGen where x.TabIndex.Equals(item.Tabindex) orderby x.Fechanum select x).ToList();
+                item.ValRefGen = item.ListDataSpans.ElementAt(item.ListDataSpans.Count - 1).Spantiempo;
+                bool flagRef = false;
+                foreach (var itemSpan in item.ListDataSpans)
+                {
+                    if (flagRef)
+                    {
+                        if (!item.DicContadoresGen.ContainsKey(itemSpan.Spantiempo))
+                        {
+                            item.DicContadoresGen.Add(itemSpan.Spantiempo, 0);
+                        }
+                        item.DicContadoresGen[itemSpan.Spantiempo]++;
+                    }
+                    flagRef = itemSpan.Spantiempo == item.ValRefGen;
+                }
+                item.DicContadoresGen = (from x in item.DicContadoresGen orderby x.Value descending select x).ToDictionary(x => x.Key, x => x.Value);
+                item.ListDataSpans.Clear();
+                //item.ListDataSpans = (from x in listaRanksGlGen where x.TabIndexLetter.Equals(item.Tabindexletter) && x.GroupLetter.Equals(item.GroupLetter) orderby x.Fechanum select x).ToList();
+                //item.ValRefGlGen = GetInfoSpans(item.ListDataSpans, item.DicContadoresDiaSem, item.AgrUltFechaNumSpanGlGen.Spantiempo);
+                //item.ListDataSpans.Clear();
+                //    item.DicContadoresGen = (from x in item.DicContadoresGen orderby x.Value descending select x).ToDictionary(x => x.Key, x => x.Value);
 
-            //foreach (var item in listaInfo)
-            //{
-            //    item.ListRankSpansGen = GetListSpanRank(listaRanksGen, item, 2);
-            //    item.RankSpanActualGen = AsignarInfoRank(item.ListRankSpansGen, item.AgrUltFechaNumSpanGen.Spantiempo);
-            //    if (item.RankSpanActualGen != 0)
-            //    {
-            //        item.MaxRankSpanActualGen = AsignarInfoMaxRank(item.ListRankSpansGen);
-            //        item.MinSpanTiGen = AsignarInfoMinSpan(item.ListRankSpansGen);
-            //        item.ListData.Add(AddInfoMinSpanListData(item.RankSpanActualGen));
-            //    }
-            //    else
-            //    {
-            //        item.ListData.Add(0);
-            //    }
+                //    item.ListDataSpans = (from x in listaRanksDiaSem where x.TabIndex.Equals(item.Tabindex) orderby x.Fechanum descending select x).ToList();
+                //    GetInfoSpans(item, item.ListDataSpans, item.DicContadoresDiaSem, item.AgrUltFechaNumSpanDiaSem.Spantiempo);
+                //    item.DicContadoresDiaSem = (from x in item.DicContadoresDiaSem orderby x.Value descending select x).ToDictionary(x => x.Key, x => x.Value);
 
-            //    item.ListRankSpansDiaSem = GetListSpanRank(listaRanksDiaSem, item, 2);
-            //    item.RankSpanActualDiaSem = AsignarInfoRank(item.ListRankSpansDiaSem, item.AgrUltFechaNumSpanDiaSem.Spantiempo);
-            //    if (item.RankSpanActualDiaSem != 0)
-            //    {
-            //        item.MaxRankSpanActualDiaSem = AsignarInfoMaxRank(item.ListRankSpansDiaSem);
-            //        item.MinSpanTiDiaSem = AsignarInfoMinSpan(item.ListRankSpansDiaSem);
-            //        item.ListData.Add(AddInfoMinSpanListData(item.RankSpanActualDiaSem));
-            //    }
-            //    else
-            //    {
-            //        item.ListData.Add(0);
-            //    }
+                //    //item.ListDataSpans = (from x in listaRanksDiaSem where x.TabIndex.Equals(item.Tabindex) orderby x.Fechanum descending select x).ToList();
+                //    //if (item.AgrUltFechaNumSpanDiaSem.Spantiempo < 0)
+                //    //{
+                //    //    totalVals = item.AgrUltFechaNumSpanDiaSem.Spantiempo + item.ListDataSpans.ElementAt(0).Spantiempo + item.ListDataSpans.ElementAt(1).Spantiempo;
+                //    //    item.Indicador = item.Indicador && totalVals == 0;
+                //    //}
+                //    //item.ListDataSpans = (from x in listaRanksDiaMes where x.TabIndex.Equals(item.Tabindex) orderby x.Fechanum descending select x).ToList();
+                //    //if (item.AgrUltFechaNumSpanDiaMes.Spantiempo < 0)
+                //    //{
+                //    //    totalVals = item.AgrUltFechaNumSpanDiaMes.Spantiempo + item.ListDataSpans.ElementAt(0).Spantiempo + item.ListDataSpans.ElementAt(1).Spantiempo;
+                //    //    item.Indicador = item.Indicador && totalVals == 0;
+                //    //}
+                //}
 
-            //    item.ListRankSpansDiaMes = GetListSpanRank(listaRanksDiaMes, item, 2);
-            //    item.RankSpanActualDiaMes = AsignarInfoRank(item.ListRankSpansDiaMes, item.AgrUltFechaNumSpanDiaMes.Spantiempo);
-            //    if (item.RankSpanActualDiaMes != 0)
-            //    {
-            //        item.MaxRankSpanActualDiaMes = AsignarInfoMaxRank(item.ListRankSpansDiaMes);
-            //        item.MinSpanTiDiaMes = AsignarInfoMinSpan(item.ListRankSpansDiaMes);
-            //        item.ListData.Add(AddInfoMinSpanListData(item.RankSpanActualDiaMes));
-            //    }
-            //    else
-            //    {
-            //        item.ListData.Add(0);
-            //    }
 
-            //    item.ListRankSpansDiaAnio = GetListSpanRank(listaRanksDiaAnio, item, 2);
-            //    item.RankSpanActualDiaAnio = AsignarInfoRank(item.ListRankSpansDiaAnio, item.AgrUltFechaNumSpanDiaAnio.Spantiempo);
-            //    if (item.RankSpanActualDiaAnio != 0)
-            //    {
-            //        item.MaxRankSpanActualDiaAnio = AsignarInfoMaxRank(item.ListRankSpansDiaAnio);
-            //        item.MinSpanDiaAnio = AsignarInfoMinSpan(item.ListRankSpansDiaAnio);
-            //        item.ListData.Add(AddInfoMinSpanListData(item.RankSpanActualDiaAnio));
-            //    }
-            //    else
-            //    {
-            //        item.ListData.Add(0);
-            //    }
+                //foreach (var item in listaInfo)
+                //{
+                //    item.ListRankSpansGen = GetListSpanRank(listaRanksGen, item, 2);
+                //    item.RankSpanActualGen = AsignarInfoRank(item.ListRankSpansGen, item.AgrUltFechaNumSpanGen.Spantiempo);
+                //    if (item.RankSpanActualGen != 0)
+                //    {
+                //        item.MaxRankSpanActualGen = AsignarInfoMaxRank(item.ListRankSpansGen);
+                //        item.MinSpanTiGen = AsignarInfoMinSpan(item.ListRankSpansGen);
+                //        item.ListData.Add(AddInfoMinSpanListData(item.RankSpanActualGen));
+                //    }
+                //    else
+                //    {
+                //        item.ListData.Add(0);
+                //    }
 
-            //    item.ListRankSpansGlGen = GetListSpanRank(listaRanksGlGen, item, 1);
-            //    item.RankSpanActualGlGen = AsignarInfoRank(item.ListRankSpansGlGen, item.AgrUltFechaNumSpanGlGen.Spantiempo);
-            //    if (item.RankSpanActualGlGen != 0)
-            //    {
-            //        item.MaxRankSpanActualGlGen = AsignarInfoMaxRank(item.ListRankSpansGlGen);
-            //        item.MinSpanGlGen = AsignarInfoMinSpan(item.ListRankSpansGlGen);
-            //        item.ListData.Add(AddInfoMinSpanListData(item.RankSpanActualGlGen));
-            //    }
-            //    else
-            //    {
-            //        item.ListData.Add(0);
-            //    }
+                //    item.ListRankSpansDiaSem = GetListSpanRank(listaRanksDiaSem, item, 2);
+                //    item.RankSpanActualDiaSem = AsignarInfoRank(item.ListRankSpansDiaSem, item.AgrUltFechaNumSpanDiaSem.Spantiempo);
+                //    if (item.RankSpanActualDiaSem != 0)
+                //    {
+                //        item.MaxRankSpanActualDiaSem = AsignarInfoMaxRank(item.ListRankSpansDiaSem);
+                //        item.MinSpanTiDiaSem = AsignarInfoMinSpan(item.ListRankSpansDiaSem);
+                //        item.ListData.Add(AddInfoMinSpanListData(item.RankSpanActualDiaSem));
+                //    }
+                //    else
+                //    {
+                //        item.ListData.Add(0);
+                //    }
 
-            //    item.ListRankSpansGlDiaSem = GetListSpanRank(listaRanksGlDiaSem, item, 1);
-            //    item.RankSpanActualGlDiaSem = AsignarInfoRank(item.ListRankSpansGlDiaSem, item.AgrUltFechaNumSpanGlDiaSem.Spantiempo);
-            //    if (item.RankSpanActualGlDiaSem != 0)
-            //    {
-            //        item.MaxRankSpanActualGlDiaSem = AsignarInfoMaxRank(item.ListRankSpansGlDiaSem);
-            //        item.MinSpanGlDiaSem = AsignarInfoMinSpan(item.ListRankSpansGlDiaSem);
-            //        item.ListData.Add(AddInfoMinSpanListData(item.RankSpanActualGlDiaSem));
-            //    }
-            //    else
-            //    {
-            //        item.ListData.Add(0);
-            //    }
+                //    item.ListRankSpansDiaMes = GetListSpanRank(listaRanksDiaMes, item, 2);
+                //    item.RankSpanActualDiaMes = AsignarInfoRank(item.ListRankSpansDiaMes, item.AgrUltFechaNumSpanDiaMes.Spantiempo);
+                //    if (item.RankSpanActualDiaMes != 0)
+                //    {
+                //        item.MaxRankSpanActualDiaMes = AsignarInfoMaxRank(item.ListRankSpansDiaMes);
+                //        item.MinSpanTiDiaMes = AsignarInfoMinSpan(item.ListRankSpansDiaMes);
+                //        item.ListData.Add(AddInfoMinSpanListData(item.RankSpanActualDiaMes));
+                //    }
+                //    else
+                //    {
+                //        item.ListData.Add(0);
+                //    }
 
-            //    item.ListRankSpansGlDiaMes = GetListSpanRank(listaRanksGlDiaMes, item, 1);
-            //    item.RankSpanActualGlDiaMes = AsignarInfoRank(item.ListRankSpansGlDiaMes, item.AgrUltFechaNumSpanGlDiaMes.Spantiempo);
-            //    if (item.RankSpanActualGlDiaMes != 0)
-            //    {
-            //        item.MaxRankSpanActualGlDiaMes = AsignarInfoMaxRank(item.ListRankSpansGlDiaMes);
-            //        item.MinSpanGlDiaMes = AsignarInfoMinSpan(item.ListRankSpansGlDiaMes);
-            //        item.ListData.Add(AddInfoMinSpanListData(item.RankSpanActualGlDiaMes));
-            //    }
-            //    else
-            //    {
-            //        item.ListData.Add(0);
-            //    }
+                //    item.ListRankSpansDiaAnio = GetListSpanRank(listaRanksDiaAnio, item, 2);
+                //    item.RankSpanActualDiaAnio = AsignarInfoRank(item.ListRankSpansDiaAnio, item.AgrUltFechaNumSpanDiaAnio.Spantiempo);
+                //    if (item.RankSpanActualDiaAnio != 0)
+                //    {
+                //        item.MaxRankSpanActualDiaAnio = AsignarInfoMaxRank(item.ListRankSpansDiaAnio);
+                //        item.MinSpanDiaAnio = AsignarInfoMinSpan(item.ListRankSpansDiaAnio);
+                //        item.ListData.Add(AddInfoMinSpanListData(item.RankSpanActualDiaAnio));
+                //    }
+                //    else
+                //    {
+                //        item.ListData.Add(0);
+                //    }
 
-            //    item.ListRankSpansGlDiaAnio = GetListSpanRank(listaRanksGlDiaAnio, item, 1);
-            //    item.RankSpanActualGlDiaAnio = AsignarInfoRank(item.ListRankSpansGlDiaAnio, item.AgrUltFechaNumSpanGlDiaAnio.Spantiempo);
-            //    if (item.RankSpanActualGlDiaAnio != 0)
-            //    {
-            //        item.MaxRankSpanActualGlDiaAnio = AsignarInfoMaxRank(item.ListRankSpansGlDiaAnio);
-            //        item.MinSpanGlDiaAnio = AsignarInfoMinSpan(item.ListRankSpansGlDiaAnio);
-            //        item.ListData.Add(AddInfoMinSpanListData(item.RankSpanActualGlDiaAnio));
-            //    }
-            //    else
-            //    {
-            //        item.ListData.Add(0);
-            //    }
-            //}
+                //    item.ListRankSpansGlGen = GetListSpanRank(listaRanksGlGen, item, 1);
+                //    item.RankSpanActualGlGen = AsignarInfoRank(item.ListRankSpansGlGen, item.AgrUltFechaNumSpanGlGen.Spantiempo);
+                //    if (item.RankSpanActualGlGen != 0)
+                //    {
+                //        item.MaxRankSpanActualGlGen = AsignarInfoMaxRank(item.ListRankSpansGlGen);
+                //        item.MinSpanGlGen = AsignarInfoMinSpan(item.ListRankSpansGlGen);
+                //        item.ListData.Add(AddInfoMinSpanListData(item.RankSpanActualGlGen));
+                //    }
+                //    else
+                //    {
+                //        item.ListData.Add(0);
+                //    }
+
+                //    item.ListRankSpansGlDiaSem = GetListSpanRank(listaRanksGlDiaSem, item, 1);
+                //    item.RankSpanActualGlDiaSem = AsignarInfoRank(item.ListRankSpansGlDiaSem, item.AgrUltFechaNumSpanGlDiaSem.Spantiempo);
+                //    if (item.RankSpanActualGlDiaSem != 0)
+                //    {
+                //        item.MaxRankSpanActualGlDiaSem = AsignarInfoMaxRank(item.ListRankSpansGlDiaSem);
+                //        item.MinSpanGlDiaSem = AsignarInfoMinSpan(item.ListRankSpansGlDiaSem);
+                //        item.ListData.Add(AddInfoMinSpanListData(item.RankSpanActualGlDiaSem));
+                //    }
+                //    else
+                //    {
+                //        item.ListData.Add(0);
+                //    }
+
+                //    item.ListRankSpansGlDiaMes = GetListSpanRank(listaRanksGlDiaMes, item, 1);
+                //    item.RankSpanActualGlDiaMes = AsignarInfoRank(item.ListRankSpansGlDiaMes, item.AgrUltFechaNumSpanGlDiaMes.Spantiempo);
+                //    if (item.RankSpanActualGlDiaMes != 0)
+                //    {
+                //        item.MaxRankSpanActualGlDiaMes = AsignarInfoMaxRank(item.ListRankSpansGlDiaMes);
+                //        item.MinSpanGlDiaMes = AsignarInfoMinSpan(item.ListRankSpansGlDiaMes);
+                //        item.ListData.Add(AddInfoMinSpanListData(item.RankSpanActualGlDiaMes));
+                //    }
+                //    else
+                //    {
+                //        item.ListData.Add(0);
+                //    }
+
+                //    item.ListRankSpansGlDiaAnio = GetListSpanRank(listaRanksGlDiaAnio, item, 1);
+                //    item.RankSpanActualGlDiaAnio = AsignarInfoRank(item.ListRankSpansGlDiaAnio, item.AgrUltFechaNumSpanGlDiaAnio.Spantiempo);
+                //    if (item.RankSpanActualGlDiaAnio != 0)
+                //    {
+                //        item.MaxRankSpanActualGlDiaAnio = AsignarInfoMaxRank(item.ListRankSpansGlDiaAnio);
+                //        item.MinSpanGlDiaAnio = AsignarInfoMinSpan(item.ListRankSpansGlDiaAnio);
+                //        item.ListData.Add(AddInfoMinSpanListData(item.RankSpanActualGlDiaAnio));
+                //    }
+                //    else
+                //    {
+                //        item.ListData.Add(0);
+                //    }
+            }
 
             //List<object[]> lstIndexDias =
-                ConsultasClassFO.ConsultarValoresPivotTab(contexto, maxTabindex);
-            List<string> lstGroupLetter = (from x in listaInfo select x.GroupLetter).Distinct().ToList();
-            List<string> lstStrQueries = new List<string>();
-            foreach (var item in lstGroupLetter)
-            {
-                int total = (from x in listaInfo where x.GroupLetter.Equals(item) select x.Tabindexletter).Max();
-                lstStrQueries.Add(string.Format(ConstantesConsultaFO.QUERY_COUNT_GRP_TAB_TOTAL, item, total, fechaFormat));
-            }
-            ConsultasClassFO.ConsultarValoresProbGroupTabTotal(contexto, string.Join(" UNION ALL ", lstStrQueries));
+            //ConsultasClassFO.ConsultarValoresPivotTab(contexto, maxTabindex);
+            //List<string> lstGroupLetter = (from x in listaInfo select x.GroupLetter).Distinct().ToList();
+            //List<string> lstStrQueries = new List<string>();
+            //foreach (var item in lstGroupLetter)
+            //{
+            //    int total = (from x in listaInfo where x.GroupLetter.Equals(item) select x.Tabindexletter).Max();
+            //    lstStrQueries.Add(string.Format(ConstantesConsultaFO.QUERY_COUNT_GRP_TAB_TOTAL, item, total, fechaFormat));
+            //}
+            //ConsultasClassFO.ConsultarValoresProbGroupTabTotal(contexto, string.Join(" UNION ALL ", lstStrQueries));
             return listaInfo;
         }
 
@@ -1385,32 +1485,32 @@ namespace LectorCvsResultados.FlashOrdered
             }
         }
 
-        private static AgrupadorFechaNumValor AddInfoString(string strJoin, List<string> lstStringJoin, AgrupadorInfoGeneralDTO aigDTO,
-            List<AgrupadorFechaNumValor> lstAgrupadores, int caso)
+        private static AgrupadorInfoQuery AddInfoString(string strJoin, List<string> lstStringJoin, AgrupadorInfoGeneralDTO aigDTO,
+            List<AgrupadorInfoQuery> lstAgrupadores, int caso)
         {
-            AgrupadorFechaNumValor infoUltFecha;
+            AgrupadorInfoQuery infoUltFecha;
             if(caso == 1)
             {
-                infoUltFecha = (from x in lstAgrupadores where x.Tabindex.Equals(aigDTO.Tabindex) select x).FirstOrDefault();
+                infoUltFecha = (from x in lstAgrupadores where x.TabIndex.Equals(aigDTO.Tabindex) select x).FirstOrDefault();
                 if (infoUltFecha != null)
                 {
-                    lstStringJoin.Add(string.Format(strJoin, infoUltFecha.FechaNum, aigDTO.Tabindex));
+                    lstStringJoin.Add(string.Format(strJoin, infoUltFecha.Fechanum, aigDTO.Tabindex));
                 }
                 else
                 {
-                    infoUltFecha = new AgrupadorFechaNumValor();
+                    infoUltFecha = new AgrupadorInfoQuery();
                 }
             }
             else
             {
-                infoUltFecha = (from x in lstAgrupadores where x.TabindexLetter.Equals(aigDTO.Tabindexletter) && x.GroupLetter.Equals(aigDTO.GroupLetter) select x).FirstOrDefault();
+                infoUltFecha = (from x in lstAgrupadores where x.TabIndexLetter.Equals(aigDTO.Tabindexletter) && x.GroupLetter.Equals(aigDTO.GroupLetter) select x).FirstOrDefault();
                 if (infoUltFecha != null)
                 {
-                    lstStringJoin.Add(string.Format(strJoin, infoUltFecha.FechaNum, aigDTO.GroupLetter, aigDTO.Tabindexletter));
+                    lstStringJoin.Add(string.Format(strJoin, infoUltFecha.Fechanum, aigDTO.GroupLetter, aigDTO.Tabindexletter));
                 }
                 else
                 {
-                    infoUltFecha = new AgrupadorFechaNumValor();
+                    infoUltFecha = new AgrupadorInfoQuery();
                 }
             }
             
@@ -1422,7 +1522,7 @@ namespace LectorCvsResultados.FlashOrdered
             return objInfo != null && objInfo.Total >= totalProb ? 1 : 0;
         }
 
-        private static List<AgrupadorConteosTimeSpanDTO> GetListSpanRank(List<AgrupadorConteosTimeSpanDTO> lista, AgrupadorInfoGeneralDTO item, int caso)
+        private static List<AgrupadorInfoQuery> GetListSpanRank(List<AgrupadorInfoQuery> lista, AgrupadorInfoGeneralDTO item, int caso)
         {
             if (caso == 1)
             {
@@ -1434,10 +1534,9 @@ namespace LectorCvsResultados.FlashOrdered
             }
         }
 
-        public static List<FLASHORDERED> GetListaTemp(DateTime fecha, int casoResource, SisResultEntities contexto, int valorMinimo)
+        public static List<FLASHORDERED> GetListaTempMinVal(DateTime fecha, SisResultEntities contexto, int valorMinimo, List<FLASHORDERED> listaHtmlTemp)
         {
             List<FLASHORDERED> listaHtmlFinal = new List<FLASHORDERED>();
-            List<FLASHORDERED> listaHtmlTemp = UtilGeneral.UtilHtml.LeerInfoHtmlTempActual(fecha, casoResource);
             string fechaFormat = fecha.ToString("yyyyMMdd");
             string strJoin = UtilHtml.ObtenerJoinElementos(listaHtmlTemp);
             List<AgrupadorMaxTabIndex> listaMaxTabindexGL = ConsultasClassFO.ConsultarMaxSeqTabindexGl(fechaFormat, contexto, strJoin);
@@ -1595,17 +1694,17 @@ namespace LectorCvsResultados.FlashOrdered
             return objDto.Total >= rank ? 1 : 0;
         }
 
-        public static int AsignarInfoRank(List<AgrupadorConteosTimeSpanDTO> lista, int spanActual)
+        public static int AsignarInfoRank(List<AgrupadorInfoQuery> lista, int spanActual)
         {
             return (from x in lista where x.Spantiempo.Equals(spanActual) select x.Rank).FirstOrDefault();
         }
 
-        public static int AsignarInfoMaxRank(List<AgrupadorConteosTimeSpanDTO> lista)
+        public static int AsignarInfoMaxRank(List<AgrupadorInfoQuery> lista)
         {
             return (from x in lista select x.Rank).Max();
         }
 
-        public static int AsignarInfoMinSpan(List<AgrupadorConteosTimeSpanDTO> lista)
+        public static int AsignarInfoMinSpan(List<AgrupadorInfoQuery> lista)
         {
             return (from x in lista select x.Spantiempo).Min();
         }
